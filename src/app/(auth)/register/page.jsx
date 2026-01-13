@@ -13,7 +13,10 @@ const RegisterPage = () => {
   const router = useRouter();
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const photoURLPattern =
+    /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp|avif|svg))$/i;
 
   // Redirect if already logged in
   useEffect(() => {
@@ -21,60 +24,94 @@ const RegisterPage = () => {
       router.push("/profile");
     }
   }, [status, router]);
+  // upload photo to imgbb
+  const uploadPhotoToImgbb = async (file) => {
+    // Create form data
+    const formData = new FormData();
+    // Append image file
+    formData.append("image", file);
+
+    // Make API request to imgbb
+    const res = await fetch(
+      `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Image upload failed");
+    }
+
+    const data = await res.json();
+    return data.data.url;
+  };
 
   const handleCredentialsRegister = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+
     try {
-      if (!emailPattern.test(e.target.email.value)) {
-        setError("Invalid email address");
-        return;
+      const name = e.target.name.value.trim();
+      const email = e.target.email.value.trim();
+      const password = e.target.password.value;
+      const confirmPassword = e.target.confirmPassword.value;
+      const photoFile = e.target.photo.files[0];
+
+      if (!name || name.length < 2) {
+        throw new Error("Name is required");
       }
-      if (e.target.password.value !== e.target.confirmPassword.value) {
-        setError("Passwords don't match");
-        return;
+
+      if (!emailPattern.test(email)) {
+        throw new Error("Invalid email address");
       }
-      if (e.target.password.value.length < 6) {
-        setError("Password must be at least 6 characters");
-        return;
+
+      if (password.length < 6) {
+        throw new Error("Password must be at least 6 characters");
       }
+
+      if (password !== confirmPassword) {
+        throw new Error("Passwords don't match");
+      }
+
+      let photoUrl = "";
+
+      if (photoFile) {
+        setIsUploading(true);
+        photoUrl = await uploadPhotoToImgbb(photoFile);
+        setIsUploading(false);
+      }
+
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: e.target.name.value,
-          email: e.target.email.value,
-          password: e.target.password.value,
+          name,
+          email,
+          photo: photoUrl,
+          password,
         }),
       });
 
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
-      }
+      if (!response.ok) throw new Error(data.message);
 
       toast.success("Account created! Logging you in...");
 
-      // Auto login after registration
-      const result = await signIn("credentials", {
-        email: e.target.email.value,
-        password: e.target.password.value,
+      await signIn("credentials", {
+        email,
+        password,
         redirect: false,
       });
 
-      if (result?.error) {
-        toast.error("Login failed. Please try logging in manually.");
-        router.push("/login");
-      } else {
-        router.push("/profile");
-      }
-    } catch (error) {
-      console.error("Registration error:", error);
-      toast.error(error.message || "Registration failed");
+      router.push("/profile");
+    } catch (err) {
+      toast.error(err.message || "Registration failed");
     } finally {
       setIsLoading(false);
+      setIsUploading(false);
     }
   };
 
@@ -144,7 +181,8 @@ const RegisterPage = () => {
                   className="input"
                   placeholder="Email"
                 />
-
+                <label className="label">Profile Picture</label>
+                <input type="file" className="file-input" name="photo" />
                 <label className="label">Password</label>
                 <input
                   type="password"
@@ -166,13 +204,17 @@ const RegisterPage = () => {
                 <div className="divider m-0.5 font-semibold">OR</div>
                 <div className="flex flex-wrap items-center gap-2">
                   <button
-                    className="btn btn-soft"
-                    disabled={isLoading}
-                    onClick={handleGoogleRegister}
+                    className="btn btn-accent mt-2"
+                    disabled={isLoading || isUploading}
                   >
-                    <FaGoogle size={20} />
-                    Register
+                    <FaUserPlus size={20} />
+                    {isUploading
+                      ? "Uploading image..."
+                      : isLoading
+                      ? "Registering..."
+                      : "Register"}
                   </button>
+
                   <Link className="btn btn-soft" href="/login">
                     <FaSignInAlt size={20} />
                     Login

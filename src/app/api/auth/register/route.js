@@ -11,8 +11,8 @@ clientPromise = global._mongoClientPromise;
 
 export async function POST(request) {
   try {
-    const { name, email, password } = await request.json();
-    if (!name || !email || !password)
+    const { name, email, password, photo } = await request.json();
+    if (!name || !email || !password || !photo)
       return NextResponse.json(
         { message: "All fields required" },
         { status: 400 }
@@ -35,7 +35,7 @@ export async function POST(request) {
       name,
       email,
       password: hashedPassword,
-      image: null,
+      image: photo,
       provider: "credentials",
       role: "user",
       createdAt: new Date(),
