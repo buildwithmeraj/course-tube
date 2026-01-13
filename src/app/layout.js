@@ -1,14 +1,23 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cabin, Nunito_Sans, Poltawski_Nowy } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
+import Providers from "./providers/Providers";
+import { Toaster } from "react-hot-toast";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const poltawskiNowy = Poltawski_Nowy({
   subsets: ["latin"],
+  variable: "--font-poltawski",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
+  variable: "--font-nunito",
+});
+
+const cabin = Cabin({
+  subsets: ["latin"],
+  variable: "--font-cabin",
 });
 
 export const metadata = {
@@ -20,9 +29,20 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${poltawskiNowy.variable} ${nunitoSans.variable} ${cabin.variable} antialiased`}
       >
-        {children}
+        <Providers>
+          <header>
+            <nav>
+              <Navbar />
+            </nav>
+          </header>
+          <main>{children}</main>
+          <Toaster position="bottom-center" reverseOrder={false} />
+          <footer>
+            <Footer />
+          </footer>
+        </Providers>
       </body>
     </html>
   );
