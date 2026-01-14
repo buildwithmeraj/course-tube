@@ -1,13 +1,6 @@
 import { NextResponse } from "next/server";
-import { MongoClient } from "mongodb";
+import clientPromise from "@/lib/mongodb";
 import bcrypt from "bcryptjs";
-
-let clientPromise;
-if (!global._mongoClientPromise) {
-  const client = new MongoClient(process.env.MONGODB_URI);
-  global._mongoClientPromise = client.connect();
-}
-clientPromise = global._mongoClientPromise;
 
 export async function POST(request) {
   try {

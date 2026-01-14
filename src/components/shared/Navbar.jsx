@@ -74,8 +74,16 @@ const Navbar = () => {
           </li>
         </ul>
       </div>
-      <div className="navbar-end">
-        <a className="btn btn-primary">Button</a>
+      <div className="navbar-end space-x-2">
+        <Link className="btn btn-primary" href="/dashboard">
+          Dashboard
+        </Link>
+        <Link className="btn btn-primary" href="/profile/">
+          Profile
+        </Link>
+        <Link className="btn btn-primary" href="/profile/courses/add">
+          Add
+        </Link>
       </div>
     </div>
   );

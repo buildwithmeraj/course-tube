@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React from "react";
 import { FaUserPen } from "react-icons/fa6";
-import { FaGoogle, FaSignInAlt, FaUserPlus } from "react-icons/fa";
+import { FaSignInAlt, FaUserPlus } from "react-icons/fa";
 import { signIn, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -82,6 +82,10 @@ const RegisterPage = () => {
         setIsUploading(true);
         photoUrl = await uploadPhotoToImgbb(photoFile);
         setIsUploading(false);
+      }
+
+      if (photoUrl && !photoURLPattern.test(photoUrl)) {
+        throw new Error("Invalid photo URL");
       }
 
       const response = await fetch("/api/auth/register", {

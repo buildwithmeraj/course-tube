@@ -67,6 +67,7 @@ export const authOptions = {
             id: user._id.toString(),
             email: user.email,
             name: user.name,
+            role: user.role || "user",
             image: user.image || null,
           };
         } catch (error) {
@@ -115,31 +116,20 @@ export const authOptions = {
 
     // Include user info in JWT token
     async jwt({ token, user, account }) {
-      // Add user info to token
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
         token.picture = user.image || null;
-
-        // Generate custom accessToken
-        if (!token.accessToken) {
-          token.accessToken = jwt.sign(
-            {
-              email: user.email,
-              name: user.name,
-              picture: user.image || null,
-              sub: user.id,
-            },
-            secret,
-            { expiresIn: "30d", algorithm: "HS256" }
-          );
-        }
+        token.role = user.role || "user";
       }
 
-      // For OAuth accounts, keep their access_token if available
-      if (account?.access_token && !token.accessToken) {
-        token.accessToken = account.access_token;
+      // Ensure OAuth users get role
+      if (account?.provider === "google" && token.email && !token.role) {
+        const db = await getDatabase();
+        const usersCollection = db.collection("users");
+        const dbUser = await usersCollection.findOne({ email: token.email });
+        token.role = dbUser?.role || "user";
       }
 
       return token;
@@ -152,6 +142,7 @@ export const authOptions = {
         session.user.id = token.id;
         session.user.email = token.email;
         session.user.name = token.name;
+        session.user.role = token.role || "user";
         session.user.image = token.picture || null;
         session.user.accessToken = token.accessToken;
       }
@@ -162,6 +153,7 @@ export const authOptions = {
   // Custom pages
   pages: {
     signIn: "/login",
+    error: "/login",
   },
 };
 
