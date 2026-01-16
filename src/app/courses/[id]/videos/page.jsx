@@ -1,18 +1,24 @@
 "use client";
 import Loading from "@/components/ui/Loading";
 import VideoListCard from "@/components/ui/VideoListCard";
+import VideoListCardSkeleton from "@/components/ui/VideoListCardSkeleton";
 import YouTubePlayer from "@/components/ui/YouTubePlayer";
+import YouTubePlayerSkeleton from "@/components/ui/YouTubePlayerSkeleton";
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
+import { RiGraduationCapFill } from "react-icons/ri";
 
 const VideosPage = () => {
   const [videos, setVideos] = useState([]);
   const [course, setCourse] = useState([]);
+  const [enrolled, setEnrolled] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [lastFinishedVideo, setLastFinishedVideo] = useState(null);
   const [manuallySelectedVideo, setManuallySelectedVideo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [enrollLoading, setEnrollLoading] = useState(true);
   const { id } = useParams();
   const searchParams = useSearchParams();
 
@@ -117,19 +123,78 @@ const VideosPage = () => {
     }
   };
 
-  if (loading) {
-    return <Loading />;
+  useEffect(() => {
+    const fetchEnrollment = async () => {
+      try {
+        setEnrollLoading(true);
+        const enrollData = await fetch(`/api/courses/${id}/enroll`);
+        const enrollDataJson = await enrollData.json();
+        if (enrollDataJson) {
+          setEnrolled(true);
+        }
+        setEnrollLoading(false);
+      } catch (err) {
+        console.error(err);
+        setEnrollLoading(false);
+      }
+    };
+    fetchEnrollment();
+  }, [id]);
+
+  const enrollInCourse = async () => {
+    try {
+      setEnrollLoading(true);
+      const res = await fetch(`/api/courses/${id}/enroll`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEnrolled(true);
+      }
+      toast.success("Enrolled successfully");
+      setShowModal(true);
+      setEnrollLoading(false);
+    } catch (err) {
+      console.error(err);
+      setEnrollLoading(false);
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  if (enrollLoading) return <Loading />;
+
+  if (!enrolled) {
+    return (
+      <div className="flex items-center justify-center h-dvh">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center flex-col">
+          <RiGraduationCapFill size={128} className="text-base-content/50" />
+          <h2 className="text-2xl mb-4">
+            You are not enrolled in this course.
+          </h2>
+          <button className="btn btn-primary" onClick={enrollInCourse}>
+            Enroll Now
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2 space-y-3">
-          <YouTubePlayer
-            video={selectedVideoData}
-            onEnd={handleVideoEnd}
-            course={course}
-          />
+          {loading ? (
+            <YouTubePlayerSkeleton />
+          ) : (
+            <YouTubePlayer
+              video={selectedVideoData}
+              onEnd={handleVideoEnd}
+              course={course}
+            />
+          )}
           <div className="flex items-center justify-between">
             <button
               className="btn btn-accent btn-soft"
@@ -165,6 +230,10 @@ const VideosPage = () => {
         </div>
 
         <div className="overflow-y-auto max-h-[85vh] space-y-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+          {loading &&
+            Array.from({ length: 12 }).map((_, i) => (
+              <VideoListCardSkeleton key={i} />
+            ))}
           {videos.map((video) => (
             <VideoListCard
               key={video._id.toString()}
@@ -181,6 +250,27 @@ const VideosPage = () => {
           ))}
         </div>
       </div>
+      {showModal && (
+        <dialog
+          id="enrolled_modal"
+          className="modal modal-open modal-bottom sm:modal-middle"
+        >
+          <div className="modal-box text-success text-center">
+            <h2 className="font-bold ">Congratulations!</h2>
+            <p className="py-4">
+              You have successfully enrolled in the course. Start learning now!
+              Good luck!
+            </p>
+            <div className="modal-action flex items-center justify-center">
+              <form method="dialog">
+                <button className="btn btn-success" onClick={closeModal}>
+                  Okay
+                </button>
+              </form>
+            </div>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };

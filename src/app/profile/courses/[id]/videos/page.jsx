@@ -1,10 +1,12 @@
 "use client";
-import Loading from "@/components/ui/Loading";
-import VideoCard from "@/components/ui/VideoCard";
+import VideoListCard from "@/components/ui/VideoListCard";
+import VideoListCardSkeleton from "@/components/ui/VideoListCardSkeleton";
 import YouTubePlayer from "@/components/ui/YouTubePlayer";
-import Icon from "@/components/utilities/Icon";
+import YouTubePlayerSkeleton from "@/components/ui/YouTubePlayerSkeleton";
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
 
 const VideosPage = () => {
   const [videos, setVideos] = useState([]);
@@ -14,6 +16,15 @@ const VideosPage = () => {
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
   const searchParams = useSearchParams();
+
+  const progressColor = (total, progress) => {
+    let progressPercentage = (progress / total) * 100;
+    return progressPercentage < 35
+      ? "text-base-content"
+      : progressPercentage < 70
+      ? "text-warning"
+      : "text-success";
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -83,30 +94,93 @@ const VideosPage = () => {
   }, [videos, selectedVideo]);
 
   const handleVideoEnd = (video) => {
-    console.log("User finished video:", video);
+    setLastFinishedVideo(video._id);
     fetch(`/api/courses/${id}/progress?videoId=${video._id}`, {
       method: "PATCH",
     }).catch((err) => console.error("Error marking progress:", err));
+    changeVideo("next");
+    toast.success("Video changed to next one");
   };
 
-  if (loading) {
-    <Loading />;
-  }
+  const changeVideo = (action) => {
+    if (action === "next") {
+      const currentIndex = videos.findIndex((v) => v._id === selectedVideo);
+      if (currentIndex !== -1 && currentIndex + 1 < videos.length) {
+        setManuallySelectedVideo(videos[currentIndex + 1]._id);
+      }
+    } else if (action === "prev") {
+      const currentIndex = videos.findIndex((v) => v._id === selectedVideo);
+      if (currentIndex > 0) {
+        setManuallySelectedVideo(videos[currentIndex - 1]._id);
+      }
+    } else {
+      console.warn("Unknown action for changeVideo:", action);
+    }
+  };
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <YouTubePlayer video={selectedVideoData} onEnd={handleVideoEnd} />
+      <div className="grid grid-cols-3 gap-4">
+        <div className="col-span-2 space-y-3">
+          {loading ? (
+            <YouTubePlayerSkeleton />
+          ) : (
+            <YouTubePlayer
+              video={selectedVideoData}
+              onEnd={handleVideoEnd}
+              course={course}
+            />
+          )}
+          <div className="flex items-center justify-between">
+            <button
+              className="btn btn-accent btn-soft"
+              onClick={() => changeVideo("prev")}
+            >
+              <FaArrowAltCircleLeft />
+              Previous
+            </button>
+            <button
+              className="btn btn-accent btn-soft"
+              onClick={() => changeVideo("next")}
+            >
+              Next
+              <FaArrowAltCircleRight />
+            </button>
+          </div>
+          <div className="text-lg font-semibold flex items-center gap-4">
+            Course Progress{" "}
+            <progress
+              className={`progress w-56 transition-all duration-300 ${progressColor(
+                course?.totalCount,
+                videos.find((v) => v._id === lastFinishedVideo)?.position + 1 ||
+                  0
+              )}`}
+              value={
+                videos.find((v) => v._id === lastFinishedVideo)?.position + 1 ||
+                0
+              }
+              max={course?.totalCount}
+              id="progress"
+            ></progress>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="overflow-y-auto max-h-[85vh] space-y-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+          {loading &&
+            Array.from({ length: 12 }).map((_, i) => (
+              <VideoListCardSkeleton key={i} />
+            ))}
           {videos.map((video) => (
-            <VideoCard
+            <VideoListCard
               key={video._id.toString()}
               video={video}
               course={course}
               isSelected={video._id === selectedVideo}
+              isWatched={
+                lastFinishedVideo &&
+                video.position <=
+                  videos.find((v) => v._id === lastFinishedVideo)?.position
+              }
               onSelect={(vid) => setManuallySelectedVideo(vid)}
             />
           ))}

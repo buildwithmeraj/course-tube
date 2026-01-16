@@ -1,5 +1,6 @@
 "use client";
 import VideoCard from "@/components/ui/VideoCard";
+import VideoCardSkeleton from "@/components/ui/VideoCardSkeleton";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -8,6 +9,7 @@ const CourseDetails = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [course, setCourse] = useState([]);
   const { id } = useParams();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
@@ -54,12 +56,20 @@ const CourseDetails = () => {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {loading && (
+          <>
+            {Array.from({ length: 12 }).map((_, i) => (
+              <VideoCardSkeleton key={i} />
+            ))}
+          </>
+        )}
         {videos.map((video) => (
           <VideoCard
             key={video._id.toString()}
             video={video}
             course={course}
             isSelected={video._id === selectedVideo}
+            isWatched={video._id < selectedVideo}
             onSelect={(vid) => setSelectedVideo(vid)}
           />
         ))}
