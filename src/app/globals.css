@@ -86,6 +86,9 @@ h4,
 h5,
 h6 {
   font-family: var(--font-poltawski);
+}
+
+h2 {
   @apply text-3xl;
 }
 

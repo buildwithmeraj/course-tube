@@ -60,6 +60,7 @@ const CourseDetails = () => {
             video={video}
             course={course}
             isSelected={video._id === selectedVideo}
+            isWatched={video._id < selectedVideo}
             onSelect={(vid) => setSelectedVideo(vid)}
           />
         ))}

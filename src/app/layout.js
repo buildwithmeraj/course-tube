@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${poltawskiNowy.variable} ${nunitoSans.variable} ${cabin.variable} antialiased`}
+        className={`${poltawskiNowy.variable} ${nunitoSans.variable} ${cabin.variable} antialiased flex flex-col min-h-screen`}
       >
         <Providers>
           <header>
@@ -37,7 +37,9 @@ export default function RootLayout({ children }) {
               <Navbar />
             </nav>
           </header>
-          <main>{children}</main>
+          <main className="container mx-auto px-4 mt-20 flex-1">
+            {children}
+          </main>
           <Toaster position="bottom-center" reverseOrder={false} />
           <footer>
             <Footer />

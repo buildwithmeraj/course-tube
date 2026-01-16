@@ -10,6 +10,7 @@ const Icon = ({ classes, width, height }) => {
         className={classes}
         width={width}
         height={height}
+        sizes="100vw"
       />
     </>
   );

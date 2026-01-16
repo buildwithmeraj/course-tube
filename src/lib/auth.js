@@ -1,6 +1,7 @@
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import { getDB } from "./getDB";
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -15,9 +16,10 @@ export const authOptions = {
       // The name to display on the sign in form (e.g. "Sign in with...")
       name: "Credentials",
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
+
       // Authorize user credentials
       async authorize(credentials) {
         // if no credentials, return error
@@ -27,7 +29,7 @@ export const authOptions = {
 
         try {
           // connect to database
-          const db = await getDatabase();
+          const db = await getDB();
           // access users collection
           const usersCollection = db.collection("users");
 
@@ -74,7 +76,7 @@ export const authOptions = {
       // If signing in with Google, save user to database if not exists
       if (account?.provider === "google") {
         try {
-          const db = await getDatabase();
+          const db = await getDB();
           const usersCollection = db.collection("users");
 
           const existingUser = await usersCollection.findOne({
@@ -110,7 +112,7 @@ export const authOptions = {
 
       // Ensure OAuth users get role
       if (account?.provider === "google" && token.email && !token.role) {
-        const db = await getDatabase();
+        const db = await getDB();
         const usersCollection = db.collection("users");
         const dbUser = await usersCollection.findOne({ email: token.email });
         token.role = dbUser?.role || "user";
