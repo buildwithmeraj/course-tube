@@ -1,6 +1,7 @@
 "use client";
-import LoadingInBlock from "@/components/ui/LoadingInBlock";
 import PlaylistCard from "@/components/ui/PlaylistCard";
+import PlaylistCardSkeleton from "@/components/ui/PlaylistCardSkeleton";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const PopularCourses = () => {
@@ -11,7 +12,7 @@ const PopularCourses = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          "/api/courses?approved=true&popular=true&limit=8"
+          "/api/courses?approved=true&popular=true&limit=8",
         );
         const data = await res.json();
         setCourses(data);
@@ -24,16 +25,26 @@ const PopularCourses = () => {
     fetchPopularCourses();
   }, []);
 
-  if (loading) {
-    return <LoadingInBlock />;
-  }
   return (
     <>
-      <h2>Popular Courses {courses.length}</h2>
+      <h2 className="my-4">Popular Courses {courses.length}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {courses.map((course) => (
-          <PlaylistCard key={course._id} playlist={course} />
-        ))}
+        {loading && (
+          <>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <PlaylistCardSkeleton key={i} />
+            ))}
+          </>
+        )}
+        {!loading &&
+          courses.map((course) => (
+            <PlaylistCard key={course._id} playlist={course} />
+          ))}
+      </div>
+      <div className="text-center">
+        <Link href="/courses/" className="btn btn-primary mt-4">
+          More Courses
+        </Link>
       </div>
     </>
   );

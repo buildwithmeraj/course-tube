@@ -24,7 +24,7 @@ const PlaylistCard = ({ playlist }) => {
             >
               <RiPlayList2Fill size={56} />
             </div>
-            {playlist.enrollCount && (
+            {playlist.enrollCount >= 0 && (
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded flex items-center gap-1">
                 <HiUserGroup size={15} />
                 {playlist.enrollCount} Enrolls

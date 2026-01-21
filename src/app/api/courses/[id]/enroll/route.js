@@ -16,6 +16,10 @@ export async function GET(req, { params }) {
   const db = client.db("courses");
   const enrollsCol = db.collection("enrolls");
 
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
   const course = await enrollsCol.findOne({
     courseId: new ObjectId(id),
     userEmail: session?.user?.email,
@@ -26,17 +30,19 @@ export async function GET(req, { params }) {
 
 export async function POST(req, { params }) {
   const { id } = await params;
+  const client = await clientPromise;
+  const db = client.db("courses");
+  const enrollsCol = db.collection("enrolls");
+  const courseId = new ObjectId(id);
+  const session = await getServerSession(authOptions);
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json({ message: "Invalid course ID" }, { status: 400 });
   }
 
-  const client = await clientPromise;
-  const db = client.db("courses");
-  const enrollsCol = db.collection("enrolls");
-
-  const courseId = new ObjectId(id);
-  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
 
   // Fetch existing progress
   const courseProgress = await enrollsCol.findOne({

@@ -12,6 +12,9 @@ export async function GET(req, { params }) {
     return NextResponse.json({ message: "Invalid ID" }, { status: 400 });
   }
 
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
   const client = await clientPromise;
   const db = client.db("courses");
   const progressCol = db.collection("progress");
@@ -36,6 +39,9 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ message: "Invalid video ID" }, { status: 400 });
   }
 
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
   const client = await clientPromise;
   const db = client.db("courses");
   const progressCol = db.collection("progress");

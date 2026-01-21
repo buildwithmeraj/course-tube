@@ -44,7 +44,7 @@
   --color-base-100: oklch(30.857% 0.023 264.149);
   --color-base-200: oklch(28.036% 0.019 264.182);
   --color-base-300: oklch(26.346% 0.018 262.177);
-  --color-base-content: oklch(82.901% 0.031 222.959);
+  --color-base-content: oklch(98% 0.003 247.858);
   --color-primary: hsl(199, 64%, 73%);
   --color-primary-content: oklch(12% 0.042 264.695);
   --color-secondary: hsl(199, 95%, 14%);
@@ -94,4 +94,18 @@ h2 {
 
 .btn {
   @apply text-lg;
+}
+
+.btn {
+  @apply rounded-full;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-accent,
+.btn-neutral,
+.btn-info,
+.btn-success,
+.btn-error {
+  @apply text-white;
 }

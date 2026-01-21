@@ -1,23 +1,36 @@
 "use client";
+import NotFound from "@/components/shared/NotFound";
 import Loading from "@/components/ui/Loading";
+import NotLoggedIn from "@/components/ui/NotLoggedIn";
 import VideoListCard from "@/components/ui/VideoListCard";
 import VideoListCardSkeleton from "@/components/ui/VideoListCardSkeleton";
 import YouTubePlayer from "@/components/ui/YouTubePlayer";
 import YouTubePlayerSkeleton from "@/components/ui/YouTubePlayerSkeleton";
+import { useSession } from "next-auth/react";
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
+import {
+  FaArrowAltCircleLeft,
+  FaArrowAltCircleRight,
+  FaSyncAlt,
+} from "react-icons/fa";
 import { RiGraduationCapFill } from "react-icons/ri";
+import { IoHelpCircle } from "react-icons/io5";
+import VideoDescription from "@/components/ui/VideoDescription";
 
 const VideosPage = () => {
+  const { data: session, status } = useSession();
   const [videos, setVideos] = useState([]);
-  const [course, setCourse] = useState([]);
+  const [course, setCourse] = useState(null);
   const [enrolled, setEnrolled] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [updated, setUpdated] = useState(true);
   const [lastFinishedVideo, setLastFinishedVideo] = useState(null);
   const [manuallySelectedVideo, setManuallySelectedVideo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [synchronizing, setSynchronizing] = useState(false);
   const [enrollLoading, setEnrollLoading] = useState(true);
   const { id } = useParams();
   const searchParams = useSearchParams();
@@ -27,33 +40,44 @@ const VideosPage = () => {
     return progressPercentage < 35
       ? "text-base-content"
       : progressPercentage < 70
-      ? "text-warning"
-      : "text-success";
+        ? "text-warning"
+        : "text-success";
   };
 
   useEffect(() => {
     if (!id) return;
 
     const fetchVideosAndProgress = async () => {
+      // Check if course was updated in the last 7 days
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       try {
         // set loading state
         setLoading(true);
-        // Fetch all videos for the course
-        const resVideos = await fetch(`/api/courses/${id}/videos`);
-        const videosData = await resVideos.json();
-        setVideos(videosData);
-
         // Fetch course details
         const resCourse = await fetch(`/api/courses/${id}`);
+        if (!resCourse.ok) {
+          setError("Failed to fetch course details");
+        }
         const courseData = await resCourse.json();
         setCourse(courseData);
+        if (courseData.updatedAt > sevenDaysAgo) {
+          setUpdated(true);
+        }
+
+        // Fetch all videos for the course
+        const resVideos = await fetch(`/api/courses/${id}/videos`);
+        if (!resVideos.ok) {
+          setError("Failed to fetch videos");
+        }
+        const videosData = await resVideos.json();
+        setVideos(videosData);
 
         // Fetch user progress (last finished video)
         const resProgress = await fetch(`/api/courses/${id}/progress`);
         const progressData = await resProgress.json();
         const finishedVideoId = progressData?.finishedVideo || null;
         setLastFinishedVideo(finishedVideoId);
-        console.log("Last finished video ID:", finishedVideoId);
       } catch (err) {
         console.error(err);
       } finally {
@@ -160,9 +184,43 @@ const VideosPage = () => {
     }
   };
 
+  const handleSynchronize = async () => {
+    try {
+      setSynchronizing(true);
+      const res = await fetch(`/api/courses/${id}/synchronize`, {
+        method: "PATCH",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        // Refetch videos after synchronization
+        fetchVideosAndProgress();
+        toast.success("Course synchronized successfully");
+      } else {
+        if (res.status === 429) {
+          toast.success("Course is already updated");
+        } else {
+          toast.error("Failed to synchronize course");
+        }
+      }
+      setSynchronizing(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("An error occurred during synchronization");
+      setSynchronizing(false);
+    }
+  };
+
   const closeModal = () => {
     setShowModal(false);
   };
+
+  if (error) {
+    return <NotFound />;
+  }
+
+  if (!session && !loading) {
+    return <NotLoggedIn />;
+  }
 
   if (enrollLoading) return <Loading />;
 
@@ -183,8 +241,11 @@ const VideosPage = () => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="grid grid-cols-3 gap-4">
+        <div className="col-span-full -mb-2">
+          <h2>{course.title}</h2>
+        </div>
         <div className="col-span-2 space-y-3">
           {loading ? (
             <YouTubePlayerSkeleton />
@@ -197,39 +258,74 @@ const VideosPage = () => {
           )}
           <div className="flex items-center justify-between">
             <button
-              className="btn btn-accent btn-soft"
+              className="btn btn-soft"
               onClick={() => changeVideo("prev")}
             >
               <FaArrowAltCircleLeft />
               Previous
             </button>
             <button
-              className="btn btn-accent btn-soft"
+              className="btn btn-soft"
               onClick={() => changeVideo("next")}
             >
               Next
               <FaArrowAltCircleRight />
             </button>
           </div>
-          <div className="text-lg font-semibold flex items-center gap-4">
-            Course Progress{" "}
-            <progress
-              className={`progress w-56 transition-all duration-300 ${progressColor(
-                course?.totalCount,
-                videos.find((v) => v._id === lastFinishedVideo)?.position + 1 ||
-                  0
-              )}`}
-              value={
-                videos.find((v) => v._id === lastFinishedVideo)?.position + 1 ||
-                0
-              }
-              max={course?.totalCount}
-              id="progress"
-            ></progress>
+          <VideoDescription description={selectedVideoData?.description} />
+          <div className="flex justify-between items-center">
+            <div className="text-lg font-semibold flex items-center gap-4">
+              Course Progress{" "}
+              <progress
+                className={`progress w-56 transition-all duration-300 ${progressColor(
+                  course?.totalCount,
+                  videos.find((v) => v._id === lastFinishedVideo)?.position +
+                    1 || 0,
+                )}`}
+                value={
+                  videos.find((v) => v._id === lastFinishedVideo)?.position +
+                    1 || 0
+                }
+                max={course?.totalCount}
+                id="progress"
+              ></progress>
+            </div>
+            <div>
+              <button
+                className="btn btn-info btn-soft btn-sm"
+                onClick={handleSynchronize}
+                disabled={synchronizing || updated}
+              >
+                {synchronizing ? (
+                  <>
+                    <FaSyncAlt className="animate-spin" /> Synchronizing ...
+                  </>
+                ) : (
+                  <>
+                    <FaSyncAlt /> Sync Course
+                  </>
+                )}{" "}
+              </button>
+              <div
+                className="tooltip tooltip-top"
+                data-tip={
+                  updated
+                    ? `Already synchronized within last 7 days`
+                    : `Get latest videos YouTube`
+                }
+              >
+                <button
+                  className="btn btn-circle btn-soft ml-2 btn-sm"
+                  type="button"
+                >
+                  <IoHelpCircle />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="overflow-y-auto max-h-[85vh] space-y-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+        <div className="overflow-y-auto max-h-[76vh] space-y-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 rounded-lg">
           {loading &&
             Array.from({ length: 12 }).map((_, i) => (
               <VideoListCardSkeleton key={i} />

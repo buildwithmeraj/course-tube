@@ -29,8 +29,8 @@ const fetchDurations = async (videoIds) => {
 
     const res = await fetch(
       `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${chunk.join(
-        ","
-      )}&key=${API_KEY}`
+        ",",
+      )}&key=${API_KEY}`,
     );
 
     const data = await res.json();
@@ -48,7 +48,7 @@ const fetchAllVideos = async (playlistId) => {
 
   do {
     const res = await fetch(
-      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&pageToken=${nextPageToken}&key=${API_KEY}`
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&pageToken=${nextPageToken}&key=${API_KEY}`,
     );
 
     const data = await res.json();
@@ -61,7 +61,7 @@ const fetchAllVideos = async (playlistId) => {
         thumbnail: item.snippet.thumbnails?.medium?.url,
         position: item.snippet.position,
         publishedAt: item.snippet.publishedAt,
-      }))
+      })),
     );
 
     nextPageToken = data.nextPageToken || "";
@@ -73,11 +73,9 @@ const fetchAllVideos = async (playlistId) => {
 
   // Merge duration data
   return videos.map((v) => {
-    const parsed = parseDuration(durationMap[v.videoId] || "PT0S");
     return {
       ...v,
       duration: parsed.formatted,
-      durationSeconds: parsed.seconds,
     };
   });
 };

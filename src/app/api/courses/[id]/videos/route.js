@@ -1,3 +1,4 @@
+import { authOptions } from "@/lib/auth";
 import clientPromise from "@/lib/db";
 import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
@@ -24,7 +25,7 @@ export async function GET(req, { params }) {
     console.error("Error fetching videos:", err);
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

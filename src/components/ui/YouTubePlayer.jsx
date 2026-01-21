@@ -69,9 +69,9 @@ const YouTubePlayer = ({ video, onEnd, course }) => {
         ></div>
       </div>
       {video && (
-        <h2 className="mt-2 font-semibold">
+        <h3 className="mt-2 font-semibold text-2xl">
           {video.position + 1}/{course?.totalCount} {video.title}
-        </h2>
+        </h3>
       )}
     </div>
   );

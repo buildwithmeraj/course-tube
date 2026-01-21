@@ -4,6 +4,7 @@ import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import Providers from "./providers/Providers";
 import { Toaster } from "react-hot-toast";
+import Dock from "@/components/shared/Dock";
 
 const poltawskiNowy = Poltawski_Nowy({
   subsets: ["latin"],
@@ -27,9 +28,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}>
       <body
-        className={`${poltawskiNowy.variable} ${nunitoSans.variable} ${cabin.variable} antialiased flex flex-col min-h-screen`}
+        className={`${poltawskiNowy.variable} ${nunitoSans.variable} ${cabin.variable} antialiased flex flex-col min-h-screen overflow-x-hidden`}
       >
         <Providers>
           <header>
@@ -37,11 +38,12 @@ export default function RootLayout({ children }) {
               <Navbar />
             </nav>
           </header>
-          <main className="container mx-auto px-4 mt-20 flex-1">
+          <main className="container mx-auto mt-18 mb-20 lg:mb-4 flex-1">
             {children}
           </main>
           <Toaster position="bottom-center" reverseOrder={false} />
           <footer>
+            <Dock />
             <Footer />
           </footer>
         </Providers>

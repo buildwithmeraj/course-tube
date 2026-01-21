@@ -1,4 +1,6 @@
 "use client";
+import Loading from "@/components/ui/Loading";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const ACTIONS = {
@@ -11,7 +13,6 @@ const Dashboard = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [action, setAction] = useState(null);
 
@@ -89,12 +90,12 @@ const Dashboard = () => {
     }
   };
 
-  if (loading) return <p>Loading courses...</p>;
+  if (loading) return <Loading />;
   if (error) return <p className="text-error">{error}</p>;
 
   return (
     <div>
-      <h1>All Courses</h1>
+      <h2 className="text-center">All Courses</h2>
 
       <div className="overflow-x-auto backdrop-blur-xl">
         <table className="table">
@@ -110,19 +111,16 @@ const Dashboard = () => {
           <tbody>
             {courses.map((item) => (
               <tr key={item._id}>
-                <td className="font-bold">{item.title}</td>
+                <td className="font-bold">
+                  <Link href={`/courses/${item._id}`} className="link">
+                    {item.title}
+                  </Link>
+                </td>
                 <td>{item.approved ? "Yes" : "No"}</td>
                 <td>{item.totalCount}</td>
 
                 <td>
                   <div className="flex gap-2">
-                    <a
-                      href={`/test/${item.playlistId}`}
-                      className="btn btn-primary btn-sm"
-                    >
-                      View
-                    </a>
-
                     {!item.approved && (
                       <button
                         className="btn btn-xs btn-success"
