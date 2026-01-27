@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
 import bcrypt from "bcryptjs";
+import clientPromise from "@/lib/db";
 
 export async function POST(request) {
   try {
@@ -8,7 +8,7 @@ export async function POST(request) {
     if (!name || !email || !password || !photo)
       return NextResponse.json(
         { message: "All fields required" },
-        { status: 400 }
+        { status: 400 },
       );
 
     const client = await clientPromise;
@@ -19,7 +19,7 @@ export async function POST(request) {
     if (existingUser)
       return NextResponse.json(
         { message: "User already exists" },
-        { status: 400 }
+        { status: 400 },
       );
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -36,13 +36,13 @@ export async function POST(request) {
 
     return NextResponse.json(
       { message: "User created successfully", userId: result.insertedId },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (err) {
     console.error(err);
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
