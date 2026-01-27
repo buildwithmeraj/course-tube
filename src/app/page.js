@@ -1,18 +1,10 @@
-"use client";
-import Hero from "@/components/pages/home/Hero";
-import HowItWorks from "@/components/pages/home/HowItWorks";
-import PopularCourses from "@/components/pages/home/PopularCourses";
-import Stats from "@/components/pages/home/Stats";
+import HomePage from "../components/pages/home/Home";
+export const metadata = {
+  title: `Home Page | ${process.env.SITE_NAME}`,
+  description:
+    "Complete courses directly from youtube playlists while keeping track of progresses in an organized way.",
+};
 
 export default function Home() {
-  return (
-    <>
-      <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen bg-primary/65 -mt-4">
-        <Hero />
-      </section>
-      <HowItWorks />
-      <PopularCourses />
-      <Stats />
-    </>
-  );
+  return <HomePage />;
 }

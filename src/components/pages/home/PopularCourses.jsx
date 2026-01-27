@@ -3,6 +3,7 @@ import PlaylistCard from "@/components/ui/PlaylistCard";
 import PlaylistCardSkeleton from "@/components/ui/PlaylistCardSkeleton";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { GrLinkNext } from "react-icons/gr";
 
 const PopularCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -43,7 +44,7 @@ const PopularCourses = () => {
       </div>
       <div className="text-center">
         <Link href="/courses/" className="btn btn-primary mt-4">
-          More Courses
+          More Courses <GrLinkNext />
         </Link>
       </div>
     </>
