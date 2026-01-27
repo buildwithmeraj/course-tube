@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Course Tube
 
-## Getting Started
+Course Tube is a Next.js app for discovering, fetching and tracking progress of free YouTube course playlists. Users can add playlists, track watched videos, and organize learning — admins review submissions, manage categories, and publish courses.
 
-First, run the development server:
+## Live Site
+
+Here is the live site: [https://course-tube-seven.vercel.app/](https://course-tube-seven.vercel.app/)
+
+## Key concepts
+
+- Playslists = free YouTube course playlists (fetched via YouTube Data API)
+- Progress tracking = mark videos watched and track completion per playlist
+- Roles = regular users and admins
+- Approval workflow = user-added courses are private to the uploader until an admin approves them and makes them public
+- Categories = admin-created containers that group many courses
+
+## Features
+
+- YouTube playlist discovery and metadata fetch
+- Track watched videos, resume progress across devices
+- User registration and secure password hashing (bcryptjs)
+- Role management: admin and user roles
+- Admin dashboard for approving courses, managing categories and users
+- Course approval workflow: user-added courses remain private until admin approval
+- Category management: admins create categories and assign courses
+- Search, filters and responsive UI (Next.js App Router + Tailwind/CSS)
+- MongoDB-backed storage
+
+## Tech stack
+
+- Next.js (App Router)
+- MongoDB
+- bcryptjs for password hashing
+- YouTube Data API v3
+- TailwindCSS / plain CSS
+
+## Getting started
+
+Prerequisites
+
+- Node.js 16+
+- MongoDB (local or cloud)
+- YouTube Data API key
+
+Installation
+
+1. Clone
+
+```bash
+git clone <repo-url>
+cd course-tube
+```
+
+2. Install
+
+```bash
+npm install
+# or yarn install
+# or pnpm install
+```
+
+3. Environment
+   Create `.env.local`:
+
+```
+MONGODB_URI=your_mongodb_connection_string
+YOUTUBE_API_KEY=your_youtube_api_key
+# Optional
+PORT=3000
+```
+
+4. Run
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# or yarn dev
+# or pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Usage / Workflow
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Register as a user and add a YouTube playlist (course).
+- New courses are visible only to the uploader.
+- Admin reviews submissions in the admin dashboard and can:
+  - Approve to make a course public
+  - Reject or request changes
+  - Create and manage categories
+- Public courses appear under categories and are discoverable by others.
 
-## Learn More
+## Project structure (important parts)
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/
+│   ├── api/
+│   │   └── auth/
+│   │       └── register/
+│   ├── dashboard/         # admin dashboard routes
+│   ├── courses/           # course pages and CRUD
+│   └── page.js
+└── lib/
+    └── db.js
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Open issues or PRs. Add tests and follow repo conventions.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
