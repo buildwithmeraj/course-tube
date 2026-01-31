@@ -139,7 +139,7 @@ const RegisterPage = () => {
     );
   }
   return (
-    <div className="flex items-center justify-center h-[85vh]">
+    <div className="flex items-center justify-center h-[80vh]">
       <div className="card bg-base-100 w-fit max-w-2xl shadow-xl flex flex-row items-center">
         <div className="flex flex-row justify-center items-center card bg-base-100 w-full shadow-xl">
           <div className="max-w-md shrink-0">

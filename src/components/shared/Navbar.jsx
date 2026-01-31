@@ -25,10 +25,10 @@ const Navbar = () => {
         <input id="sidebar" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
           <div className="navbar fixed w-full z-20 top-0 start-0 bg-primary/60 px-5 backdrop-blur-xl">
-            <div className="navbar-start">
+            <div className="navbar-start flex items-center">
               <div className="dropdown">
-                <label htmlFor="sidebar" className="lg:hidden">
-                  <FaBars size={20} className="mr-2 lg:hidden" />
+                <label htmlFor="sidebar" className="flex lg:hidden">
+                  <FaBars size={18} className="mr-2 lg:hidden" />
                 </label>
               </div>
               <Link className="text-xl" href="/">
