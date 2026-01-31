@@ -3,12 +3,12 @@ import Link from "next/link";
 import React from "react";
 import { FaPlayCircle } from "react-icons/fa";
 
-const VideoCard = ({ video, isSelected, course, isWatched }) => {
+const VideoCard = ({ video, isSelected, course, isWatched, isEnrolled }) => {
   return (
     <Link
       href={`/courses/${video.courseId}/videos?video=${video._id}`}
       className={`cursor-pointer rounded-xl ${
-        isSelected ? "border-blue-500" : "border-gray-300"
+        isEnrolled & isSelected ? "border-blue-500" : "border-gray-300"
       }`}
     >
       <figure className="relative group">
@@ -18,8 +18,8 @@ const VideoCard = ({ video, isSelected, course, isWatched }) => {
           width={0}
           height={0}
           sizes="100vw"
-          className={`w-full rounded-xl ${isWatched ? "opacity-50" : ""} ${
-            isSelected ? "border-4 border-blue-500" : ""
+          className={`w-full rounded-xl ${isEnrolled & isWatched ? "opacity-50" : ""} ${
+            isEnrolled & isSelected ? "border-4 border-blue-500" : ""
           }`}
         />
         <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded">
@@ -37,10 +37,10 @@ const VideoCard = ({ video, isSelected, course, isWatched }) => {
       </figure>
       <h3
         className={`card-title mt-2 ${
-          isWatched ? "text-base-content/60" : "text-base-content"
-        } ${isSelected ? "text-info" : ""}`}
+          isEnrolled & isWatched ? "text-base-content/60" : "text-base-content"
+        } ${isEnrolled & isSelected ? "text-info" : ""}`}
       >
-        {`${isWatched ? "✓" : ""} ${isSelected ? "⮞" : ""} ${video.title}`}
+        {`${isEnrolled & isWatched ? "✓" : ""} ${isEnrolled & isSelected ? "⮞" : ""} ${video.title}`}
       </h3>
     </Link>
   );

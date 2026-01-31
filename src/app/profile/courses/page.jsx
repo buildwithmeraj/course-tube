@@ -1,33 +1,11 @@
-import getUserPlaylist from "@/actions/server/getUserPlaylist";
-import PlaylistCard from "@/components/ui/PlaylistCard";
-import PlaylistCardSkeleton from "@/components/ui/PlaylistCardSkeleton";
-import { Suspense } from "react";
-
-const Courses = async () => {
-  const courses = await getUserPlaylist();
-  return (
-    <div>
-      <h1>Your Courses</h1>
-
-      {courses.length === 0 && <p>No enrolled courses</p>}
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-        <Suspense
-          fallback={
-            <>
-              {Array.from({ length: 12 }).map((_, i) => (
-                <PlaylistCardSkeleton key={i} />
-              ))}
-            </>
-          }
-        >
-          {courses.map((item) => (
-            <PlaylistCard key={item._id.toString()} playlist={item.course} />
-          ))}
-        </Suspense>
-      </div>
-    </div>
-  );
+import EnrolledCourses from "@/components/pages/private/EnrolledCourses";
+import React from "react";
+export const metadata = {
+  title: `Enrolled Courses | ${process.env.SITE_NAME}`,
+  description: `All courses enrolled by you. `,
+};
+const page = () => {
+  return <EnrolledCourses />;
 };
 
-export default Courses;
+export default page;

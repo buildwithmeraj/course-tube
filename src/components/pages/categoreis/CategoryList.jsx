@@ -26,6 +26,7 @@ const CategoryList = () => {
 
     fetchCategories();
   }, []);
+  if (error) console.log(error);
   if (loading) return <Loading />;
 
   return (

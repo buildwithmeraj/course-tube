@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React from "react";
-import { FaUserPen } from "react-icons/fa6";
+import { FaGoogle, FaUserPen } from "react-icons/fa6";
 import { FaSignInAlt, FaUserPlus } from "react-icons/fa";
 import { signIn, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
@@ -140,15 +140,8 @@ const RegisterPage = () => {
   }
   return (
     <div className="flex items-center justify-center h-[85vh]">
-      <div className="card bg-base-100 w-fit max-w-4xl shadow-xl flex flex-row items-center">
+      <div className="card bg-base-100 w-fit max-w-2xl shadow-xl flex flex-row items-center">
         <div className="flex flex-row justify-center items-center card bg-base-100 w-full shadow-xl">
-          <div
-            className={`hidden md:flex ${
-              error ? "text-error" : "text-accent"
-            } pl-4`}
-          >
-            <FaUserPen size={200} />
-          </div>
           <div className="max-w-md shrink-0">
             <form className="card-body" onSubmit={handleCredentialsRegister}>
               <h2 className="text-center">Register</h2>
@@ -156,7 +149,7 @@ const RegisterPage = () => {
                 <div className="alert alert-error shadow-lg flex items-center mt-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="stroke-current flex-shrink-0 h-6 w-6"
+                    className="stroke-current shrink-0 h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
                   >
@@ -201,25 +194,29 @@ const RegisterPage = () => {
                   name="confirmPassword"
                   placeholder="Confirm Password"
                 />
-                <button className="btn btn-accent mt-2" disabled={isLoading}>
+                <button
+                  className="btn btn-accent mt-2"
+                  disabled={isLoading || isUploading}
+                >
                   <FaUserPlus size={20} />{" "}
-                  {isLoading ? "Registering..." : "Register"}
+                  {isLoading || isUploading
+                    ? isLoading
+                      ? "Registering..."
+                      : "Uploading..."
+                    : "Register"}
                 </button>
                 <div className="divider m-0.5 font-semibold">OR</div>
                 <div className="flex flex-wrap items-center gap-2">
                   <button
-                    className="btn btn-accent mt-2"
+                    className="btn btn-soft flex flex-1"
+                    type="button"
+                    onClick={handleGoogleRegister}
                     disabled={isLoading || isUploading}
                   >
-                    <FaUserPlus size={20} />
-                    {isUploading
-                      ? "Uploading image..."
-                      : isLoading
-                        ? "Registering..."
-                        : "Register"}
+                    <FaGoogle size={20} />
+                    {isLoading || isUploading ? "Registering..." : "Register"}
                   </button>
-
-                  <Link className="btn btn-soft" href="/login">
+                  <Link className="btn btn-soft flex flex-1" href="/login">
                     <FaSignInAlt size={20} />
                     Login
                   </Link>

@@ -1,4 +1,4 @@
-import CategoryList from "@/components/pages/categoreis/CategoryList/CategoryList";
+import CategoryList from "@/components/pages/categoreis/CategoryList";
 import React from "react";
 export const metadata = {
   title: `Categories | ${process.env.SITE_NAME}`,

@@ -79,25 +79,29 @@ nav {
   font-family: var(--font-nunito);
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-poltawski);
+h2 {
+  @apply text-3xl font-bold py-3;
 }
 
-h2 {
-  @apply text-3xl py-3;
+h5 {
+  @apply text-2xl py-3 font-semibold underline;
 }
 
 .btn {
   @apply text-lg;
 }
 
-.btn {
+.btn,
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="file"],
+input[type="url"],
+input[type="password"] {
   @apply rounded-full;
+}
+textarea {
+  @apply rounded-2xl;
 }
 
 .btn-primary,
@@ -108,4 +112,8 @@ h2 {
 .btn-success,
 .btn-error {
   @apply text-white;
+}
+
+label {
+  @apply pl-1;
 }

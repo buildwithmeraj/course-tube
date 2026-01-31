@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { signIn, useSession } from "next-auth/react";
-import { BiLogInCircle } from "react-icons/bi";
 import { FaGoogle, FaSignInAlt, FaUserPlus } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -79,11 +78,6 @@ const LoginPage = () => {
     <div className="flex items-center justify-center h-[85vh]">
       <div className="card bg-base-100 w-fit max-w-4xl shadow-xl flex flex-row items-center">
         <div className="flex flex-row justify-center items-center card bg-base-100 w-full shadow-xl">
-          <div
-            className={`hidden md:flex ${error ? "text-error" : "text-accent"}`}
-          >
-            <BiLogInCircle size={200} />
-          </div>
           <div className="max-w-md shrink-0">
             <form className="card-body" onSubmit={handleCredentialsLogin}>
               <h2 className="text-center">Login</h2>
@@ -91,7 +85,7 @@ const LoginPage = () => {
                 <div className="alert alert-error shadow-lg flex items-center mt-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="stroke-current flex-shrink-0 h-6 w-6"
+                    className="stroke-current shrink-0 h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
                   >

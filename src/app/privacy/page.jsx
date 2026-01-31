@@ -1,23 +1,26 @@
 import React from "react";
-
+export const metadata = {
+  title: `Privacy Policy | ${process.env.SITE_NAME}`,
+  description: `Privacy Policy of ${process.env.SITE_NAME}. `,
+};
 export default function PrivacyPolicyPage() {
   return (
     <main className="prose prose-lg mx-auto py-12 px-4 max-w-4xl">
-      <h1>Privacy Policy</h1>
+      <h2>Privacy Policy</h2>
       <p className="text-sm text-muted">Last updated: January 18, 2026</p>
 
       <section>
-        <h2>1. Introduction</h2>
+        <h5>1. Introduction</h5>
         <p>
-          CourseTube ("we," "our," or "us") operates the website. This page
-          informs you of our policies regarding the collection, use, and
-          disclosure of personal data when you use our service and the choices
-          you have associated with that data.
+          CourseTube (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;)
+          operates the website. This page informs you of our policies regarding
+          the collection, use, and disclosure of personal data when you use our
+          service and the choices you have associated with that data.
         </p>
       </section>
 
       <section>
-        <h2>2. Information Collection and Use</h2>
+        <h5>2. Information Collection and Use</h5>
         <p>
           We collect several different types of information for various
           purposes:
@@ -52,7 +55,7 @@ export default function PrivacyPolicyPage() {
       </section>
 
       <section>
-        <h2>3. Use of Data</h2>
+        <h5>3. Use of Data</h5>
         <p>CourseTube uses the collected data for various purposes:</p>
         <ul>
           <li>To provide and maintain our service</li>
@@ -68,7 +71,7 @@ export default function PrivacyPolicyPage() {
       </section>
 
       <section>
-        <h2>4. Security of Data</h2>
+        <h5>4. Security of Data</h5>
         <p>
           The security of your data is important to us, but remember that no
           method of transmission over the Internet is 100% secure. While we
@@ -78,16 +81,17 @@ export default function PrivacyPolicyPage() {
       </section>
 
       <section>
-        <h2>5. Changes to This Privacy Policy</h2>
+        <h5>5. Changes to This Privacy Policy</h5>
         <p>
           We may update our Privacy Policy from time to time. We will notify you
           of any changes by posting the new Privacy Policy on this page and
-          updating the "Last updated" date at the top of this Privacy Policy.
+          updating the &quot;Last updated&quot; date at the top of this Privacy
+          Policy.
         </p>
       </section>
 
       <section>
-        <h2>6. Contact Us</h2>
+        <h5>6. Contact Us</h5>
         <p>
           If you have any questions about this Privacy Policy, please contact us
           at{" "}
