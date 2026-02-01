@@ -2,6 +2,9 @@
 import Loading from "@/components/ui/Loading";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { FaCircleInfo } from "react-icons/fa6";
+import { RiPlayListAddFill } from "react-icons/ri";
 
 const ACTIONS = {
   APPROVE: "approve",
@@ -9,7 +12,7 @@ const ACTIONS = {
   DELETE: "delete",
 };
 
-const Dashboard = () => {
+const ManageCourses = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,8 +23,9 @@ const Dashboard = () => {
     const fetchCourses = async () => {
       try {
         const res = await fetch("/api/courses");
-        if (!res.ok) throw new Error("Failed to fetch courses");
-
+        if (!res.ok) {
+          toast.error("Failed to fetch courses!");
+        }
         const data = await res.json();
         setCourses(data);
       } catch (err) {
@@ -51,7 +55,10 @@ const Dashboard = () => {
       body: JSON.stringify({ approved }),
     });
 
-    if (!res.ok) throw new Error("Update failed");
+    if (!res.ok) {
+      toast.error("Failed to update course!");
+    }
+    toast.success("Course updated successfuly!");
 
     setCourses((prev) =>
       prev.map((c) => (c._id === id ? { ...c, approved } : c)),
@@ -63,8 +70,10 @@ const Dashboard = () => {
       method: "DELETE",
     });
 
-    if (!res.ok) throw new Error("Delete failed");
-
+    if (!res.ok) {
+      toast.error("Failed to delete course!");
+    }
+    toast.success("Course deleted successfuly!");
     setCourses((prev) => prev.filter((c) => c._id !== id));
   };
 
@@ -95,87 +104,92 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h2 className="text-center">All Courses</h2>
-
-      <div className="overflow-x-auto backdrop-blur-xl">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Approved</th>
-              <th>Total Videos</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {courses.map((item) => (
-              <tr key={item._id}>
-                <td className="font-bold">
-                  <Link href={`/courses/${item._id}`} className="link">
-                    {item.title}
-                  </Link>
-                </td>
-                <td>{item.approved ? "Yes" : "No"}</td>
-                <td>{item.totalCount}</td>
-
-                <td>
-                  <div className="flex gap-2">
-                    {!item.approved && (
-                      <button
-                        className="btn btn-xs btn-success"
-                        onClick={() =>
-                          openModal(
-                            { id: item._id, name: item.title },
-                            ACTIONS.APPROVE,
-                          )
-                        }
-                      >
-                        Approve
-                      </button>
-                    )}
-
-                    {item.approved && (
-                      <button
-                        className="btn btn-xs btn-warning"
-                        onClick={() =>
-                          openModal(
-                            { id: item._id, name: item.title },
-                            ACTIONS.REJECT,
-                          )
-                        }
-                      >
-                        Reject
-                      </button>
-                    )}
-
-                    <button
-                      className="btn btn-xs btn-error"
-                      onClick={() =>
-                        openModal(
-                          { id: item._id, name: item.title },
-                          ACTIONS.DELETE,
-                        )
-                      }
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-
-            {courses.length === 0 && (
-              <tr>
-                <td colSpan="4" className="text-center">
-                  No courses found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div className="flex items-center justify-between flex-col lg:flex-row">
+        <h2>Manage Courses {courses.length > 0 && `(${courses.length})`}</h2>
+        <Link href="/profile/courses/add" className="btn btn-primary">
+          <RiPlayListAddFill />
+          Add
+        </Link>
       </div>
+      {courses.length === 0 ? (
+        <div className="min-h-[78vh] flex items-center justify-center">
+          <div className="text-center text-xl text-base-content/60 flex items-center justify-center flex-col">
+            <FaCircleInfo size={56} />
+            No courses found
+          </div>
+        </div>
+      ) : (
+        <div className="overflow-x-auto backdrop-blur-xl">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Approved</th>
+                <th>Total Videos</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
 
+            <tbody>
+              {courses.map((item) => (
+                <tr key={item._id}>
+                  <td className="font-bold">
+                    <Link href={`/courses/${item._id}`} className="link">
+                      {item.title}
+                    </Link>
+                  </td>
+                  <td>{item.approved ? "Yes" : "No"}</td>
+                  <td>{item.totalCount}</td>
+
+                  <td>
+                    <div className="flex gap-2">
+                      {!item.approved && (
+                        <button
+                          className="btn btn-sm btn-success"
+                          onClick={() =>
+                            openModal(
+                              { id: item._id, name: item.title },
+                              ACTIONS.APPROVE,
+                            )
+                          }
+                        >
+                          Approve
+                        </button>
+                      )}
+
+                      {item.approved && (
+                        <button
+                          className="btn btn-sm btn-warning"
+                          onClick={() =>
+                            openModal(
+                              { id: item._id, name: item.title },
+                              ACTIONS.REJECT,
+                            )
+                          }
+                        >
+                          Reject
+                        </button>
+                      )}
+
+                      <button
+                        className="btn btn-sm btn-error"
+                        onClick={() =>
+                          openModal(
+                            { id: item._id, name: item.title },
+                            ACTIONS.DELETE,
+                          )
+                        }
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       {action && selectedCourse && (
         <div className="modal modal-open">
           <div className="modal-box">
@@ -212,4 +226,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default ManageCourses;

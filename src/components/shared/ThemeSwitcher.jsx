@@ -21,7 +21,7 @@ const ThemeSwitcher = () => {
   const isDark = mounted ? theme === "dark" || resolvedTheme === "dark" : false;
 
   return (
-    <StyledWrapper>
+    <StyledWrapper className="place-self-center">
       {mounted && (
         <label className="switch">
           <span className="sun">

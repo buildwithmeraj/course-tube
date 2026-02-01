@@ -110,7 +110,7 @@ export async function PATCH(req, { params }) {
         { returnDocument: "after" },
       );
 
-    if (!result.value) {
+    if (!result) {
       return NextResponse.json(
         { message: "Category not found" },
         { status: 404 },

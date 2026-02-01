@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import { BiSolidVideos } from "react-icons/bi";
-import { FaFolderPlus } from "react-icons/fa6";
+import { FaCircleCheck, FaFolderPlus } from "react-icons/fa6";
+import { IoWarning } from "react-icons/io5";
 
 const AddCategory = () => {
   const [courses, setCourses] = useState([]);
@@ -92,27 +92,30 @@ const AddCategory = () => {
   }, [courses, courseSearch]);
 
   return (
-    <div className="flex items-center justify-center h-[85vh]">
+    <div className="flex items-center justify-center h-[80vh]">
       <div className="card bg-base-100 shadow-xl flex flex-row">
-        <div
-          className={`hidden md:flex pl-2 ${
-            error ? "text-error" : "text-accent"
-          }`}
-        >
-          <BiSolidVideos size={200} />
-        </div>
-
         <form className="card-body w-105" onSubmit={handleAddCategory}>
           <h2 className="text-center text-xl font-semibold">Add Category</h2>
 
-          {error && <p className="text-error">{error}</p>}
-          {success && <p className="text-success">{success}</p>}
+          {error && (
+            <p className="alert alert-error">
+              <IoWarning className="inline" />
+              {error}
+            </p>
+          )}
+          {success && (
+            <p className="alert alert-success">
+              <FaCircleCheck className="inline" />
+              {success}
+            </p>
+          )}
 
           <div>
             <label className="label">Category Title</label>
             <input
               className="input input-bordered w-full"
               value={title}
+              type="text"
               onChange={(e) => setTitle(e.target.value)}
               placeholder="MERN Stack"
             />
@@ -139,7 +142,7 @@ const AddCategory = () => {
               onChange={(e) => setCourseSearch(e.target.value)}
             />
 
-            <div className="max-h-40 overflow-y-auto space-y-1 border p-2 rounded">
+            <div className="max-h-40 overflow-y-auto space-y-1 border p-2 rounded-lg">
               {loadingCourses ? (
                 <p className="text-sm opacity-70">Loading courses...</p>
               ) : filteredCourses.length > 0 ? (

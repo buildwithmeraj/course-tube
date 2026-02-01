@@ -8,7 +8,6 @@ import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { RiGraduationCapFill } from "react-icons/ri";
 
 const CourseDetails = () => {
   const { data: session, status } = useSession();

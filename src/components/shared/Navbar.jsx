@@ -110,7 +110,9 @@ const Navbar = () => {
                   Login
                 </Link>
               )}
-              <ThemeSwitcher />
+              <div className="hidden sm:flex">
+                <ThemeSwitcher />
+              </div>
             </div>
           </div>
         </div>
@@ -118,12 +120,16 @@ const Navbar = () => {
         <div className="drawer-side z-40">
           <label htmlFor="sidebar" className="drawer-overlay"></label>
           <ul className="menu bg-base-200 min-h-full w-80 p-4">
-            <li className="flex justify-center items-center -ml-4 mb-6">
+            <li className="flex justify-center items-center -ml-4 mb-2">
               <Logo />
             </li>
             <li>
-              <label htmlFor="sidebar" className="" aria-label="Close sidebar">
-                <MdClose size={18} className="-mr-1 -pr-1" /> Close
+              <label
+                htmlFor="sidebar"
+                className=" flex justify-center font-semibold"
+                aria-label="Close sidebar"
+              >
+                <MdClose size={18} className="-mr-1 -pr-1" /> Close Menu
               </label>
             </li>
             <li>
@@ -192,6 +198,10 @@ const Navbar = () => {
                 <MdPrivacyTip />
                 Privacy Policy
               </Link>
+            </li>
+            <li className="grid justify-self-center">
+              <div className="place-self-center font-bold text-lg">Theme</div>
+              <ThemeSwitcher />
             </li>
           </ul>
         </div>

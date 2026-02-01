@@ -59,7 +59,7 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="prose prose-lg mx-auto py-12 px-4 max-w-xl">
+    <main className="prose prose-lg mx-auto px-4 max-w-xl">
       <h2>Contact Us</h2>
       <p className="alert alert-soft alert-info mb-3">
         Have questions or feedback? We would love to hear from you. Fill out the

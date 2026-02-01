@@ -25,12 +25,12 @@ const PlaylistCard = ({ playlist }) => {
               <RiPlayList2Fill size={56} />
             </div>
             {playlist.enrollCount >= 0 && (
-              <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded flex items-center gap-1">
+              <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded-lg flex items-center gap-1">
                 <HiUserGroup size={15} />
                 {playlist.enrollCount} Enrolls
               </div>
             )}
-            <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded flex items-center gap-1">
+            <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded-lg flex items-center gap-1">
               <RiGraduationCapFill size={15} />
               {playlist.totalCount} Videos
             </div>
@@ -39,7 +39,7 @@ const PlaylistCard = ({ playlist }) => {
           <div className="card shadow-md bg-accent/70"></div>
         </div>
       </Link>
-      <h3 className="card-title mt-2">
+      <h3 className="card-title mt-2 line-clamp-2">
         <Link href={`/courses/${playlist._id}`}>{playlist.title}</Link>
       </h3>
     </div>

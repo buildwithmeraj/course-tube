@@ -3,21 +3,23 @@ import fetchAllVideos from "@/actions/client/fetchAllVideos";
 import getPlayListData from "@/actions/client/getPlayListData";
 import getPlaylistId from "@/actions/client/getPlaylistId";
 import React, { useState } from "react";
-import { BiSolidVideos } from "react-icons/bi";
+import { FaCircleCheck, FaCircleInfo } from "react-icons/fa6";
+import { IoWarning } from "react-icons/io5";
 import { RiPlayListAddFill } from "react-icons/ri";
 
 const AddCourse = () => {
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleAddCourse = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-
+    setSuccess(null);
     try {
       const formData = new FormData(e.currentTarget);
-      const url = formData.get("url");
+      const url = formData.get("url")?.trim();
 
       const playlistId = getPlaylistId(url);
       if (!playlistId) throw new Error("Invalid playlist URL");
@@ -25,7 +27,7 @@ const AddCourse = () => {
       const infoRes = await getPlayListData(playlistId);
       const infoData = await infoRes.json();
 
-      if (!infoData.items?.length) {
+      if (!Array.isArray(infoData.items) || infoData.items.length === 0) {
         throw new Error("Playlist not found");
       }
 
@@ -49,8 +51,7 @@ const AddCourse = () => {
         const data = await res.json();
         throw new Error(data.message);
       }
-
-      alert("Course added successfully!");
+      setSuccess(true);
       e.target.reset();
     } catch (err) {
       setError(err.message);
@@ -60,25 +61,28 @@ const AddCourse = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-[85vh]">
-      <div className="card bg-base-100 shadow-xl flex flex-row">
-        <div
-          className={`hidden md:flex ${
-            error ? "text-error" : "text-accent"
-          } pl-2`}
-        >
-          <BiSolidVideos size={200} />
-        </div>
-
+    <div className="flex items-center justify-center h-[80vh]">
+      <div className="card bg-base-100 shadow-xl flex flex-row max-w-md min-w-75">
         <form className="card-body" onSubmit={handleAddCourse}>
           <h2 className="text-center">Add Course</h2>
 
-          {error && <p className="text-error">{error}</p>}
+          {error && (
+            <p className="alert alert-error">
+              <IoWarning className="inline" />
+              {error}
+            </p>
+          )}
+          {success && (
+            <p className="alert alert-success">
+              <FaCircleCheck className="inline" />
+              Course playlist added successfuly!
+            </p>
+          )}
 
           <label className="label">Course Playlist URL</label>
           <input
             type="url"
-            className="input"
+            className="input w-full"
             name="url"
             required
             placeholder="https://www.youtube.com/playlist?list=PL..."
@@ -88,6 +92,11 @@ const AddCourse = () => {
             <RiPlayListAddFill size={20} />
             {isLoading ? "Adding..." : "Add Course"}
           </button>
+          <div className="alert alert-info alert-soft">
+            <FaCircleInfo className="inline-block" /> All the videos from the
+            playlist you provide will be automatically fetched and added on the
+            background. Course title and other relative data also will be added.
+          </div>
         </form>
       </div>
     </div>

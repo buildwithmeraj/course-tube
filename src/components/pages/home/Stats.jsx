@@ -44,7 +44,7 @@ const Stats = () => {
   const minutes = Math.floor((seconds % 3600) / 60);
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 items-center">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 items-center mt-6">
       <h2 className="col-span-full text-center">Statistics</h2>
       <div className="p-4 bg-primary/30 rounded-lg text-center shadow-sm hover:shadow-md relative">
         <div className="text-sm text-muted">Categories</div>

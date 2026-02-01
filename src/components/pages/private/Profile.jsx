@@ -43,7 +43,14 @@ export default function Profile() {
         >
           View Courses
         </Link>
-
+        {session.user?.role === "admin" && (
+          <Link
+            href="/dashboard"
+            className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg text-center transition"
+          >
+            Admin Dashboard
+          </Link>
+        )}
         <button
           onClick={handleSignOut}
           className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition"

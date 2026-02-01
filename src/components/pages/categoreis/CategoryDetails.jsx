@@ -4,6 +4,7 @@ import PlaylistCard from "@/components/ui/PlaylistCard";
 import PlaylistCardSkeleton from "@/components/ui/PlaylistCardSkeleton";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { FaCircleInfo } from "react-icons/fa6";
 
 const CategoryDetails = () => {
   const [category, setCategory] = useState(null);
@@ -35,6 +36,13 @@ const CategoryDetails = () => {
       <h2 className="col-span-full">
         {category.title} ({category.courses.length} Courses)
       </h2>
+      {category?.description && (
+        <p className="col-span-full alert alert-soft alert-info rounded-lg">
+          <FaCircleInfo className="inline mr-2 mb-0.5" />
+          {category?.description}
+        </p>
+      )}
+
       {loading && (
         <>
           {Array.from({ length: 12 }).map((_, i) => (

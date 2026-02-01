@@ -11,7 +11,7 @@ const VideoCard = ({ video, isSelected, course, isWatched, isEnrolled }) => {
         isEnrolled & isSelected ? "border-blue-500" : "border-gray-300"
       }`}
     >
-      <figure className="relative group">
+      <figure className="relative">
         <Image
           src={video.thumbnail}
           alt={video.title}
@@ -19,7 +19,9 @@ const VideoCard = ({ video, isSelected, course, isWatched, isEnrolled }) => {
           height={0}
           sizes="100vw"
           className={`w-full rounded-xl ${isEnrolled & isWatched ? "opacity-50" : ""} ${
-            isEnrolled & isSelected ? "border-4 border-blue-500" : ""
+            isEnrolled & isSelected
+              ? "border-4 border-blue-500"
+              : " border border-base-content"
           }`}
         />
         <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded">
@@ -36,7 +38,7 @@ const VideoCard = ({ video, isSelected, course, isWatched, isEnrolled }) => {
         </div>
       </figure>
       <h3
-        className={`card-title mt-2 ${
+        className={`card-title mt-2 line-clamp-2 ${
           isEnrolled & isWatched ? "text-base-content/60" : "text-base-content"
         } ${isEnrolled & isSelected ? "text-info" : ""}`}
       >

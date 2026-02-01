@@ -8,14 +8,14 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
   const isWatchedButNotSelected = isWatched && !isSelected;
 
   useEffect(() => {
-    if (isSelected && cardRef.current) {
+    if (isSelected && isWatched && cardRef.current) {
       cardRef.current.scrollIntoView({
         behavior: "smooth",
         block: "start",
         inline: "start",
       });
     }
-  }, [isSelected]);
+  }, [isSelected, isWatched]);
 
   return (
     <Link
@@ -23,14 +23,14 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
       href={`/courses/${video.courseId}/videos?video=${video._id}`}
       className={`
         grid gap-2 items-start 
-        grid-cols-3 sm:grid-cols-7   /* <— only structural change */
+        grid-cols-3 sm:grid-cols-7 
         ${isSelected ? "border-blue-500" : "border-gray-300"}
       `}
     >
       <figure
         className="
           relative group 
-          col-span-1 sm:col-span-3   /* <— responsive column */
+          col-span-1 sm:col-span-3 
           lg:max-w-48 
           rounded-lg
         "
@@ -42,7 +42,7 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
           height={0}
           sizes="100vw"
           className={`
-            w-full h-auto          /* <— key fix */
+            w-full h-auto
             lg:max-w-48 
             rounded-lg 
             ${isWatchedButNotSelected ? "opacity-50" : ""}
@@ -69,8 +69,7 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
 
       <h4
         className={`
-          col-span-2 sm:col-span-4   /* <— responsive column */
-          card-title text-lg
+          col-span-2 sm:col-span-4 card-title text-lg line-clamp-3
           ${isWatchedButNotSelected ? "text-base-content/60" : "text-base-content"}
           ${isSelected ? "text-info" : ""} hover:text-info
         `}

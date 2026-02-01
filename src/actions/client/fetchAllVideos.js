@@ -75,7 +75,7 @@ const fetchAllVideos = async (playlistId) => {
   return videos.map((v) => {
     return {
       ...v,
-      duration: parsed.formatted,
+      duration: parseDuration.formatted,
     };
   });
 };

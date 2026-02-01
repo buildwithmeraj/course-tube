@@ -1,7 +1,10 @@
 "use client";
 
 import Loading from "@/components/ui/Loading";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import { FaCircleInfo, FaFolderPlus } from "react-icons/fa6";
 
 const ACTIONS = {
   EDIT: "edit",
@@ -26,7 +29,9 @@ const ManageCategories = () => {
     const fetchCategories = async () => {
       try {
         const res = await fetch("/api/categories");
-        if (!res.ok) throw new Error("Failed to fetch categories");
+        if (!res.ok) {
+          toast.error("Failed to fetch categories!");
+        }
 
         const data = await res.json();
         setCategories(data);
@@ -69,7 +74,10 @@ const ManageCategories = () => {
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) throw new Error("Update failed");
+      if (!res.ok) {
+        toast.error("Failed to update category!");
+      }
+      toast.success("Category updated successfuly!");
 
       setCategories((prev) =>
         prev.map((cat) =>
@@ -89,7 +97,10 @@ const ManageCategories = () => {
         method: "DELETE",
       });
 
-      if (!res.ok) throw new Error("Delete failed");
+      if (!res.ok) {
+        toast.error("Failed to delete category!");
+      }
+      toast.success("Category deleted successfuly!");
 
       setCategories((prev) =>
         prev.filter((cat) => cat._id !== selectedCategory._id),
@@ -137,53 +148,62 @@ const ManageCategories = () => {
 
   return (
     <div>
-      <h2 className="text-center mb-4">Manage Categories</h2>
-
-      <div className="overflow-x-auto backdrop-blur-xl">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Description</th>
-              <th>Courses</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {categories.map((cat) => (
-              <tr key={cat._id}>
-                <td className="font-semibold">{cat.title}</td>
-                <td className="truncate max-w-xs">{cat.description || "-"}</td>
-                <td>{cat.courseIds?.length || 0}</td>
-                <td className="flex gap-2">
-                  <button
-                    className="btn btn-xs btn-info"
-                    onClick={() => openEditModal(cat)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-xs btn-error"
-                    onClick={() => openDeleteModal(cat)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-
-            {categories.length === 0 && (
-              <tr>
-                <td colSpan="4" className="text-center">
-                  No categories found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div className="flex items-center justify-between flex-col lg:flex-row">
+        <h2>
+          Manage Categories {categories.length > 0 && `(${categories.length})`}
+        </h2>
+        <Link href="/dashboard/categories/add" className="btn btn-primary">
+          <FaFolderPlus />
+          Add
+        </Link>
       </div>
+      {categories.length === 0 ? (
+        <div className="min-h-[78vh] flex items-center justify-center">
+          <div className="text-center text-xl text-base-content/60 flex items-center justify-center flex-col">
+            <FaCircleInfo size={56} />
+            No categories found
+          </div>
+        </div>
+      ) : (
+        <div className="overflow-x-auto backdrop-blur-xl">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Courses</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
 
+            <tbody>
+              {categories.map((cat) => (
+                <tr key={cat._id}>
+                  <td className="font-semibold">{cat.title}</td>
+                  <td className="truncate max-w-xs">
+                    {cat.description || "-"}
+                  </td>
+                  <td>{cat.courseIds?.length || 0}</td>
+                  <td className="flex gap-2">
+                    <button
+                      className="btn btn-sm btn-info"
+                      onClick={() => openEditModal(cat)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-sm btn-error"
+                      onClick={() => openDeleteModal(cat)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       {action && selectedCategory && (
         <div className="modal modal-open">
           <div className="modal-box">

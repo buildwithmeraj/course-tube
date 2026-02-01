@@ -1,13 +1,15 @@
 "use client";
 import Loading from "@/components/ui/Loading";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { FaFolderOpen } from "react-icons/fa6";
+import { FaFolderOpen, FaFolderPlus } from "react-icons/fa6";
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -44,6 +46,15 @@ const CategoryList = () => {
               {category.title}
             </Link>
           ))}
+          {session?.user?.role === "admin" && (
+            <Link
+              className="border-t border-base-content/30 mt-2 pt-2 hover:text-primary flex items-center justify-center"
+              href="/dashboard/categories/add"
+            >
+              <FaFolderPlus className="inline mr-2 mb-1" size={18} />
+              Add a Category
+            </Link>
+          )}
         </div>
       )}
     </>

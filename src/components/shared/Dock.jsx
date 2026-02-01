@@ -29,10 +29,12 @@ const Dock = () => {
         <RiGraduationCapFill size={20} />
         <span className="dock-label">Courses</span>
       </DockNavLink>
-      <DockNavLink className="hidden md:flex" href="/categories">
-        <FaFolderOpen size={20} />
-        <span className="dock-label">Categories</span>
-      </DockNavLink>
+      <div className="hidden md:flex">
+        <DockNavLink href="/categories">
+          <FaFolderOpen size={20} />
+          <span className="dock-label">Categories</span>
+        </DockNavLink>
+      </div>
       {session ? (
         <DockNavLink href="/profile">
           <FaUser size={16} />

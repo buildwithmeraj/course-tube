@@ -106,7 +106,7 @@ const Search = ({ setShowSearchModal }) => {
         <div className="modal-action justify-center">
           <form method="dialog">
             <button
-              className="btn btn-soft"
+              className="btn btn-sm btn-soft"
               onClick={() => setShowSearchModal(false)}
             >
               Close

@@ -43,7 +43,7 @@ export const authOptions = {
           // compare hashed passwords
           const isPasswordValid = await bcrypt.compare(
             credentials.password,
-            user.password
+            user.password,
           );
 
           if (!isPasswordValid) throw new Error("Invalid password");
@@ -72,29 +72,24 @@ export const authOptions = {
   // Callbacks
   callbacks: {
     // Handle actions after sign in
-    async signIn({ user, account, profile }) {
-      // If signing in with Google, save user to database if not exists
+    async signIn({ user, account }) {
       if (account?.provider === "google") {
-        try {
-          const db = await getDB();
-          const usersCollection = db.collection("users");
+        const db = await getDB();
+        const usersCollection = db.collection("users");
 
-          const existingUser = await usersCollection.findOne({
+        const existingUser = await usersCollection.findOne({
+          email: user.email,
+        });
+
+        if (!existingUser) {
+          await usersCollection.insertOne({
             email: user.email,
+            name: user.name,
+            image: user.image,
+            role: "user",
+            provider: "google",
+            createdAt: new Date(),
           });
-
-          if (!existingUser) {
-            await usersCollection.insertOne({
-              email: user.email,
-              name: user.name,
-              image: user.image,
-              role: "user",
-              provider: "google",
-              createdAt: new Date(),
-            });
-          }
-        } catch (error) {
-          console.error("Error saving Google user:", error);
         }
       }
       return true;
@@ -103,21 +98,22 @@ export const authOptions = {
     // Include user info in JWT token
     async jwt({ token, user, account }) {
       if (user) {
-        token.id = user.id;
+        token.id = user.id || token.id;
         token.email = user.email;
         token.name = user.name;
         token.picture = user.image || null;
-        token.role = user.role || "user";
       }
 
-      // Ensure OAuth users get role
-      if (account?.provider === "google" && token.email && !token.role) {
+      // ALWAYS fetch role from DB for Google users
+      if (account?.provider === "google" && token.email) {
         const db = await getDB();
         const usersCollection = db.collection("users");
-        const dbUser = await usersCollection.findOne({ email: token.email });
+
+        const dbUser = await usersCollection.findOne({
+          email: token.email,
+        });
         token.role = dbUser?.role || "user";
       }
-
       return token;
     },
 

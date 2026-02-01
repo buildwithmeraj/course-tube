@@ -117,3 +117,7 @@ textarea {
 label {
   @apply pl-1;
 }
+
+.card-title {
+  @apply text-lg;
+}

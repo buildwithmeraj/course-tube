@@ -1,12 +1,16 @@
 "use client";
 import PlaylistCard from "@/components/ui/PlaylistCard";
 import PlaylistCardSkeleton from "@/components/ui/PlaylistCardSkeleton";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
+import { FaPlus } from "react-icons/fa6";
 
 const CoursesList = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("");
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchAllCourses = async () => {
@@ -49,6 +53,16 @@ const CoursesList = () => {
             <option value="updatedAt">Updated Recently</option>
           </select>
         </div>
+        {session?.user?.role === "user" ||
+          (session?.user?.role === "admin" && (
+            <Link
+              className="text-primary flex items-center gap-1"
+              href="/profile/courses/add"
+            >
+              <FaPlus className="mb-0.5" />
+              Add
+            </Link>
+          ))}
       </div>
 
       {courses.length === 0 && <p>No approved courses</p>}
