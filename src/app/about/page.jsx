@@ -21,7 +21,7 @@ export default function AboutPage() {
     <>
       <section>
         <h2 className="text-center">About CourseTube</h2>
-        <p className="lead">
+        <p className="lead backdrop-blur-lg">
           CourseTube is a revolutionary learning platform that curates
           high-quality playlist-based courses from YouTube and makes them easy
           to follow. We believe learning should be accessible, structured, and
@@ -29,7 +29,7 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <div className="flex items-center gap-4 flex-col lg:flex-row my-3">
+      <div className="flex items-center gap-4 flex-col lg:flex-row my-3 backdrop-blur-lg">
         <section className="w-full lg:w-1/2">
           <h2 className="text-center">Our Mission</h2>
           <p>
@@ -58,7 +58,7 @@ export default function AboutPage() {
 
       <section>
         <h2 className="text-center">Why Choose CourseTube?</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 backdrop-blur-lg">
           {features.map((feature, index) => (
             <div key={index} className="flex items-start gap-3">
               <FaCheckCircle className="text-success mt-1 shrink-0" />
@@ -70,7 +70,7 @@ export default function AboutPage() {
 
       <section className="my-3">
         <h2 className="text-center">Our Values</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 backdrop-blur-lg">
           <div className="p-4 bg-primary/10 rounded-lg">
             <h3 className="font-bold mb-2">Accessibility</h3>
             <p className="text-sm">
@@ -102,11 +102,11 @@ export default function AboutPage() {
 
       <section>
         <h2 className="text-center">Get Involved</h2>
-        <p className="mb-3 underline font-semibold">
+        <p className="mb-3 underline font-semibold backdrop-blur-lg">
           We are always looking for ways to improve CourseTube. Here is how you
           can help:
         </p>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 backdrop-blur-lg">
           <div>
             <strong>Submit a Course:</strong> Found a great YouTube playlist?
             Submit it for admin approval.

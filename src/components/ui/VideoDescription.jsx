@@ -36,7 +36,7 @@ const VideoDescription = ({ description }) => {
     });
   };
   return (
-    <div className="collapse bg-base-100 border-base-300 border">
+    <div className="collapse bg-base-100 border-base-300 border backdrop-blur-lg">
       <input
         type="checkbox"
         id="descriptionOpen"

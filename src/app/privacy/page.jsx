@@ -5,7 +5,7 @@ export const metadata = {
 };
 export default function PrivacyPolicyPage() {
   return (
-    <main className="prose prose-lg mx-auto py-12 px-4 max-w-4xl">
+    <main className="prose prose-lg mx-auto py-12 px-4 max-w-4xl backdrop-blur-lg">
       <h2>Privacy Policy</h2>
       <p className="text-sm text-muted">Last updated: January 18, 2026</p>
 

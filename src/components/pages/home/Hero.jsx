@@ -7,7 +7,7 @@ import "animate.css";
 
 const Hero = () => {
   return (
-    <div className="hero min-h-90 max-w-screen">
+    <div className="hero min-h-90 max-w-screen backdrop-blur-md">
       <div className="hero-content flex-col lg:flex-row-reverse">
         <Image
           src="/hero.svg"

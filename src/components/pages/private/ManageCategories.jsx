@@ -179,7 +179,11 @@ const ManageCategories = () => {
             <tbody>
               {categories.map((cat) => (
                 <tr key={cat._id}>
-                  <td className="font-semibold">{cat.title}</td>
+                  <td className="font-semibold">
+                    <Link href={`/categories/${cat._id}`} className="link">
+                      {cat.title}
+                    </Link>
+                  </td>
                   <td className="truncate max-w-xs">
                     {cat.description || "-"}
                   </td>

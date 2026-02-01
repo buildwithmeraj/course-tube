@@ -73,9 +73,22 @@ const fetchAllVideos = async (playlistId) => {
 
   // Merge duration data
   return videos.map((v) => {
+    const iso = durationMap[v.videoId];
+
+    if (!iso) {
+      return {
+        ...v,
+        duration: "0:00",
+        durationSeconds: 0,
+      };
+    }
+
+    const parsed = parseDuration(iso);
+
     return {
       ...v,
-      duration: parseDuration.formatted,
+      duration: parsed.formatted,
+      durationSeconds: parsed.seconds,
     };
   });
 };

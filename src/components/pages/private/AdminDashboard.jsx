@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { FaBook, FaList } from "react-icons/fa";
 
 const StatCard = ({ title, value, color }) => (
-  <div className="stat bg-base-100 rounded-lg shadow">
+  <div className="bg-base-100 rounded-lg shadow p-2 text-center">
     <div className="stat-title">{title}</div>
     <div className={`stat-value ${color}`}>{value}</div>
   </div>
@@ -14,7 +14,7 @@ const StatCard = ({ title, value, color }) => (
 const DashboardCard = ({ icon: Icon, title, description, href, color }) => (
   <Link href={href}>
     <div
-      className={`card bg-base-100 shadow-lg hover:shadow-xl transition-shadow cursor-pointer border-l-4 ${color}`}
+      className={`card bg-base-100 shadow-lg hover:shadow-xl transition-shadow cursor-pointer border-x-4 ${color}`}
     >
       <div className="card-body">
         <div className="flex items-center gap-4">
@@ -49,14 +49,14 @@ const AdminDashboard = () => {
       title: "Manage Courses",
       description: "Create, edit, and delete courses",
       href: "/dashboard/courses",
-      color: "border-primary bg-primary/10",
+      color: "border-primary bg-primary/70",
     },
     {
       icon: FaList,
       title: "Manage Categories",
       description: "Organize course categories",
       href: "/dashboard/categories",
-      color: "border-info bg-info/10",
+      color: "border-info bg-info/40",
     },
   ];
 
@@ -69,7 +69,7 @@ const AdminDashboard = () => {
         <p className="text-base-content/60">Manage your platform efficiently</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 backdrop-blur-md">
         <StatCard
           title="Total Courses"
           value={loading ? "..." : (s.coursesCount ?? 0)}
@@ -95,7 +95,7 @@ const AdminDashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 backdrop-blur-md">
         {cards.map((card) => (
           <DashboardCard key={card.href} {...card} />
         ))}

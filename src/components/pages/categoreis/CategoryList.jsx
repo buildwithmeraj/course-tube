@@ -34,8 +34,8 @@ const CategoryList = () => {
   return (
     <>
       {categories.length > 0 && (
-        <div className="flex flex-col gap-0.5 max-w-lg mx-auto border p-2 border-base-content/30 rounded-xl mt-1">
-          <h2 className="-mb-2 text-center">Categories {categories?.length}</h2>
+        <div className="flex flex-col gap-0.5 max-w-lg mx-auto border p-2 border-base-content/30 rounded-xl mt-1 backdrop-blur-lg">
+          <h2 className="-mb-2 text-center">Categories</h2>
           {categories.map((category) => (
             <Link
               key={category._id}

@@ -254,7 +254,7 @@ const CourseVideos = () => {
     <div className="space-y-3">
       <div className="grid grid-cols-1 lg:grid-cols-7 xl:grid-cols-3 gap-4 w-full">
         <div className="col-span-full -mb-2">
-          <h2>{course.title}</h2>
+          <h2>{course?.title}</h2>
         </div>
         <div className="col-span-full lg:col-span-4 xl:col-span-2 space-y-3 w-full">
           {loading ? (
@@ -335,7 +335,7 @@ const CourseVideos = () => {
           </div>
         </div>
 
-        <div className="col-span-full lg:col-span-3 xl:col-span-1 overflow-y-auto max-h-[82vh] space-y-2  scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100  rounded-lg w-full">
+        <div className="col-span-full lg:col-span-3 xl:col-span-1 overflow-y-auto max-h-[82vh] space-y-2  scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100  rounded-lg w-full backdrop-blur-lg">
           {loading &&
             Array.from({ length: 12 }).map((_, i) => (
               <VideoListCardSkeleton key={i} />

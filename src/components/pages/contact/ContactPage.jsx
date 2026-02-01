@@ -78,7 +78,7 @@ export default function ContactPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 backdrop-blur-xl">
         <div className="form-control">
           <label className="label block">
             <span className="label-text">Name</span>

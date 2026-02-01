@@ -23,14 +23,14 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
       href={`/courses/${video.courseId}/videos?video=${video._id}`}
       className={`
         grid gap-2 items-start 
-        grid-cols-3 sm:grid-cols-7 
+        grid-cols-7 md:grid-cols-3 
         ${isSelected ? "border-blue-500" : "border-gray-300"}
       `}
     >
       <figure
         className="
           relative group 
-          col-span-1 sm:col-span-3 
+          col-span-3 md:col-span-1 
           lg:max-w-48 
           rounded-lg
         "
@@ -46,7 +46,7 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
             lg:max-w-48 
             rounded-lg 
             ${isWatchedButNotSelected ? "opacity-50" : ""}
-            ${isSelected ? "border-4 border-blue-500" : ""}
+            ${isSelected ? "border-4 border-blue-500" : "border border-base-content"}
           `}
         />
 
@@ -69,7 +69,7 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
 
       <h4
         className={`
-          col-span-2 sm:col-span-4 card-title text-lg line-clamp-3
+          col-span-4 md:col-span-2 text-sm line-clamp-3
           ${isWatchedButNotSelected ? "text-base-content/60" : "text-base-content"}
           ${isSelected ? "text-info" : ""} hover:text-info
         `}
