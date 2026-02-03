@@ -5,6 +5,7 @@ import Footer from "@/components/shared/Footer";
 import Providers from "./providers/Providers";
 import { Toaster } from "react-hot-toast";
 import Dock from "@/components/shared/Dock";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const poltawskiNowy = Poltawski_Nowy({
   subsets: ["latin"],
@@ -36,6 +37,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${poltawskiNowy.variable} ${nunitoSans.variable} ${cabin.variable} antialiased flex flex-col min-h-screen overflow-x-hidden`}
       >
+        <SpeedInsights />
         <Providers>
           <header>
             <nav>
