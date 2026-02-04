@@ -39,7 +39,7 @@ const Navbar = () => {
               <ul className="menu menu-horizontal px-1">
                 <li>
                   <button
-                    className="hover:text-primary hover:font-semibold cursor-pointer"
+                    className="cursor-pointer"
                     onClick={() => setShowSearchModal(true)}
                   >
                     <ImSearch className="inline pb-0.5" size={15} />

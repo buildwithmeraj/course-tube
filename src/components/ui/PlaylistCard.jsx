@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { RiPlayList2Fill, RiGraduationCapFill } from "react-icons/ri";
 import { HiUserGroup } from "react-icons/hi";
+import { FaVideo } from "react-icons/fa6";
 
 const PlaylistCard = ({ playlist }) => {
   return (
@@ -25,14 +26,16 @@ const PlaylistCard = ({ playlist }) => {
               <RiPlayList2Fill size={56} />
             </div>
             {playlist.enrollCount >= 0 && (
-              <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded-lg flex items-center gap-1">
-                <HiUserGroup size={15} />
-                {playlist.enrollCount} Enrolls
+              <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs md:text-sm px-2 py-1 rounded-lg flex items-center gap-1">
+                <RiGraduationCapFill size={15} />
+                {playlist.enrollCount}
+                <span className="hidden md:flex"> Enrolls</span>
               </div>
             )}
-            <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded-lg flex items-center gap-1">
-              <RiGraduationCapFill size={15} />
-              {playlist.totalCount} Videos
+            <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs md:text-sm px-2 py-1 rounded-lg flex items-center gap-1">
+              <FaVideo size={14} />
+              {playlist.totalCount}
+              <span className="hidden md:flex"> Videos</span>
             </div>
           </div>
           <div className="card shadow-md bg-accent"></div>

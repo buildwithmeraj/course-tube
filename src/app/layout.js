@@ -7,19 +7,9 @@ import { Toaster } from "react-hot-toast";
 import Dock from "@/components/shared/Dock";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-const poltawskiNowy = Poltawski_Nowy({
-  subsets: ["latin"],
-  variable: "--font-poltawski",
-});
-
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
   variable: "--font-nunito",
-});
-
-const cabin = Cabin({
-  subsets: ["latin"],
-  variable: "--font-cabin",
 });
 
 export const metadata = {
@@ -35,7 +25,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body
-        className={`${poltawskiNowy.variable} ${nunitoSans.variable} ${cabin.variable} antialiased flex flex-col min-h-screen overflow-x-hidden`}
+        className={`${nunitoSans.variable} antialiased flex flex-col min-h-screen overflow-x-hidden`}
       >
         <SpeedInsights />
         <Providers>

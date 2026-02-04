@@ -24,10 +24,10 @@ const VideoCard = ({ video, isSelected, course, isWatched, isEnrolled }) => {
               : " border border-base-content"
           }`}
         />
-        <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded">
+        <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs md:text-sm px-2 py-1 rounded">
           {video.position + 1}/{course?.totalCount || "?"}
         </div>
-        <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded">
+        <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs md:text-sm px-2 py-1 rounded">
           {video.duration}
         </div>
         <div
