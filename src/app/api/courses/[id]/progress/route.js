@@ -19,17 +19,18 @@ export async function GET(req, { params }) {
   const db = client.db("courses");
   const progressCol = db.collection("progress");
 
-  const course = await progressCol.findOne({
+  const progress = await progressCol.findOne({
     courseId: new ObjectId(id),
     userEmail: session?.user?.email,
   });
 
-  return NextResponse.json(course);
+  return NextResponse.json(progress);
 }
 
 export async function PATCH(req, { params }) {
   const { id } = await params;
   const finishedVideoId = req.nextUrl.searchParams.get("videoId");
+  const session = await getServerSession(authOptions);
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json({ message: "Invalid course ID" }, { status: 400 });
@@ -48,7 +49,6 @@ export async function PATCH(req, { params }) {
 
   const courseId = new ObjectId(id);
   const videoId = new ObjectId(finishedVideoId);
-  const session = await getServerSession(authOptions);
 
   // Fetch existing progress
   const courseProgress = await progressCol.findOne({
@@ -64,7 +64,7 @@ export async function PATCH(req, { params }) {
     ) {
       await progressCol.updateOne(
         { courseId, userEmail: session?.user?.email },
-        { $set: { finishedVideo: videoId } }
+        { $set: { finishedVideo: videoId } },
       );
       return NextResponse.json({ message: "Progress updated" });
     } else {

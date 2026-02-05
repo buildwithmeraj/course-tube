@@ -7,7 +7,7 @@ import VideoListCardSkeleton from "@/components/ui/VideoListCardSkeleton";
 import YouTubePlayer from "@/components/ui/YouTubePlayer";
 import YouTubePlayerSkeleton from "@/components/ui/YouTubePlayerSkeleton";
 import { useSession } from "next-auth/react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -33,6 +33,8 @@ const CourseVideos = () => {
   const [synchronizing, setSynchronizing] = useState(false);
   const [enrollLoading, setEnrollLoading] = useState(true);
   const { id } = useParams();
+  const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const progressColor = (total, progress) => {
@@ -127,13 +129,31 @@ const CourseVideos = () => {
     return videos.find((v) => v._id === lastFinishedVideo) || null;
   }, [videos, lastFinishedVideo]);
 
+  const updateVideoParam = (videoId) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("video", videoId);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
   const handleVideoEnd = (video) => {
     setLastFinishedVideo(video._id);
     fetch(`/api/courses/${id}/progress?videoId=${video._id}`, {
       method: "PATCH",
     }).catch((err) => console.error("Error marking progress:", err));
-    changeVideo("next");
-    toast.success("Video changed to next one");
+
+    const currentIndex = videos.findIndex((v) => v._id === video._id);
+    const nextVideoId =
+      currentIndex !== -1 && currentIndex + 1 < videos.length
+        ? videos[currentIndex + 1]._id
+        : video._id;
+
+    setManuallySelectedVideo(nextVideoId);
+    updateVideoParam(nextVideoId);
+    toast.success(
+      currentIndex + 1 < videos.length
+        ? "Video changed to next one"
+        : "Course completed",
+    );
   };
 
   const changeVideo = (action) => {
