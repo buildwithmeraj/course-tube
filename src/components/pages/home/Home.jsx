@@ -4,6 +4,7 @@ import Hero from "@/components/pages/home/Hero";
 import HowItWorks from "@/components/pages/home/HowItWorks";
 import PopularCourses from "@/components/pages/home/PopularCourses";
 import Stats from "@/components/pages/home/Stats";
+import FeaturedCategories from "./FeaturedCategories";
 
 export default function HomePage() {
   return (
@@ -13,6 +14,7 @@ export default function HomePage() {
       </section>
       <HowItWorks />
       <PopularCourses />
+      <FeaturedCategories />
       <Stats />
       <CTA />
     </>

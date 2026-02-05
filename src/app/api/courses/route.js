@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/db";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
 
-const DEFAULT_LIMIT = 12;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const DEFAULT_LIMIT = 10000;
 const MAX_LIMIT = 100;
 
 export async function GET(req) {
@@ -43,7 +44,6 @@ export async function GET(req) {
     }
     if (query && query.length > 0) {
       filter.title = { $regex: query, $options: "i" };
-      filter.approved = true;
     }
 
     const client = await clientPromise;
@@ -113,7 +113,9 @@ export async function GET(req) {
         ])
         .toArray();
     }
-    return NextResponse.json(courses, { status: 200 });
+    const res = NextResponse.json(courses, { status: 200 });
+    res.headers.set("Cache-Control", "no-store, max-age=0");
+    return res;
   } catch (err) {
     console.error("Error fetching courses:", err);
     return NextResponse.json(

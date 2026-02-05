@@ -140,12 +140,8 @@ export default function Profile() {
                   {displayName.slice(0, 2).toUpperCase()}
                 </div>
               )}
-              <span className="absolute -bottom-1 -right-1 rounded-full bg-success px-2 py-1 text-[10px] font-semibold text-success-content shadow">
-                Online
-              </span>
             </div>
             <div>
-              <p className="text-sm text-base-content/60">Welcome back</p>
               <h2 className="text-2xl font-semibold text-base-content">
                 {displayName}
               </h2>
