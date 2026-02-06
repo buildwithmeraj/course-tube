@@ -4,8 +4,8 @@ import clientPromise from "@/lib/db";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const DEFAULT_LIMIT = 10000;
-const MAX_LIMIT = 100;
+const DEFAULT_LIMIT = 1000000;
+const MAX_LIMIT = 1000;
 
 export async function GET(req) {
   try {

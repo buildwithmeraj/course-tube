@@ -1,28 +1,11 @@
 import React from "react";
-import { Cabin, Nunito_Sans, Poltawski_Nowy } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import Providers from "./providers/Providers";
 import { Toaster } from "react-hot-toast";
-import { TbTriangleFilled } from "react-icons/tb";
-import { FaExclamationTriangle } from "react-icons/fa";
+import { FaExclamationTriangle, FaHome } from "react-icons/fa";
 import Link from "next/link";
-
-const poltawskiNowy = Poltawski_Nowy({
-  subsets: ["latin"],
-  variable: "--font-poltawski",
-});
-
-const nunitoSans = Nunito_Sans({
-  subsets: ["latin"],
-  variable: "--font-nunito",
-});
-
-const cabin = Cabin({
-  subsets: ["latin"],
-  variable: "--font-cabin",
-});
 
 export const metadata = {
   title: "Create Next App",
@@ -32,9 +15,7 @@ export const metadata = {
 const GlobalNotFound = () => {
   return (
     <html lang="en">
-      <body
-        className={`${poltawskiNowy.variable} ${nunitoSans.variable} ${cabin.variable} antialiased flex flex-col min-h-screen`}
-      >
+      <body className={`antialiased flex flex-col min-h-screen`}>
         <Providers>
           <header>
             <nav>
@@ -55,6 +36,7 @@ const GlobalNotFound = () => {
                 <p className="text-lg">But you can return to the homepage.</p>
                 <p>
                   <Link href="/" className="btn btn-success">
+                    <FaHome />
                     Home
                   </Link>
                 </p>

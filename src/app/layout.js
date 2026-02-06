@@ -1,4 +1,4 @@
-import { Cabin, Nunito_Sans, Poltawski_Nowy } from "next/font/google";
+import { Cabin, Figtree, Nunito_Sans, Poltawski_Nowy } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
@@ -7,9 +7,10 @@ import { Toaster } from "react-hot-toast";
 import Dock from "@/components/shared/Dock";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-const nunitoSans = Nunito_Sans({
+const FigtreeFont = Figtree({
   subsets: ["latin"],
-  variable: "--font-nunito",
+  variable: "--font-figtree",
+  fallback: ["system-ui", "sans-serif"],
 });
 
 export const metadata = {
@@ -25,7 +26,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body
-        className={`${nunitoSans.variable} antialiased flex flex-col min-h-screen overflow-x-hidden`}
+        className={`${FigtreeFont.variable} antialiased flex flex-col min-h-screen overflow-x-hidden`}
       >
         <SpeedInsights />
         <Providers>

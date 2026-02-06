@@ -2,6 +2,10 @@ import React from "react";
 import Link from "next/link";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdMail } from "react-icons/io";
+import { FaUnlock } from "react-icons/fa6";
+import { GrStatusGood } from "react-icons/gr";
+import { RiCommunityLine } from "react-icons/ri";
+import { GoNorthStar } from "react-icons/go";
 export const metadata = {
   title: `About | ${process.env.SITE_NAME}`,
   description: `Know more about ${process.env.SITE_NAME}. `,
@@ -74,12 +78,14 @@ export default function AboutPage() {
           <div className="p-4 bg-primary/10 rounded-lg">
             <h3 className="font-bold mb-2">Accessibility</h3>
             <p className="text-sm">
+              <FaUnlock className="inline mr-1.5 mb-0.5" />
               Education should be free and available to everyone, everywhere.
             </p>
           </div>
           <div className="p-4 bg-info/10 rounded-lg">
             <h3 className="font-bold mb-2">Quality</h3>
             <p className="text-sm">
+              <GrStatusGood className="inline mr-1.5 mb-0.5" />
               We curate only the best content from trusted educators and
               creators.
             </p>
@@ -87,12 +93,14 @@ export default function AboutPage() {
           <div className="p-4 bg-success/10 rounded-lg">
             <h3 className="font-bold mb-2">Community</h3>
             <p className="text-sm">
+              <RiCommunityLine className="inline mr-1.5 mb-0.5" />
               Learning together strengthens our resolve to help each other grow.
             </p>
           </div>
           <div className="p-4 bg-warning/10 rounded-lg">
             <h3 className="font-bold mb-2">Innovation</h3>
             <p className="text-sm">
+              <GoNorthStar className="inline mr-1.5 mb-0.5" />
               We continuously improve our platform to enhance the learning
               experience.
             </p>

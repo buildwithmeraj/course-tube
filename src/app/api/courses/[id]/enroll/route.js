@@ -20,12 +20,12 @@ export async function GET(req, { params }) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const course = await enrollsCol.findOne({
+  const enrollment = await enrollsCol.findOne({
     courseId: new ObjectId(id),
     userEmail: session?.user?.email,
   });
 
-  return NextResponse.json(course);
+  return NextResponse.json(enrollment);
 }
 
 export async function POST(req, { params }) {

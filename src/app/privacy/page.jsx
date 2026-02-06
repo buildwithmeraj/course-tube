@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 export const metadata = {
   title: `Privacy Policy | ${process.env.SITE_NAME}`,
@@ -93,14 +94,10 @@ export default function PrivacyPolicyPage() {
       <section>
         <h5>6. Contact Us</h5>
         <p>
-          If you have any questions about this Privacy Policy, please contact us
-          at{" "}
-          <a
-            href="mailto:privacy@coursetube.example"
-            className="text-primary hover:underline"
-          >
-            privacy@coursetube.example
-          </a>
+          If you have any questions about this Privacy Policy, please{" "}
+          <Link href="/contact" className="text-primary hover:underline">
+            contact us
+          </Link>
         </p>
       </section>
     </main>

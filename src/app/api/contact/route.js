@@ -41,12 +41,12 @@ export async function POST(req) {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "We received your message",
+      subject: `We received your message from ${process.env.SITE_NAME}`,
       html: `
-        <h2>Thank you for contacting CourseTube</h2>
+        <h2>Thank you for contacting ${process.env.SITE_NAME}</h2>
         <p>Hi ${name},</p>
         <p>We've received your message and will get back to you as soon as possible.</p>
-        <p>Best regards,<br>The CourseTube Team</p>
+        <p>Best regards,<br>The ${process.env.SITE_NAME} Team</p>
       `,
     });
 
