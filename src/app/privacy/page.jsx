@@ -13,10 +13,11 @@ export default function PrivacyPolicyPage() {
       <section>
         <h5>1. Introduction</h5>
         <p>
-          CourseTube (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;)
-          operates the website. This page informs you of our policies regarding
-          the collection, use, and disclosure of personal data when you use our
-          service and the choices you have associated with that data.
+          {process.env.SITE_NAME} (&quot;we&quot;, &quot;our&quot;, or
+          &quot;us&quot;) operates the website. This page informs you of our
+          policies regarding the collection, use, and disclosure of personal
+          data when you use our service and the choices you have associated with
+          that data.
         </p>
       </section>
 
@@ -57,7 +58,9 @@ export default function PrivacyPolicyPage() {
 
       <section>
         <h5>3. Use of Data</h5>
-        <p>CourseTube uses the collected data for various purposes:</p>
+        <p>
+          {process.env.SITE_NAME} uses the collected data for various purposes:
+        </p>
         <ul>
           <li>To provide and maintain our service</li>
           <li>To notify you about changes to our service</li>

@@ -7,7 +7,12 @@ import VideoListCardSkeleton from "@/components/ui/VideoListCardSkeleton";
 import YouTubePlayer from "@/components/ui/YouTubePlayer";
 import YouTubePlayerSkeleton from "@/components/ui/YouTubePlayerSkeleton";
 import { useSession } from "next-auth/react";
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -20,7 +25,7 @@ import { IoHelpCircle } from "react-icons/io5";
 import VideoDescription from "@/components/ui/VideoDescription";
 
 const CourseVideos = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [videos, setVideos] = useState([]);
   const [course, setCourse] = useState(null);
   const [enrolled, setEnrolled] = useState(false);
@@ -124,10 +129,6 @@ const CourseVideos = () => {
   const selectedVideoData = useMemo(() => {
     return videos.find((v) => v._id === selectedVideo) || null;
   }, [videos, selectedVideo]);
-
-  const lastWatchedVideo = useMemo(() => {
-    return videos.find((v) => v._id === lastFinishedVideo) || null;
-  }, [videos, lastFinishedVideo]);
 
   const updateVideoParam = (videoId) => {
     const params = new URLSearchParams(searchParams);

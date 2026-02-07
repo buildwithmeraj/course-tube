@@ -38,7 +38,7 @@ const CategoryDetails = () => {
       </h2>
       {category?.description && (
         <p className="col-span-full alert alert-soft alert-info rounded-lg">
-          <FaCircleInfo className="inline mr-2 mb-0.5" />
+          <FaCircleInfo className="inline -mr-2.5 mb-0.5" />
           {category?.description}
         </p>
       )}

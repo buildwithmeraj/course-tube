@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
+import { FaCheckCircle, FaInfoCircle } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
+import { PiWarningFill } from "react-icons/pi";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -62,19 +64,26 @@ export default function ContactPage() {
     <main className="prose prose-lg mx-auto px-4 max-w-xl">
       <h2>Contact Us</h2>
       <p className="alert alert-soft alert-info mb-3">
+        <FaInfoCircle className="inline-block" size={30} />
         Have questions or feedback? We would love to hear from you. Fill out the
         form below and we will get back to you as soon as possible.
       </p>
 
       {success && (
         <div className="alert alert-success mb-4">
-          <span>Your message has been sent successfully!</span>
+          <span>
+            <FaCheckCircle className="inline mr-2" />
+            Your message has been sent successfully!
+          </span>
         </div>
       )}
 
       {error && (
         <div className="alert alert-error mb-4">
-          <span>{error}</span>
+          <span>
+            <PiWarningFill className="inline mr-2" />
+            {error}
+          </span>
         </div>
       )}
 

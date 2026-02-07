@@ -15,7 +15,7 @@ const FigtreeFont = Figtree({
 
 export const metadata = {
   title: {
-    template: "%s | CourseTube",
+    template: "%s | " + process.env.SITE_NAME,
     default: process.env.SITE_NAME,
   },
   description:

@@ -17,13 +17,22 @@ Here is the live site: [https://course-tube-seven.vercel.app/](https://course-tu
 ## Features
 
 - YouTube playlist discovery and metadata fetch
-- Track watched videos, resume progress across devices
-- User registration and secure password hashing (bcryptjs)
+- Course synchronization (pull latest playlist videos on demand)
+- Track watched videos and resume progress across devices
+- Enrollment flow per course
+- User registration/login (credentials) and Google OAuth (NextAuth)
+- Secure password hashing (bcryptjs)
+- Profile dashboard with progress stats
 - Role management: admin and user roles
-- Admin dashboard for approving courses, managing categories and users
+- Admin dashboard for approving/rejecting courses, managing categories and users
 - Course approval workflow: user-added courses remain private until admin approval
 - Category management: admins create categories and assign courses
-- Search, filters and responsive UI (Next.js App Router + Tailwind/CSS)
+- Search, filters, and sorting (enroll count, total videos, created/updated)
+- Featured categories and popular courses sections
+- Contact form (email delivered via Nodemailer)
+- Profile photo upload (imgbb)
+- Theme toggle (dark/light)
+- Responsive UI (Next.js App Router + Tailwind/CSS)
 - MongoDB-backed storage
 
 ## Tech stack
@@ -31,7 +40,9 @@ Here is the live site: [https://course-tube-seven.vercel.app/](https://course-tu
 - Next.js (App Router)
 - MongoDB
 - bcryptjs for password hashing
+- NextAuth (Credentials + Google)
 - YouTube Data API v3
+- Nodemailer (contact form)
 - TailwindCSS / plain CSS
 
 ## Getting started
@@ -63,8 +74,26 @@ npm install
    Create `.env.local`:
 
 ```
+SITE_NAME=Course Tube
+NEXT_PUBLIC_SITE_NAME=Course Tube
+PAGE_TITLE=Course Tube
+NEXTAUTH_URL=http://localhost:3000
+NEXT_PUBLIC_SERVER_URL=http://localhost:3000
+
 MONGODB_URI=your_mongodb_connection_string
-YOUTUBE_API_KEY=your_youtube_api_key
+NEXTAUTH_SECRET=your_nextauth_secret
+
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+
+NEXT_PUBLIC_YOUTUBE_API=your_youtube_api_key
+NEXT_PUBLIC_IMGBB_API_KEY=your_imgbb_key
+
+EMAIL_SERVICE=gmail
+EMAIL_USER=your_email@example.com
+EMAIL_PASSWORD=your_email_app_password
+
+ADMIN_EMAIL=admin@example.com
 # Optional
 PORT=3000
 ```

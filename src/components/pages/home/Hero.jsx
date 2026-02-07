@@ -18,7 +18,9 @@ const Hero = () => {
           className="animate__animated animate__pulse animate__slow animate__infinite"
         />
         <div>
-          <h1 className="text-4xl font-bold">Welcome to CourseTube</h1>
+          <h1 className="text-4xl font-bold">
+            Welcome to {process.env.SITE_NAME}
+          </h1>
           <p className="py-2 text-lg">
             Unlock your potential with our curated collection of high-quality
             courses. Learn from industry experts and transform your skills.
@@ -26,7 +28,7 @@ const Hero = () => {
 
           <div className="py-2">
             <h2 className="text-2xl font-semibold mb-1">
-              Why Choose CourseTube?
+              Why Choose {process.env.SITE_NAME}?
             </h2>
             <p className="py-2">
               We believe learning should be accessible, affordable, and

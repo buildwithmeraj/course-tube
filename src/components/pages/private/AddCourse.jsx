@@ -61,7 +61,7 @@ const AddCourse = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-[80vh]">
+    <div className="flex items-center justify-center h-[76vh]">
       <div className="card bg-base-100 shadow-xl flex flex-row max-w-md min-w-75">
         <form className="card-body" onSubmit={handleAddCourse}>
           <h2 className="text-center">Add Course</h2>

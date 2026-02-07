@@ -7,7 +7,7 @@ const Footer = () => {
         <aside>
           <p>
             Copyright © {new Date().getFullYear()} - All right reserved by
-            CourseTube
+            {process.env.SITE_NAME}
           </p>
         </aside>
       </footer>

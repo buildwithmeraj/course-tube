@@ -92,7 +92,7 @@ const AddCategory = () => {
   }, [courses, courseSearch]);
 
   return (
-    <div className="flex items-center justify-center h-[80vh]">
+    <div className="flex items-center justify-center h-[76vh]">
       <div className="card bg-base-100 shadow-xl flex flex-row">
         <form className="card-body w-105" onSubmit={handleAddCategory}>
           <h2 className="text-center text-xl font-semibold">Add Category</h2>

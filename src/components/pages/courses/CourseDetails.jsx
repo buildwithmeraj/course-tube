@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const CourseDetails = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [videos, setVideos] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [course, setCourse] = useState(null);

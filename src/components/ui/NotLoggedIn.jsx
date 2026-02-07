@@ -12,6 +12,7 @@ const NotLoggedIn = () => {
           You must be logged in to access this page.
         </p>
         <Link className="btn btn-primary mt-4" href="/login">
+          <FaSignInAlt />
           Login Now
         </Link>
       </div>

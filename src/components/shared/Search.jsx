@@ -51,7 +51,10 @@ const Search = ({ setShowSearchModal }) => {
         <div className="min-h-[10vh]">
           <p className="text-center">
             <label className="input">
-              <IoSearch />
+              <IoSearch
+                className="ml-1 text-base-content/60 mb-0.5"
+                size={18}
+              />
               <input
                 type="search"
                 placeholder="Search"
@@ -106,7 +109,7 @@ const Search = ({ setShowSearchModal }) => {
         <div className="modal-action justify-center">
           <form method="dialog">
             <button
-              className="btn btn-sm btn-soft"
+              className="btn btn-sm btn-soft hover:btn-error"
               onClick={() => setShowSearchModal(false)}
             >
               Close

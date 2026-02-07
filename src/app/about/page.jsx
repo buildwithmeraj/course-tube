@@ -24,12 +24,12 @@ export default function AboutPage() {
   return (
     <>
       <section>
-        <h2 className="text-center">About CourseTube</h2>
+        <h2 className="text-center">About {process.env.SITE_NAME}</h2>
         <p className="lead backdrop-blur-lg">
-          CourseTube is a revolutionary learning platform that curates
-          high-quality playlist-based courses from YouTube and makes them easy
-          to follow. We believe learning should be accessible, structured, and
-          completely free.
+          {process.env.SITE_NAME} is a revolutionary learning platform that
+          curates high-quality playlist-based courses from YouTube and makes
+          them easy to follow. We believe learning should be accessible,
+          structured, and completely free.
         </p>
       </section>
 
@@ -61,7 +61,7 @@ export default function AboutPage() {
       </div>
 
       <section>
-        <h2 className="text-center">Why Choose CourseTube?</h2>
+        <h2 className="text-center">Why Choose {process.env.SITE_NAME}?</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 backdrop-blur-lg">
           {features.map((feature, index) => (
             <div key={index} className="flex items-start gap-3">
@@ -111,8 +111,8 @@ export default function AboutPage() {
       <section>
         <h2 className="text-center">Get Involved</h2>
         <p className="mb-3 underline font-semibold backdrop-blur-lg">
-          We are always looking for ways to improve CourseTube. Here is how you
-          can help:
+          We are always looking for ways to improve {process.env.SITE_NAME}.
+          Here is how you can help:
         </p>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 backdrop-blur-lg">
           <div>

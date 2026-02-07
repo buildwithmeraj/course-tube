@@ -6,8 +6,7 @@ const HowItWorks = () => {
     {
       icon: FaYoutube,
       title: "YouTube Playlists",
-      description:
-        "We surface playlists hosted on YouTube — CourseTube does not host videos. Playlists play from YouTube so creators keep ownership and playback stays authentic.",
+      description: `We surface playlists hosted on YouTube — ${process.env.SITE_NAME} does not host videos. Playlists play from YouTube so creators keep ownership and playback stays authentic.`,
     },
     {
       icon: FaList,
@@ -32,7 +31,9 @@ const HowItWorks = () => {
   return (
     <div className="mx-auto">
       <div className="text-center mb-6">
-        <h2 className="text-4xl font-bold mb-2">How CourseTube Works</h2>
+        <h2 className="text-4xl font-bold mb-2">
+          How {process.env.SITE_NAME} Works
+        </h2>
         <p className="text-lg text-base-content/70">
           Learn from YouTube playlists, organized and tracked for your progress.
         </p>
