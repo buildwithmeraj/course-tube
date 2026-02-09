@@ -70,7 +70,10 @@ const YouTubePlayer = ({ video, onEnd, course }) => {
       </div>
       {video && (
         <h3 className="mt-2 font-semibold text-xl">
-          {video.position + 1}/{course?.totalCount} {video.title}
+          <span className="badge badge-lg badge-info badge-soft rounded-xl mr-2">
+            {video.position + 1}/{course?.totalCount}
+          </span>{" "}
+          {video.title}
         </h3>
       )}
     </div>

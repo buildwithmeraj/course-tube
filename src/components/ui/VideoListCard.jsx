@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef } from "react";
-import { FaPlayCircle } from "react-icons/fa";
+import { FaCheckCircle, FaPlayCircle } from "react-icons/fa";
 
 const VideoListCard = ({ video, isSelected, course, isWatched }) => {
   const cardRef = useRef(null);
@@ -74,9 +74,11 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
           ${isSelected ? "text-info" : ""} hover:text-info
         `}
       >
-        {`${isWatchedButNotSelected ? "✓" : ""} ${
-          isSelected ? "⮞" : ""
-        } ${video.title}`}
+        {isWatchedButNotSelected && (
+          <FaCheckCircle className="inline text-success mr-1 mb-0.5" />
+        )}{" "}
+        {isSelected && <FaPlayCircle className="inline mr-1 mb-1" />}{" "}
+        {video.title}
       </h4>
     </Link>
   );

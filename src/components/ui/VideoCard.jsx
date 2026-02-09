@@ -1,14 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { FaPlayCircle } from "react-icons/fa";
+import { FaCheckCircle, FaPlayCircle } from "react-icons/fa";
 
 const VideoCard = ({ video, isSelected, course, isWatched, isEnrolled }) => {
   return (
     <Link
       href={`/courses/${video.courseId}/videos?video=${video._id}`}
-      className={`cursor-pointer rounded-xl ${
-        isEnrolled & isSelected ? "border-blue-500" : "border-gray-300"
+      className={`group cursor-pointer rounded-xl ${
+        isEnrolled && isSelected ? "border-blue-500" : "border-gray-300"
       }`}
     >
       <figure className="relative">
@@ -18,8 +18,8 @@ const VideoCard = ({ video, isSelected, course, isWatched, isEnrolled }) => {
           width={0}
           height={0}
           sizes="100vw"
-          className={`w-full rounded-xl ${isEnrolled & isWatched ? "opacity-50" : ""} ${
-            isEnrolled & isSelected
+          className={`w-full rounded-xl ${isEnrolled && isWatched ? "opacity-50" : ""} ${
+            isEnrolled && isSelected
               ? "border-4 border-blue-500"
               : " border border-base-content"
           }`}
@@ -39,13 +39,18 @@ const VideoCard = ({ video, isSelected, course, isWatched, isEnrolled }) => {
       </figure>
       <h3
         className={`card-title mt-2 line-clamp-2 ${
-          isEnrolled & isWatched ? "text-base-content/60" : "text-base-content"
-        } ${isEnrolled & isSelected ? "text-info" : ""}`}
+          isEnrolled && isWatched ? "text-base-content/60" : "text-base-content"
+        } ${isEnrolled && isSelected ? "text-info" : ""}`}
       >
-        {`${isEnrolled & isWatched ? "✓" : ""} ${isEnrolled & isSelected ? "⮞" : ""} ${video.title}`}
+        {isEnrolled && isWatched && (
+          <FaCheckCircle className="inline text-success mr-1 mb-0.5" />
+        )}{" "}
+        {isEnrolled && isSelected && (
+          <FaPlayCircle className="inline mr-1.5 mb-1" />
+        )}
+        {video.title}
       </h3>
     </Link>
   );
 };
-
 export default VideoCard;
