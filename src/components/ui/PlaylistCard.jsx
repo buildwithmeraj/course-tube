@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { RiPlayList2Fill, RiGraduationCapFill } from "react-icons/ri";
-import { HiUserGroup } from "react-icons/hi";
 import { FaVideo } from "react-icons/fa6";
 
 const PlaylistCard = ({ playlist }) => {
