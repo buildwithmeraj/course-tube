@@ -5,7 +5,6 @@ import Footer from "@/components/shared/Footer";
 import Providers from "./providers/Providers";
 import { Toaster } from "react-hot-toast";
 import { FaExclamationTriangle, FaHome } from "react-icons/fa";
-import Link from "next/link";
 
 export const metadata = {
   title: "Create Next App",
@@ -35,10 +34,10 @@ const GlobalNotFound = () => {
                 </p>
                 <p className="text-lg">But you can return to the homepage.</p>
                 <p>
-                  <Link href="/" className="btn btn-success">
+                  <a href="/" className="btn btn-success">
                     <FaHome />
                     Home
-                  </Link>
+                  </a>
                 </p>
               </div>
             </div>
