@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { MdOutlineAddToPhotos } from "react-icons/md";
 
 const CourseDetails = () => {
   const { data: session } = useSession();
@@ -132,6 +133,7 @@ const CourseDetails = () => {
         </span>
         {!enrolled && (
           <button className="btn btn-primary" onClick={enrollInCourse}>
+            <MdOutlineAddToPhotos />
             Enroll Now
           </button>
         )}

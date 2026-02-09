@@ -20,7 +20,7 @@ import {
   FaArrowAltCircleRight,
   FaSyncAlt,
 } from "react-icons/fa";
-import { RiGraduationCapFill } from "react-icons/ri";
+import { RiGraduationCapFill, RiPlayListAddFill } from "react-icons/ri";
 import { IoHelpCircle } from "react-icons/io5";
 import VideoDescription from "@/components/ui/VideoDescription";
 
@@ -260,10 +260,11 @@ const CourseVideos = () => {
       <div className="flex items-center justify-center h-[80vh]">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center flex-col">
           <RiGraduationCapFill size={128} className="text-base-content/50" />
-          <h2 className="text-2xl mb-4">
+          <h2 className="text-2xl mb-4 text-center">
             You are not enrolled in this course.
           </h2>
           <button className="btn btn-primary" onClick={enrollInCourse}>
+            <RiPlayListAddFill />
             Enroll Now
           </button>
         </div>

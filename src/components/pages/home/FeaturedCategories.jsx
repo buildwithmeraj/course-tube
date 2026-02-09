@@ -1,5 +1,4 @@
 "use client";
-import Loading from "@/components/ui/Loading";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { FaFolder, FaFolderOpen } from "react-icons/fa6";
@@ -30,7 +29,6 @@ const FeaturedCategories = () => {
     fetchCategories();
   }, []);
   if (error) console.log(error);
-  if (loading) return <Loading />;
 
   return categories.length > 0 ? (
     <section className="mt-8">
@@ -47,20 +45,22 @@ const FeaturedCategories = () => {
         </div>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {categories.map((category) => (
-            <Link
-              key={category._id}
-              href={`/categories/${category._id}`}
-              className="group relative overflow-hidden rounded-xl border border-base-300 bg-base-200 p-4 transition hover:-translate-y-1 hover:border-base-300 hover:shadow-md"
-            >
-              <div>
-                <FaFolderOpen size={18} className="inline mb-0.5 mr-0.5" />{" "}
-                <span className="text-sm font-semibold text-base-content">
-                  {category.title}
-                </span>
-              </div>
-            </Link>
-          ))}
+          {!loading &&
+            categories.length > 0 &&
+            categories.map((category) => (
+              <Link
+                key={category._id}
+                href={`/categories/${category._id}`}
+                className="group relative overflow-hidden rounded-xl border border-base-300 bg-base-200 p-4 transition hover:-translate-y-1 hover:border-base-300 hover:shadow-md"
+              >
+                <div>
+                  <FaFolderOpen size={18} className="inline mb-0.5 mr-0.5" />{" "}
+                  <span className="text-sm font-semibold text-base-content">
+                    {category.title}
+                  </span>
+                </div>
+              </Link>
+            ))}
         </div>
       </div>
     </section>

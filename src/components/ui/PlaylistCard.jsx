@@ -28,17 +28,17 @@ const PlaylistCard = ({ playlist }) => {
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs md:text-sm px-2 py-1 rounded-lg flex items-center gap-1">
                 <RiGraduationCapFill size={15} />
                 {playlist.enrollCount}
-                <span className="hidden md:flex"> Enrolls</span>
+                Enrolls
               </div>
             )}
             <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs md:text-sm px-2 py-1 rounded-lg flex items-center gap-1">
               <FaVideo size={14} />
               {playlist.totalCount}
-              <span className="hidden md:flex"> Videos</span>
+              Videos
             </div>
           </div>
-          <div className="card shadow-md bg-accent"></div>
-          <div className="card shadow-md bg-accent/70"></div>
+          <div className="card shadow-md border border-accent bg-accent"></div>
+          <div className="card shadow-md border border-info bg-info/70"></div>
         </div>
       </Link>
       <h3 className="card-title mt-2 line-clamp-2">

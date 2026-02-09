@@ -3,6 +3,7 @@ import PlaylistCard from "@/components/ui/PlaylistCard";
 import PlaylistCardSkeleton from "@/components/ui/PlaylistCardSkeleton";
 import Link from "next/link";
 import { Suspense } from "react";
+import { GrLinkNext } from "react-icons/gr";
 import { RiPlayListAddFill } from "react-icons/ri";
 
 const EnrolledCourses = async () => {
@@ -32,6 +33,11 @@ const EnrolledCourses = async () => {
             <PlaylistCard key={item._id.toString()} playlist={item.course} />
           ))}
         </Suspense>
+      </div>
+      <div className="text-center">
+        <Link href="/courses/" className="btn btn-primary mt-4">
+          More Courses <GrLinkNext />
+        </Link>
       </div>
     </div>
   );
