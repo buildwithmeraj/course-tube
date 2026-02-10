@@ -26,14 +26,12 @@ const PlaylistCard = ({ playlist }) => {
             </div>
             {playlist.enrollCount >= 0 && (
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs md:text-sm px-2 py-1 rounded-lg flex items-center gap-1">
-                <RiGraduationCapFill size={15} />
-                {playlist.enrollCount}
-                Enrolls
+                <RiGraduationCapFill size={15} className="mb-0.5" />{" "}
+                {playlist.enrollCount} Enrolls
               </div>
             )}
             <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs md:text-sm px-2 py-1 rounded-lg flex items-center gap-1">
-              <FaVideo size={14} />
-              {playlist.totalCount}
+              <FaVideo size={14} className="mb-0.5" /> {playlist.totalCount}{" "}
               Videos
             </div>
           </div>
