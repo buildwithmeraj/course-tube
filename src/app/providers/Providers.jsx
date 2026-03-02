@@ -7,7 +7,12 @@ import { SearchProvider } from "../contexts/SearchContext";
 const Providers = ({ children }) => {
   return (
     <SessionProvider>
-      <ThemeProvider attribute="data-theme">
+      <ThemeProvider
+        attribute="data-theme"
+        defaultTheme="system"
+        enableSystem
+        suppressHydrationWarning
+      >
         <SearchProvider>{children}</SearchProvider>
       </ThemeProvider>
     </SessionProvider>

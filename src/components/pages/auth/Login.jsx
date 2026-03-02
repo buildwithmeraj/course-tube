@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { signIn, useSession } from "next-auth/react";
-import { FaGoogle, FaSignInAlt, FaUserPlus } from "react-icons/fa";
+import { FaGoogle, FaSignInAlt, FaUserPlus, FaShieldAlt } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -62,6 +62,36 @@ const LoginPage = () => {
     } catch (error) {
       console.error("Google login error:", error);
       setError("Failed to login with Google");
+      setIsLoading(false);
+    }
+  };
+
+  const handleAdminLogin = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      console.log("Attempting admin login with email: demo@admin.com");
+      const result = await signIn("credentials", {
+        email: "demo@admin.com",
+        password: "admin123",
+        redirect: false,
+      });
+
+      console.log("SignIn result:", result);
+
+      if (result?.error) {
+        console.error("SignIn error details:", result);
+        setError("Admin login failed");
+        toast.error("Admin login failed");
+      } else if (result?.ok) {
+        toast.success("Admin login successful!");
+        router.push("/profile");
+      }
+    } catch (error) {
+      console.error("Admin login error:", error);
+      setError("Failed to login as admin");
+      toast.error("Failed to login as admin");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -139,6 +169,19 @@ const LoginPage = () => {
                     Register
                   </Link>
                 </div>
+                <div className="divider m-0.5 font-semibold text-xs">
+                  DEVELOPMENT
+                </div>
+                <button
+                  className="btn btn-warning btn-soft
+                   w-full"
+                  type="button"
+                  onClick={handleAdminLogin}
+                  disabled={isLoading}
+                >
+                  <FaShieldAlt size={20} />
+                  {isLoading ? "Logging in..." : "Quick Admin Login"}
+                </button>
               </fieldset>
             </form>
           </div>

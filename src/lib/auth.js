@@ -102,10 +102,11 @@ export const authOptions = {
         token.email = user.email;
         token.name = user.name;
         token.picture = user.image || null;
+        token.role = user.role || "user";
       }
 
-      // ALWAYS fetch role from DB for Google users
-      if (account?.provider === "google" && token.email) {
+      // ALWAYS fetch role from DB for Google users AND credentials users
+      if (token.email && (account?.provider === "google" || !account)) {
         const db = await getDB();
         const usersCollection = db.collection("users");
 
