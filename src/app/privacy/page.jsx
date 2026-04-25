@@ -6,7 +6,7 @@ export const metadata = {
 };
 export default function PrivacyPolicyPage() {
   return (
-    <main className="prose prose-lg mx-auto py-12 px-4 max-w-4xl backdrop-blur-lg">
+    <main className="prose prose-lg mx-auto py-3 px-4 backdrop-blur-lg">
       <h2 className="title-accent">Privacy Policy</h2>
       <p className="text-sm text-muted">Last updated: January 18, 2026</p>
 
@@ -98,7 +98,7 @@ export default function PrivacyPolicyPage() {
         <h5>6. Contact Us</h5>
         <p>
           If you have any questions about this Privacy Policy, please{" "}
-          <Link href="/contact" className="text-primary hover:underline">
+          <Link href="/contact" className="text-accent hover:underline">
             contact us
           </Link>
         </p>

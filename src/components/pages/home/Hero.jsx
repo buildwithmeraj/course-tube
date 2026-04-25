@@ -20,58 +20,55 @@ const Hero = () => {
           className="animate__animated animate__pulse animate__slow animate__infinite"
         />
         <div>
-          <h1 className="text-4xl font-bold">
-            Welcome to {siteName}
-          </h1>
+          <h1 className="text-4xl font-bold">Learn smarter with {siteName}</h1>
           <p className="py-2 text-lg">
-            Unlock your potential with our curated collection of high-quality
-            courses. Learn from industry experts and transform your skills.
+            Turn scattered YouTube playlists into organized courses you can
+            actually finish. Track progress, resume anytime, and keep every
+            course in one place.
           </p>
 
           <div className="py-2">
-            <h2 className="text-2xl font-semibold mb-1">
-              Why Choose {siteName}?
-            </h2>
+            <h2 className="text-2xl font-semibold mb-1">Why choose us?</h2>
             <p className="py-2">
-              We believe learning should be accessible, affordable, and
-              effective. Our platform combines video-based learning with
-              interactive content to keep you engaged every step of the way.
+              {siteName} is built for focused learning. You get curated
+              playlists, progress tracking, category-based discovery, and a
+              simple approval workflow that keeps the public catalog organized.
             </p>
           </div>
 
           <div className="text-xl text-center py-4 mx-4 border-base-content/60 border-2 border-dashed rounded-xl">
             <BsFillHandIndexThumbFill className="inline rotate-90 mr-2 mb-1 text-amber-500" />
-            It is time for yourself to{" "}
+            It is time to{" "}
             <span className="text-rotate">
               <span className="font-bold">
                 <span>
                   <span className="bg-success p-2 rounded-lg text-white">
-                    Transform
+                    Start
                   </span>
                 </span>
                 <span>
                   <span className="bg-info p-2 rounded-lg text-white">
-                    Elevate
+                    Organize
                   </span>
                 </span>
                 <span>
                   <span className="bg-error p-2 rounded-lg text-white">
-                    Accelerate
+                    Progress
                   </span>
                 </span>
                 <span>
                   <span className="bg-info p-2 rounded-lg text-white">
-                    Empower
+                    Resume
                   </span>
                 </span>
                 <span>
                   <span className="bg-accent p-2 rounded-lg text-white">
-                    Revolutionize
+                    Learn
                   </span>
                 </span>
                 <span>
                   <span className="bg-error p-2 rounded-lg text-white">
-                    Unleash
+                    Finish
                   </span>
                 </span>
               </span>

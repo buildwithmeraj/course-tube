@@ -1,41 +1,42 @@
 import React from "react";
 import { FaYoutube, FaList, FaPlusCircle, FaClock } from "react-icons/fa";
 
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "CourseTube";
+
 const HowItWorks = () => {
   const steps = [
     {
       icon: FaYoutube,
-      title: "YouTube Playlists",
-      description: `We surface playlists hosted on YouTube — ${process.env.SITE_NAME} does not host videos. Playlists play from YouTube so creators keep ownership and playback stays authentic.`,
+      title: "Find a playlist",
+      description: `We surface playlists hosted on YouTube — ${siteName} does not host videos. Playlists play from YouTube so creators keep ownership and playback stays authentic.`,
     },
     {
       icon: FaList,
-      title: "Curated Categories",
+      title: "Browse by topic",
       description:
-        "Browse a thoughtfully organized collection of categories where popular and trending courses are grouped for easy discovery.",
+        "Use categories to jump straight into the topics that matter most, from beginner-friendly paths to more advanced courses.",
     },
     {
       icon: FaPlusCircle,
-      title: "Add Your Playlist",
+      title: "Submit your own",
       description:
-        "Submit any YouTube playlist to your library. Submissions are private to you until an admin approves them for public listing.",
+        "Add a YouTube playlist to your library. Submissions stay private until an admin reviews and approves them.",
     },
     {
       icon: FaClock,
-      title: "Track & Learn",
+      title: "Keep your progress",
       description:
-        "Watch anytime — we track progress, organize watched content, and help you pick up where you left off for a smoother learning experience.",
+        "Watch when you have time, track what is completed, and pick up exactly where you left off on any device.",
     },
   ];
 
   return (
     <div className="mx-auto">
       <div className="text-center mb-6 mt-2">
-        <h2 className="text-4xl font-bold mb-2">
-          How {process.env.SITE_NAME} Works
-        </h2>
+        <h2 className="text-4xl font-bold mb-2">How {siteName} works</h2>
         <p className="text-lg text-base-content/70">
-          Learn from YouTube playlists, organized and tracked for your progress.
+          A simple workflow that turns public playlists into structured,
+          trackable learning.
         </p>
       </div>
 

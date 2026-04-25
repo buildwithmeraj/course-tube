@@ -28,7 +28,13 @@ const PopularCourses = () => {
 
   return (
     <>
-      <h2 className="my-4 text-center">Popular Courses</h2>
+      <div className="text-center mb-4">
+        <h2 className="my-4 text-center">Popular Courses</h2>
+        <p className="text-base-content/70">
+          Start with the courses other learners are watching and completing
+          right now.
+        </p>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {loading && (
           <>
@@ -44,7 +50,7 @@ const PopularCourses = () => {
       </div>
       <div className="text-center">
         <Link href="/courses/" className="btn btn-primary mt-4">
-          More Courses <GrLinkNext />
+          Browse All Courses <GrLinkNext />
         </Link>
       </div>
     </>

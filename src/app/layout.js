@@ -26,6 +26,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${FigtreeFont.variable} antialiased flex flex-col min-h-screen overflow-x-hidden`}
       >
         <SpeedInsights />

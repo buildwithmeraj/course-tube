@@ -8,16 +8,16 @@ import { RiCommunityLine } from "react-icons/ri";
 import { GoNorthStar } from "react-icons/go";
 export const metadata = {
   title: `About | ${process.env.SITE_NAME}`,
-  description: `Know more about ${process.env.SITE_NAME}. `,
+  description: `Learn how ${process.env.SITE_NAME} turns YouTube playlists into structured courses with progress tracking and admin review.`,
 };
 
 const features = [
-  "YouTube Playlist Integration - Access curated playlists directly from YouTube",
-  "Progress Tracking - Monitor your learning journey with detailed progress analytics",
-  "Organized Categories - Discover courses organized by topic and skill level",
-  "Community Features - Connect with other learners and share your progress",
-  "Free Forever - All courses are completely free, no hidden charges",
-  "Responsive Design - Learn on any device - desktop, tablet, or mobile",
+  "Curated YouTube playlists turned into structured courses",
+  "Progress tracking so learners can resume from where they stopped",
+  "Admin review that keeps public courses organized and moderated",
+  "Categories that make it easier to find courses by topic",
+  "Free access with no subscription or hidden fee",
+  "Responsive design that works on desktop, tablet, and mobile",
 ];
 
 export default function AboutPage() {
@@ -28,10 +28,10 @@ export default function AboutPage() {
           About {process.env.SITE_NAME}
         </h2>
         <p className="lead backdrop-blur-lg">
-          {process.env.SITE_NAME} is a revolutionary learning platform that
-          curates high-quality playlist-based courses from YouTube and makes
-          them easy to follow. We believe learning should be accessible,
-          structured, and completely free.
+          {process.env.SITE_NAME} helps turn scattered YouTube playlists into
+          structured learning paths. It is built for people who want a simple
+          way to discover courses, track progress, and keep learning without
+          paying for another subscription.
         </p>
       </section>
 
@@ -39,25 +39,26 @@ export default function AboutPage() {
         <section className="w-full lg:w-1/2">
           <h2 className="text-center">Our Mission</h2>
           <p>
-            Make learning accessible and structured — turning scattered videos
-            into cohesive courses with progress tracking and community features.
+            Make free learning feel organized. We take high-quality playlists
+            from YouTube and present them in a course format that is easier to
+            follow, revisit, and complete.
           </p>
           <p>
-            We are committed to democratizing education by leveraging the vast
-            library of quality content on YouTube and organizing it in a way
-            that helps learners achieve their goals efficiently.
+            The goal is to reduce friction for learners, so the focus stays on
+            the content itself, not on jumping between tabs, losing track of
+            progress, or searching for the next video.
           </p>
         </section>
 
         <section className="w-full lg:w-1/2">
           <h2 className="text-center">Our Vision</h2>
           <p>
-            To create a world where quality education is accessible to everyone,
-            regardless of their economic background or geographical location.
+            Create a lightweight learning hub where anyone can discover, share,
+            and manage YouTube-based courses in one place.
           </p>
           <p>
-            We envision a future where learning is structured, engaging, and
-            empowering for millions of students worldwide.
+            We want the platform to stay simple, useful, and easy to trust for
+            both learners and admins as it grows.
           </p>
         </section>
       </div>
@@ -75,36 +76,37 @@ export default function AboutPage() {
       </section>
 
       <section className="my-3">
-        <h2 className="text-center">Our Values</h2>
+        <h2 className="text-center">What Makes It Different</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 backdrop-blur-lg">
           <div className="p-4 bg-primary/10 rounded-lg">
             <h3 className="font-bold mb-2">Accessibility</h3>
             <p className="text-sm">
               <FaUnlock className="inline mr-1.5 mb-0.5" />
-              Education should be free and available to everyone, everywhere.
+              Anyone should be able to learn from quality content without a paywall.
             </p>
           </div>
           <div className="p-4 bg-info/10 rounded-lg">
             <h3 className="font-bold mb-2">Quality</h3>
             <p className="text-sm">
               <GrStatusGood className="inline mr-1.5 mb-0.5" />
-              We curate only the best content from trusted educators and
-              creators.
+              Public courses are reviewed before approval so the catalog stays
+              cleaner and easier to browse.
             </p>
           </div>
           <div className="p-4 bg-success/10 rounded-lg">
             <h3 className="font-bold mb-2">Community</h3>
             <p className="text-sm">
               <RiCommunityLine className="inline mr-1.5 mb-0.5" />
-              Learning together strengthens our resolve to help each other grow.
+              Users can submit playlists they find useful, helping the catalog grow
+              with practical recommendations.
             </p>
           </div>
           <div className="p-4 bg-warning/10 rounded-lg">
-            <h3 className="font-bold mb-2">Innovation</h3>
+            <h3 className="font-bold mb-2">Progress</h3>
             <p className="text-sm">
               <GoNorthStar className="inline mr-1.5 mb-0.5" />
-              We continuously improve our platform to enhance the learning
-              experience.
+              Progress tracking makes long playlists feel manageable, even when
+              you return later from another device.
             </p>
           </div>
         </div>
@@ -122,16 +124,16 @@ export default function AboutPage() {
             Submit it for admin approval.
           </div>
           <div>
-            <strong>Provide Feedback:</strong> Help us improve by sharing your
-            thoughts and suggestions.
+            <strong>Provide Feedback:</strong> Share what feels confusing,
+            missing, or worth improving.
           </div>
           <div>
             <strong>Become an Ambassador:</strong> Help spread the word about
-            quality free education.
+            quality free learning resources.
           </div>
           <div>
-            <strong>Share Content:</strong> Share our platforms to other
-            learners. Let them also learn what you learned.
+            <strong>Share Content:</strong> Share the platform with other
+            learners so they can discover useful courses too.
           </div>
         </div>
       </section>
@@ -140,13 +142,13 @@ export default function AboutPage() {
         <h2 className="text-center">Contact & Support</h2>
         <p className="mb-3">
           Have questions, feedback, or partnership inquiries? We would love to
-          hear from you!
+          hear from you.
         </p>
         <p>
-          For partnerships or support or any queries:{" "}
+          For partnerships, support, or any queries:{" "}
           <Link href="/contact" className="btn btn-primary btn-sm">
             <IoMdMail />
-            Contact US
+            Contact us
           </Link>
         </p>
       </section>

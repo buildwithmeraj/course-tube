@@ -4,7 +4,7 @@ import HomeButton from "./HomeButton";
 
 const NotFound = () => {
   return (
-    <div className="min-h-[85vh] flex flex-col items-center justify-center">
+    <div className="min-h-[82vh] flex flex-col items-center justify-center">
       <div className="card bg-base-200 p-20 lg:p-24 rounded-xl shadow-md space-y-3 text-center">
         <div className="flex items-center justify-center">
           <FaExclamationTriangle size={120} className="text-warning" />

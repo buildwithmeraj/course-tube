@@ -34,9 +34,10 @@ const FeaturedCategories = () => {
     <section className="mt-8">
       <div className="rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm">
         <h2 className="text-center">Featured Categories</h2>
-        <div className="flex flex-col gap-4 md:flex-row md:items-centerop[uij] md:justify-between">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <p className="mt-1 text-sm text-base-content/60">
-            Jump into a topic and start learning right away.
+            Jump into a topic and find playlists that match what you want to
+            learn next.
           </p>
           <Link href="/categories/" className="btn btn-soft">
             <FaFolder className="mb-0.5" />

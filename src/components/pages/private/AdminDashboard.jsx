@@ -2,33 +2,55 @@
 
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { FaBook, FaList } from "react-icons/fa";
+import {
+  FaBook,
+  FaBookOpen,
+  FaLayerGroup,
+  FaList,
+  FaPlusCircle,
+  FaRegChartBar,
+} from "react-icons/fa";
+import { HiMiniWrenchScrewdriver } from "react-icons/hi2";
 
-const StatCard = ({ title, value, color }) => (
-  <div className="bg-base-100 rounded-lg shadow p-2 text-center">
-    <div className="stat-title">{title}</div>
-    <div className={`stat-value ${color}`}>{value}</div>
+const StatCard = ({ title, value, color, icon: Icon, hint }) => (
+  <div className="rounded-3xl border border-base-200 bg-base-100/90 p-5 shadow-sm backdrop-blur-xl">
+    <div className="flex items-start justify-between gap-3">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-base-content/50">
+          {title}
+        </p>
+        <div className={`mt-2 text-3xl font-black ${color}`}>{value}</div>
+        <p className="mt-2 text-sm text-base-content/60">{hint}</p>
+      </div>
+      <div className={`rounded-2xl p-3 ${color} bg-opacity-10`}>
+        <Icon size={22} />
+      </div>
+    </div>
   </div>
 );
 
 const DashboardCard = ({ icon: Icon, title, description, href, color }) => (
-  <Link href={href}>
-    <div
-      className={`card bg-base-100 shadow-lg hover:shadow-xl transition-shadow cursor-pointer border-x-4 ${color}`}
-    >
-      <div className="card-body">
+  <div
+    className={`card overflow-hidden border shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md rounded-xl ${color}`}
+  >
+    <div className="card-body gap-5 bg-base-100/90">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className={`p-3 rounded-lg ${color} text-white`}>
-            <Icon size={24} />
+          <div className={`rounded-2xl p-3 ${color} text-white shadow-sm`}>
+            <Icon size={20} />
           </div>
           <div>
             <h3 className="card-title text-lg">{title}</h3>
             <p className="text-sm text-base-content/60">{description}</p>
           </div>
         </div>
+        <Link href={href} className="btn btn-accent">
+          <HiMiniWrenchScrewdriver />
+          Manage
+        </Link>
       </div>
     </div>
-  </Link>
+  </div>
 );
 
 const AdminDashboard = () => {
@@ -49,57 +71,100 @@ const AdminDashboard = () => {
       title: "Manage Courses",
       description: "Create, edit, and delete courses",
       href: "/dashboard/courses",
-      color: "border-primary bg-primary/70",
+      color: "border-primary bg-accent",
     },
     {
       icon: FaList,
       title: "Manage Categories",
       description: "Organize course categories",
       href: "/dashboard/categories",
-      color: "border-info bg-info/40",
+      color: "border-info bg-accent",
     },
   ];
 
   const s = stats || {};
+  const statCards = [
+    {
+      title: "Total Courses",
+      value: loading ? "..." : (s.coursesCount ?? 0),
+      color: "text-primary",
+      icon: FaBook,
+      hint: "Courses published across the platform",
+    },
+    {
+      title: "Total Enrolls",
+      value: loading ? "..." : (s.enrollsCount ?? 0),
+      color: "text-info",
+      icon: FaRegChartBar,
+      hint: "Learners currently participating",
+    },
+    {
+      title: "Total Categories",
+      value: loading ? "..." : (s.categoriesCount ?? 0),
+      color: "text-success",
+      icon: FaLayerGroup,
+      hint: "Structured content groups",
+    },
+    {
+      title: "Total Videos",
+      value: loading ? "..." : (s.videosCount ?? 0),
+      color: "text-warning",
+      icon: FaList,
+      hint: "Tracked playlist videos",
+    },
+  ];
 
   return (
-    <div>
-      <div className="mb-8 mt-2">
-        <h1 className="title-accent text-4xl font-bold mb-2">
-          Admin Dashboard
-        </h1>
+    <div className="space-y-3">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="max-w-2xl space-y-2">
+          <h2 className="title-accent text-4xl font-black">Admin Dashboard</h2>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <Link href="/dashboard/courses" className="btn btn-primary btn-sm">
+            <FaBook />
+            Courses
+          </Link>
+          <Link
+            href="/dashboard/categories/add"
+            className="btn btn-soft btn-sm"
+          >
+            <FaPlusCircle />
+            Add Category
+          </Link>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 backdrop-blur-md">
-        <StatCard
-          title="Total Courses"
-          value={loading ? "..." : (s.coursesCount ?? 0)}
-          color="text-primary"
-        />
-
-        <StatCard
-          title="Total Enrolls"
-          value={loading ? "..." : (s.enrollsCount ?? 0)}
-          color="text-info"
-        />
-
-        <StatCard
-          title="Total Categories"
-          value={loading ? "..." : (s.categoriesCount ?? 0)}
-          color="text-success"
-        />
-
-        <StatCard
-          title="Total Videos"
-          value={loading ? "..." : (s.videosCount ?? 0)}
-          color="text-warning"
-        />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {statCards.map((card) => (
+          <StatCard key={card.title} {...card} />
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 backdrop-blur-md">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         {cards.map((card) => (
           <DashboardCard key={card.href} {...card} />
         ))}
+
+        <div className="card border border-base-200 bg-gradient-to-br from-accent/10 via-base-100 to-primary/10 shadow-sm col-span-full">
+          <div className="card-body">
+            <h3 className="card-title title-accent text-2xl">
+              Workflow snapshot
+            </h3>
+            <div className="space-y-3 text-sm text-base-content/70">
+              <p>
+                Approve pending courses, keep categories tidy, and create
+                structure quickly with the links in the sidebar.
+              </p>
+              <ul className="space-y-2">
+                <li>• Review new course submissions</li>
+                <li>• Organize category mappings</li>
+                <li>• Add structure before publishing</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

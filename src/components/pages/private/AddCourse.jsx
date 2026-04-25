@@ -54,7 +54,7 @@ const AddCourse = () => {
       setSuccess(true);
       e.target.reset();
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to add course");
     } finally {
       setIsLoading(false);
     }

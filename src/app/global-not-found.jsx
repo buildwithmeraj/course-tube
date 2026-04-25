@@ -14,8 +14,11 @@ export const metadata = {
 
 const GlobalNotFound = () => {
   return (
-    <html lang="en">
-      <body className={`antialiased flex flex-col min-h-screen`}>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        suppressHydrationWarning
+        className={`antialiased flex flex-col min-h-screen`}
+      >
         <Providers>
           <header>
             <nav>

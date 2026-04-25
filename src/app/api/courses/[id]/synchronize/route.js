@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/db";
 import { ObjectId } from "mongodb";
+import { getServerYouTubeApiKey, getSiteUrl } from "@/lib/youtube";
 
-const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API;
+const API_KEY = getServerYouTubeApiKey();
+const SITE_URL = getSiteUrl();
 
 const buildYouTubeUrl = (baseUrl, params) => {
   const url = new URL(baseUrl);
@@ -15,7 +17,12 @@ const buildYouTubeUrl = (baseUrl, params) => {
 };
 
 const fetchYouTubeJson = async (url, fallbackMessage) => {
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    headers: {
+      Referer: SITE_URL,
+      Origin: SITE_URL,
+    },
+  });
   const data = await res.json().catch(() => null);
 
   if (!res.ok) {
@@ -121,7 +128,10 @@ export async function PATCH(req, { params }) {
 
     if (!API_KEY) {
       return NextResponse.json(
-        { message: "YouTube API key is missing" },
+        {
+          message:
+            "Server-side YouTube API key is missing. Set YOUTUBE_API_KEY for sync.",
+        },
         { status: 500 },
       );
     }

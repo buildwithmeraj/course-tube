@@ -103,99 +103,118 @@ const ManageCourses = () => {
   if (error) return <p className="text-error">{error}</p>;
 
   return (
-    <div>
-      <div className="flex items-center justify-between flex-col lg:flex-row">
-        <h2 className="title-accent">
-          Manage Courses {courses.length > 0 && `(${courses.length})`}
-        </h2>
+    <div className="space-y-3 mt-1">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="space-y-2">
+          <h2 className="title-accent text-3xl font-black">
+            Manage Courses {courses.length > 0 && `(${courses.length})`}
+          </h2>
+        </div>
         <Link href="/profile/courses/add" className="btn btn-primary btn-sm">
           <RiPlayListAddFill />
-          Add
+          Add Course
         </Link>
       </div>
+
       {courses.length === 0 ? (
-        <div className="min-h-[78vh] flex items-center justify-center">
-          <div className="text-center text-xl text-base-content/60 flex items-center justify-center flex-col">
+        <div className="min-h-[50vh] flex items-center justify-center rounded-3xl border border-base-200 bg-base-100/80 p-10 shadow-sm">
+          <div className="text-center text-xl text-base-content/60 flex items-center justify-center flex-col gap-3">
             <FaCircleInfo size={56} />
             No courses found
+            <Link href="/profile/courses/add" className="btn btn-soft mt-2">
+              <RiPlayListAddFill />
+              Add the first course
+            </Link>
           </div>
         </div>
       ) : (
-        <div className="overflow-x-auto backdrop-blur-xl">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Approved</th>
-                <th>Total Videos</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {courses.map((item) => (
-                <tr key={item._id}>
-                  <td className="font-bold">
-                    <Link href={`/courses/${item._id}`} className="link">
-                      {item.title}
-                    </Link>
-                  </td>
-                  <td>{item.approved ? "Yes" : "No"}</td>
-                  <td>{item.totalCount}</td>
-
-                  <td>
-                    <div className="flex gap-2">
-                      {!item.approved && (
-                        <button
-                          className="btn btn-sm btn-success"
-                          onClick={() =>
-                            openModal(
-                              { id: item._id, name: item.title },
-                              ACTIONS.APPROVE,
-                            )
-                          }
-                        >
-                          Approve
-                        </button>
-                      )}
-
-                      {item.approved && (
-                        <button
-                          className="btn btn-sm btn-warning"
-                          onClick={() =>
-                            openModal(
-                              { id: item._id, name: item.title },
-                              ACTIONS.REJECT,
-                            )
-                          }
-                        >
-                          Reject
-                        </button>
-                      )}
-
-                      <button
-                        className="btn btn-sm btn-error"
-                        onClick={() =>
-                          openModal(
-                            { id: item._id, name: item.title },
-                            ACTIONS.DELETE,
-                          )
-                        }
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
+        <div className="overflow-hidden rounded-3xl border border-base-200 bg-base-100/90 shadow-sm backdrop-blur-xl">
+          <div className="overflow-x-auto">
+            <table className="table">
+              <thead>
+                <tr className="bg-base-200/60 text-base-content/70">
+                  <th>Title</th>
+                  <th>Approved</th>
+                  <th>Total Videos</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {courses.map((item) => (
+                  <tr key={item._id} className="hover:bg-base-200/50">
+                    <td className="font-bold">
+                      <Link href={`/courses/${item._id}`} className="link">
+                        {item.title}
+                      </Link>
+                    </td>
+                    <td>
+                      <span
+                        className={`badge badge-sm rounded-xl ${
+                          item.approved ? "badge-success" : "badge-warning"
+                        }`}
+                      >
+                        {item.approved ? "Approved" : "Pending"}
+                      </span>
+                    </td>
+                    <td>{item.totalCount}</td>
+
+                    <td>
+                      <div className="flex gap-2">
+                        {!item.approved && (
+                          <button
+                            className="btn btn-xs btn-success"
+                            onClick={() =>
+                              openModal(
+                                { id: item._id, name: item.title },
+                                ACTIONS.APPROVE,
+                              )
+                            }
+                          >
+                            Approve
+                          </button>
+                        )}
+
+                        {item.approved && (
+                          <button
+                            className="btn btn-xs btn-warning"
+                            onClick={() =>
+                              openModal(
+                                { id: item._id, name: item.title },
+                                ACTIONS.REJECT,
+                              )
+                            }
+                          >
+                            Reject
+                          </button>
+                        )}
+
+                        <button
+                          className="btn btn-xs btn-error"
+                          onClick={() =>
+                            openModal(
+                              { id: item._id, name: item.title },
+                              ACTIONS.DELETE,
+                            )
+                          }
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
       {action && selectedCourse && (
         <div className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg capitalize">{action} Course</h3>
+          <div className="modal-box rounded-3xl">
+            <h3 className="title-accent font-bold text-lg capitalize">
+              {action} Course
+            </h3>
 
             <p className="py-4">
               Are you sure you want to{" "}

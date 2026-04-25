@@ -1,6 +1,8 @@
 "use client";
 
-const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API;
+import { getPublicYouTubeApiKey } from "@/lib/youtube";
+
+const API_KEY = getPublicYouTubeApiKey();
 
 // Convert ISO 8601 duration → seconds + readable string
 const parseDuration = (iso) => {
@@ -47,6 +49,10 @@ const fetchDurations = async (videoIds) => {
 };
 
 const fetchAllVideos = async (playlistId) => {
+  if (!API_KEY) {
+    throw new Error("Public YouTube API key is missing");
+  }
+
   let videos = [];
   let nextPageToken = "";
 

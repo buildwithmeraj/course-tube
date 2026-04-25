@@ -61,7 +61,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="flex items-center justify-center h-[84vh]">
+    <div className="flex items-center justify-center h-[82vh]">
       <div className="card bg-base-200 w-full max-w-xl shadow-md">
         <div className="card-body">
           <h2 className="title-accent text-center">Contact Us</h2>

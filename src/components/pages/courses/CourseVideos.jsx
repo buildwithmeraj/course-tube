@@ -339,7 +339,7 @@ const CourseVideos = () => {
             </div>
             <div>
               <button
-                className="btn btn-info btn-soft btn-sm"
+                className="btn btn-info btn-sm"
                 onClick={handleSynchronize}
                 disabled={synchronizing || updated}
               >

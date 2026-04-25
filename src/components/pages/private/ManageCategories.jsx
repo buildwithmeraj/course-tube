@@ -147,73 +147,94 @@ const ManageCategories = () => {
   if (error) return <p className="text-error">{error}</p>;
 
   return (
-    <div>
-      <div className="flex items-center justify-between flex-col lg:flex-row">
-        <h2>
-          Manage Categories {categories.length > 0 && `(${categories.length})`}
-        </h2>
-        <Link href="/dashboard/categories/add" className="btn btn-primary">
+    <div className="space-y-3 mt-1">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="space-y-2">
+          <h2 className="title-accent text-3xl font-black">
+            Manage Categories{" "}
+            {categories.length > 0 && `(${categories.length})`}
+          </h2>
+        </div>
+        <Link
+          href="/dashboard/categories/add"
+          className="btn btn-primary btn-sm"
+        >
           <FaFolderPlus />
-          Add
+          Add Category
         </Link>
       </div>
       {categories.length === 0 ? (
-        <div className="min-h-[78vh] flex items-center justify-center">
-          <div className="text-center text-xl text-base-content/60 flex items-center justify-center flex-col">
+        <div className="min-h-[50vh] flex items-center justify-center rounded-3xl border border-base-200 bg-base-100/80 p-10 shadow-sm">
+          <div className="text-center text-xl text-base-content/60 flex items-center justify-center flex-col gap-3">
             <FaCircleInfo size={56} />
             No categories found
+            <Link
+              href="/dashboard/categories/add"
+              className="btn btn-soft mt-2"
+            >
+              <FaFolderPlus />
+              Add the first category
+            </Link>
           </div>
         </div>
       ) : (
-        <div className="overflow-x-auto backdrop-blur-xl">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Courses</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {categories.map((cat) => (
-                <tr key={cat._id}>
-                  <td className="font-semibold">
-                    <Link href={`/categories/${cat._id}`} className="link">
-                      {cat.title}
-                    </Link>
-                  </td>
-                  <td className="truncate max-w-xs">
-                    {cat.description || "-"}
-                  </td>
-                  <td>{cat.courseIds?.length || 0}</td>
-                  <td className="flex gap-2">
-                    <button
-                      className="btn btn-sm btn-info"
-                      onClick={() => openEditModal(cat)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-sm btn-error"
-                      onClick={() => openDeleteModal(cat)}
-                    >
-                      Delete
-                    </button>
-                  </td>
+        <div className="overflow-hidden rounded-3xl border border-base-200 bg-base-100/90 shadow-sm backdrop-blur-xl">
+          <div className="overflow-x-auto">
+            <table className="table">
+              <thead>
+                <tr className="bg-base-200/60 text-base-content/70">
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Courses</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {categories.map((cat) => (
+                  <tr key={cat._id} className="hover:bg-base-200/50">
+                    <td className="font-semibold">
+                      <Link href={`/categories/${cat._id}`} className="link">
+                        {cat.title}
+                      </Link>
+                    </td>
+                    <td className="truncate max-w-xs">
+                      {cat.description || "-"}
+                    </td>
+                    <td>
+                      <span className="badge rounded-xl badge-info">
+                        {cat.courseIds?.length || 0}
+                      </span>
+                    </td>
+                    <td className="flex gap-2">
+                      <button
+                        className="btn btn-xs btn-info"
+                        onClick={() => openEditModal(cat)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-xs btn-error"
+                        onClick={() => openDeleteModal(cat)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
       {action && selectedCategory && (
         <div className="modal modal-open">
-          <div className="modal-box">
+          <div className="modal-box rounded-3xl">
             {action === ACTIONS.EDIT && (
               <>
-                <h3 className="font-bold text-lg mb-4">Edit Category</h3>
+                <h3 className="title-accent font-bold text-lg mb-4">
+                  Edit Category
+                </h3>
 
                 <input
                   type="text"

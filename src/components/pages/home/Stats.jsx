@@ -27,7 +27,7 @@ const Stats = () => {
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 my-3">
-        <h2 className="col-span-full text-center">Statistics</h2>
+        <h2 className="col-span-full text-center">Platform snapshot</h2>
         {Array.from({ length: 5 }).map((_, i) => (
           <div
             key={i}
@@ -46,7 +46,7 @@ const Stats = () => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 items-center mt-6 backdrop-blur-md">
       <h2 className="col-span-full text-center backdrop-blur-none">
-        Statistics
+        Platform snapshot
       </h2>
       <div className="p-4 bg-primary/30 rounded-lg text-center shadow-sm hover:shadow-md relative">
         <div className="text-sm text-muted">Categories</div>
