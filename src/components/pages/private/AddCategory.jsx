@@ -93,9 +93,11 @@ const AddCategory = () => {
 
   return (
     <div className="flex items-center justify-center h-[76vh]">
-      <div className="card bg-base-100 shadow-xl flex flex-row">
-        <form className="card-body w-105" onSubmit={handleAddCategory}>
-          <h2 className="text-center text-xl font-semibold">Add Category</h2>
+      <div className="card bg-base-200 shadow-xl flex flex-row">
+        <form className="card-body w-full max-w-md" onSubmit={handleAddCategory}>
+          <h2 className="title-accent text-center text-xl font-semibold">
+            Add Category
+          </h2>
 
           {error && (
             <p className="alert alert-error">

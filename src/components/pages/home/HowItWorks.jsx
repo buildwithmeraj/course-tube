@@ -30,7 +30,7 @@ const HowItWorks = () => {
 
   return (
     <div className="mx-auto">
-      <div className="text-center mb-6">
+      <div className="text-center mb-6 mt-2">
         <h2 className="text-4xl font-bold mb-2">
           How {process.env.SITE_NAME} Works
         </h2>

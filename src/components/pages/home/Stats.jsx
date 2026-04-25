@@ -51,7 +51,7 @@ const Stats = () => {
       <div className="p-4 bg-primary/30 rounded-lg text-center shadow-sm hover:shadow-md relative">
         <div className="text-sm text-muted">Categories</div>
         <div className="text-3xl font-bold">{c.categoriesCount ?? 0}</div>
-        <div className="absolute top-2 left-2 text-base-content/50">
+        <div className="absolute top-7 left-10 text-base-content/60">
           <FaFolderOpen size={36} />
         </div>
       </div>
@@ -59,7 +59,7 @@ const Stats = () => {
       <div className="p-4 bg-primary/30 rounded-lg text-center shadow-sm hover:shadow-md relative">
         <div className="text-sm text-muted">Courses</div>
         <div className="text-3xl font-bold">{c.coursesCount ?? 0}</div>
-        <div className="absolute top-2 left-2 text-base-content/50">
+        <div className="absolute top-7 left-10 text-base-content/60">
           <RiGraduationCapFill size={36} />
         </div>
       </div>
@@ -67,7 +67,7 @@ const Stats = () => {
       <div className="p-4 bg-primary/30 rounded-lg text-center shadow-sm hover:shadow-md relative">
         <div className="text-sm text-muted">Enrolls</div>
         <div className="text-3xl font-bold">{c.enrollsCount ?? 0}</div>
-        <div className="absolute top-2 left-2 text-base-content/50">
+        <div className="absolute top-7 left-10 text-base-content/60">
           <HiUserGroup size={36} />
         </div>
       </div>
@@ -75,7 +75,7 @@ const Stats = () => {
       <div className="p-4 bg-primary/30 rounded-lg text-center shadow-sm hover:shadow-md relative">
         <div className="text-sm text-muted">Videos</div>
         <div className="text-3xl font-bold">{c.videosCount ?? 0}</div>
-        <div className="absolute top-2 left-2 text-base-content/50">
+        <div className="absolute top-7 left-10 text-base-content/60">
           <FaVideo size={36} />
         </div>
       </div>
@@ -85,7 +85,7 @@ const Stats = () => {
         <div className="text-3xl font-bold">
           {hours}h {minutes}m
         </div>
-        <div className="absolute top-2 left-2 text-base-content/50">
+        <div className="absolute top-7 left-10 text-base-content/60">
           <BiSolidTimeFive size={36} />
         </div>
       </div>

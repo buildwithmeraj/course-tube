@@ -4,21 +4,41 @@ import Logo from "../utilities/Logo";
 import Link from "next/link";
 import ThemeSwitcher from "./ThemeSwitcher";
 import Search from "./Search";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { IoHomeSharp } from "react-icons/io5";
 import { PiLinkSimpleBold } from "react-icons/pi";
 import { RiGraduationCapFill } from "react-icons/ri";
 import { FaBars, FaFolderOpen } from "react-icons/fa6";
-import { FaInfoCircle, FaSignInAlt, FaUser } from "react-icons/fa";
+import {
+  FaInfoCircle,
+  FaSignInAlt,
+  FaSignOutAlt,
+  FaUser,
+} from "react-icons/fa";
 import { MdDashboard, MdPrivacyTip } from "react-icons/md";
 import { MdClose } from "react-icons/md";
 import { IoMdMail } from "react-icons/io";
 import { ImSearch } from "react-icons/im";
 import { useSearch } from "@/app/contexts/SearchContext";
 
-const Navbar = () => {
+const Navbar = ({ forceHardNavigation = false }) => {
   const { data: session, status } = useSession();
   const { showSearchModal, setShowSearchModal } = useSearch();
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/" });
+  };
+  const navigateHard = (href) => {
+    if (forceHardNavigation) {
+      return {
+        onClick: (event) => {
+          event.preventDefault();
+          window.location.assign(href);
+        },
+      };
+    }
+
+    return {};
+  };
   return (
     <>
       <div className="drawer">
@@ -31,7 +51,7 @@ const Navbar = () => {
                   <FaBars size={18} className="mr-2 lg:hidden" />
                 </label>
               </div>
-              <Link className="text-xl" href="/">
+              <Link className="text-xl" href="/" {...navigateHard("/")}>
                 <Logo />
               </Link>
             </div>
@@ -47,13 +67,13 @@ const Navbar = () => {
                   </button>
                 </li>
                 <li>
-                  <Link href="/courses">
+                  <Link href="/courses" {...navigateHard("/courses")}>
                     <RiGraduationCapFill className="mb-0.5" />
                     Courses
                   </Link>
                 </li>
                 <li>
-                  <Link href="/categories">
+                  <Link href="/categories" {...navigateHard("/categories")}>
                     <FaFolderOpen />
                     Categories
                   </Link>
@@ -64,21 +84,21 @@ const Navbar = () => {
                       <PiLinkSimpleBold className="inline mb-0.5 mr-1" />
                       Links
                     </summary>
-                    <ul className="p-2 bg-base-100 w-40 z-1">
+                    <ul className="p-2 bg-base-100 w-40 z-10">
                       <li>
-                        <Link href="/about">
+                        <Link href="/about" {...navigateHard("/about")}>
                           <FaInfoCircle />
                           About US
                         </Link>
                       </li>
                       <li>
-                        <Link href="/contact">
+                        <Link href="/contact" {...navigateHard("/contact")}>
                           <IoMdMail />
                           Contact US
                         </Link>
                       </li>
                       <li>
-                        <Link href="/privacy">
+                        <Link href="/privacy" {...navigateHard("/privacy")}>
                           <MdPrivacyTip />
                           Privacy Policy
                         </Link>
@@ -88,11 +108,12 @@ const Navbar = () => {
                 </li>
               </ul>
             </div>
-            <div className="navbar-end space-x-1">
+            <div className="navbar-end">
               {session?.user?.role === "admin" && (
                 <Link
                   className="btn btn-ghost hidden md:flex"
                   href="/dashboard"
+                  {...navigateHard("/dashboard")}
                 >
                   <MdDashboard size={15} />
                   Dashboard
@@ -100,17 +121,34 @@ const Navbar = () => {
               )}
 
               {session ? (
-                <Link className="btn btn-ghost hidden md:flex" href="/profile">
-                  <FaUser size={15} />
-                  Profile
-                </Link>
+                <>
+                  <Link
+                    className="btn btn-ghost hidden md:flex"
+                    href="/profile"
+                    {...navigateHard("/profile")}
+                  >
+                    <FaUser size={15} />
+                    Profile
+                  </Link>
+                  <button
+                    onClick={handleSignOut}
+                    className="btn btn-sm btn-ghost hover:btn-error"
+                  >
+                    <FaSignOutAlt />
+                    Logout
+                  </button>
+                </>
               ) : (
-                <Link className="btn btn-ghost hidden md:flex" href="/login">
+                <Link
+                  className="btn btn-ghost hidden md:flex"
+                  href="/login"
+                  {...navigateHard("/login")}
+                >
                   <FaSignInAlt />
                   Login
                 </Link>
               )}
-              <div className="hidden sm:flex">
+              <div className="hidden sm:flex ml-2">
                 <ThemeSwitcher />
               </div>
             </div>
@@ -133,7 +171,7 @@ const Navbar = () => {
               </label>
             </li>
             <li>
-              <Link href="/">
+              <Link href="/" {...navigateHard("/")}>
                 <IoHomeSharp className="mb-0.5" /> Home
               </Link>
             </li>
@@ -148,7 +186,7 @@ const Navbar = () => {
             </li>
             {session?.user?.role === "admin" && (
               <li>
-                <Link className="" href="/dashboard">
+                <Link className="" href="/dashboard" {...navigateHard("/dashboard")}>
                   <MdDashboard size={15} />
                   Dashboard
                 </Link>
@@ -156,45 +194,45 @@ const Navbar = () => {
             )}
             {session ? (
               <li>
-                <Link className="" href="/profile">
+                <Link className="" href="/profile" {...navigateHard("/profile")}>
                   <FaUser size={15} />
                   Profile
                 </Link>
               </li>
             ) : (
               <li>
-                <Link className="" href="/login">
+                <Link className="" href="/login" {...navigateHard("/login")}>
                   <FaSignInAlt />
                   Login
                 </Link>
               </li>
             )}
             <li>
-              <Link href="/courses">
+              <Link href="/courses" {...navigateHard("/courses")}>
                 <RiGraduationCapFill className="mb-0.5" />
                 Courses
               </Link>
             </li>
             <li>
-              <Link href="/categories">
+              <Link href="/categories" {...navigateHard("/categories")}>
                 <FaFolderOpen />
                 Categories
               </Link>
             </li>
             <li>
-              <Link href="/about">
+              <Link href="/about" {...navigateHard("/about")}>
                 <FaInfoCircle />
                 About US
               </Link>
             </li>
             <li>
-              <Link href="/contact">
+              <Link href="/contact" {...navigateHard("/contact")}>
                 <IoMdMail />
                 Contact US
               </Link>
             </li>
             <li>
-              <Link href="/privacy">
+              <Link href="/privacy" {...navigateHard("/privacy")}>
                 <MdPrivacyTip />
                 Privacy Policy
               </Link>

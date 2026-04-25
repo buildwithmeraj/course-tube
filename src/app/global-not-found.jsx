@@ -4,7 +4,8 @@ import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import Providers from "./providers/Providers";
 import { Toaster } from "react-hot-toast";
-import { FaExclamationTriangle, FaHome } from "react-icons/fa";
+import { FaExclamationTriangle } from "react-icons/fa";
+import HomeButton from "@/components/shared/HomeButton";
 
 export const metadata = {
   title: "Create Next App",
@@ -18,7 +19,7 @@ const GlobalNotFound = () => {
         <Providers>
           <header>
             <nav>
-              <Navbar />
+              <Navbar forceHardNavigation />
             </nav>
           </header>
           <main className="container mx-auto px-4 mt-20 flex-1">
@@ -27,17 +28,14 @@ const GlobalNotFound = () => {
                 <div className="flex items-center justify-center">
                   <FaExclamationTriangle size={120} className="text-warning" />
                 </div>
-                <h2>Ooooops!</h2>
+                <h2 className="title-accent">Page not found</h2>
                 <p className="text-lg">
                   The page you are looking for does not exist. It might have
                   been moved or deleted.
                 </p>
                 <p className="text-lg">But you can return to the homepage.</p>
                 <p>
-                  <a href="/" className="btn btn-success">
-                    <FaHome />
-                    Home
-                  </a>
+                  <HomeButton className="btn btn-success" />
                 </p>
               </div>
             </div>

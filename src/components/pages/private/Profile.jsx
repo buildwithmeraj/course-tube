@@ -73,8 +73,11 @@ export default function Profile() {
 
   useEffect(() => {
     if (!stats?.courses) {
-      setOngoingCourses([]);
-      setCoursesLoading(false);
+      setTimeout(() => {
+        setOngoingCourses([]);
+        setCoursesLoading(false);
+      }, 0);
+
       return;
     }
 
@@ -84,13 +87,19 @@ export default function Profile() {
       .filter(Boolean);
 
     if (ongoingIds.length === 0) {
-      setOngoingCourses([]);
-      setCoursesLoading(false);
+      setTimeout(() => {
+        setOngoingCourses([]);
+        setCoursesLoading(false);
+      }, 0);
+
       return;
     }
 
     let cancelled = false;
-    setCoursesLoading(true);
+    setTimeout(() => {
+      setCoursesLoading(true);
+    }, 0);
+
     Promise.all(
       ongoingIds.map((courseId) =>
         fetch(`/api/courses/${courseId}`)
@@ -113,8 +122,7 @@ export default function Profile() {
   }, [stats]);
 
   const handleSignOut = async () => {
-    await signOut({ redirect: true, callbackUrl: "/" });
-    router.push("/");
+    await signOut({ callbackUrl: "/" });
   };
 
   if (status === "loading") {
@@ -299,7 +307,7 @@ export default function Profile() {
                   key={courseId || course?.title}
                   className="flex items-center gap-3 rounded-lg border border-base-300 bg-base-300 p-3"
                 >
-                  <div className="h-12 w-18 overflow-hidden rounded-md bg-base-200/60">
+                  <div className="h-12 w-20 overflow-hidden rounded-md bg-base-200/60">
                     {course?.thumbnailUrl ? (
                       <Image
                         src={course.thumbnailUrl}

@@ -17,7 +17,11 @@ const DockNavLink = ({
     : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <Link href={href} className={isActive ? `dock-active` : ``} {...props}>
+    <Link
+      href={href}
+      className={`${isActive ? "dock-active" : ""} ${className}`.trim()}
+      {...props}
+    >
       {children}
     </Link>
   );

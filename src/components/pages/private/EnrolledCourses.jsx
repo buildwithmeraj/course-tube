@@ -11,7 +11,9 @@ const EnrolledCourses = async () => {
   return (
     <div>
       <div className="flex justify-between gap-4 flex-col lg:items-center lg:flex-row">
-        <h2>Your Courses {courses.length > 0 && `(${courses.length})`}</h2>
+        <h2 className="title-accent">
+          Your Courses {courses.length > 0 && `(${courses.length})`}
+        </h2>
         <Link href="/profile/courses/add" className="btn btn-primary">
           <RiPlayListAddFill />
           Add

@@ -5,6 +5,8 @@ import { BsFillHandIndexThumbFill } from "react-icons/bs";
 import { FaPlay } from "react-icons/fa6";
 import "animate.css";
 
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "CourseTube";
+
 const Hero = () => {
   return (
     <div className="hero min-h-90 max-w-screen backdrop-blur-md">
@@ -19,7 +21,7 @@ const Hero = () => {
         />
         <div>
           <h1 className="text-4xl font-bold">
-            Welcome to {process.env.SITE_NAME}
+            Welcome to {siteName}
           </h1>
           <p className="py-2 text-lg">
             Unlock your potential with our curated collection of high-quality
@@ -28,7 +30,7 @@ const Hero = () => {
 
           <div className="py-2">
             <h2 className="text-2xl font-semibold mb-1">
-              Why Choose {process.env.SITE_NAME}?
+              Why Choose {siteName}?
             </h2>
             <p className="py-2">
               We believe learning should be accessible, affordable, and

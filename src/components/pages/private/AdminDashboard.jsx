@@ -64,9 +64,10 @@ const AdminDashboard = () => {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Admin Dashboard</h1>
-        <p className="text-base-content/60">Manage your platform efficiently</p>
+      <div className="mb-8 mt-2">
+        <h1 className="title-accent text-4xl font-bold mb-2">
+          Admin Dashboard
+        </h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 backdrop-blur-md">

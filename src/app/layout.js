@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
               <Navbar />
             </nav>
           </header>
-          <main className="container mx-auto mt-18 px-4 mb-6 lg:mb-4 flex-1">
+          <main className="container mx-auto mt-20 px-4 mb-6 lg:mb-4 flex-1">
             {children}
           </main>
           <Toaster position="bottom-center" reverseOrder={false} />

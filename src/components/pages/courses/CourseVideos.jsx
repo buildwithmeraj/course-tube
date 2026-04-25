@@ -13,7 +13,7 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import {
   FaArrowAltCircleLeft,
@@ -30,7 +30,7 @@ const CourseVideos = () => {
   const [course, setCourse] = useState(null);
   const [enrolled, setEnrolled] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [updated, setUpdated] = useState(true);
+  const [updated, setUpdated] = useState(false);
   const [lastFinishedVideo, setLastFinishedVideo] = useState(null);
   const [manuallySelectedVideo, setManuallySelectedVideo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,49 +51,58 @@ const CourseVideos = () => {
         : "text-success";
   };
 
+  const isUpdatedWithinDays = (dateValue, days = 7) => {
+    if (!dateValue) return false;
+
+    const lastUpdate = new Date(dateValue);
+    if (Number.isNaN(lastUpdate.getTime())) return false;
+
+    const maxAgeMs = days * 24 * 60 * 60 * 1000;
+    return new Date().getTime() - lastUpdate.getTime() < maxAgeMs;
+  };
+
+  const fetchVideosAndProgress = useCallback(async () => {
+    if (!id) return;
+
+    try {
+      setLoading(true);
+
+      const [resCourse, resVideos, resProgress] = await Promise.all([
+        fetch(`/api/courses/${id}`),
+        fetch(`/api/courses/${id}/videos`),
+        fetch(`/api/courses/${id}/progress`),
+      ]);
+
+      if (!resCourse.ok || !resVideos.ok) {
+        setError("Failed to fetch course data");
+        return;
+      }
+
+      const [courseData, videosData] = await Promise.all([
+        resCourse.json(),
+        resVideos.json(),
+      ]);
+      const progressData = resProgress.ok ? await resProgress.json() : null;
+
+      setCourse(courseData);
+      setUpdated(
+        isUpdatedWithinDays(courseData?.updatedAt || courseData?.createdAt, 7),
+      );
+      setVideos(Array.isArray(videosData) ? videosData : []);
+      setLastFinishedVideo(progressData?.finishedVideo || null);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load course data");
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
   useEffect(() => {
     if (!id) return;
 
-    const fetchVideosAndProgress = async () => {
-      // Check if course was updated in the last 7 days
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      try {
-        // set loading state
-        setLoading(true);
-        // Fetch course details
-        const resCourse = await fetch(`/api/courses/${id}`);
-        if (!resCourse.ok) {
-          setError("Failed to fetch course details");
-        }
-        const courseData = await resCourse.json();
-        setCourse(courseData);
-        if (courseData.updatedAt > sevenDaysAgo) {
-          setUpdated(true);
-        }
-
-        // Fetch all videos for the course
-        const resVideos = await fetch(`/api/courses/${id}/videos`);
-        if (!resVideos.ok) {
-          setError("Failed to fetch videos");
-        }
-        const videosData = await resVideos.json();
-        setVideos(videosData);
-
-        // Fetch user progress (last finished video)
-        const resProgress = await fetch(`/api/courses/${id}/progress`);
-        const progressData = await resProgress.json();
-        const finishedVideoId = progressData?.finishedVideo || null;
-        setLastFinishedVideo(finishedVideoId);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchVideosAndProgress();
-  }, [id]);
+  }, [id, fetchVideosAndProgress]);
 
   // Derive the selected video instead of setting it in an effect
   const selectedVideo = useMemo(() => {
@@ -176,13 +185,18 @@ const CourseVideos = () => {
       try {
         setEnrollLoading(true);
         const enrollData = await fetch(`/api/courses/${id}/enroll`);
+        if (!enrollData.ok) {
+          setEnrolled(false);
+          return;
+        }
+
         const enrollDataJson = await enrollData.json();
         if (enrollDataJson) {
           setEnrolled(true);
         }
-        setEnrollLoading(false);
       } catch (err) {
         console.error(err);
+      } finally {
         setEnrollLoading(false);
       }
     };
@@ -221,16 +235,17 @@ const CourseVideos = () => {
       const res = await fetch(`/api/courses/${id}/synchronize`, {
         method: "PATCH",
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
         // Refetch videos after synchronization
-        fetchVideosAndProgress();
+        await fetchVideosAndProgress();
+        setUpdated(true);
         toast.success("Course synchronized successfully");
       } else {
         if (res.status === 429) {
-          toast.success("Course is already updated");
+          toast.success(data.message || "Course is already updated");
         } else {
-          toast.error("Failed to synchronize course");
+          toast.error(data.message || "Failed to synchronize course");
         }
       }
       setSynchronizing(false);
@@ -260,7 +275,7 @@ const CourseVideos = () => {
       <div className="flex items-center justify-center h-[80vh]">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center flex-col">
           <RiGraduationCapFill size={128} className="text-base-content/50" />
-          <h2 className="text-2xl mb-4 text-center">
+          <h2 className="title-accent text-2xl mb-4 text-center">
             You are not enrolled in this course.
           </h2>
           <button className="btn btn-primary" onClick={enrollInCourse}>
@@ -276,7 +291,7 @@ const CourseVideos = () => {
     <div className="space-y-3">
       <div className="grid grid-cols-1 lg:grid-cols-7 xl:grid-cols-3 gap-4 w-full">
         <div className="col-span-full -mb-2">
-          <h2>{course?.title}</h2>
+          <h2 className="title-accent">{course?.title}</h2>
         </div>
         <div className="col-span-full lg:col-span-4 xl:col-span-2 space-y-3 w-full">
           {loading ? (
@@ -309,7 +324,7 @@ const CourseVideos = () => {
             <div className="text-lg font-semibold items-center gap-4">
               Course Progress{" "}
               <progress
-                className={`progress w-26 xl:w-56 transition-all duration-300 ${progressColor(
+                className={`progress w-28 xl:w-56 transition-all duration-300 ${progressColor(
                   course?.totalCount,
                   videos.find((v) => v._id === lastFinishedVideo)?.position +
                     1 || 0,

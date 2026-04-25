@@ -17,7 +17,7 @@ export async function GET(req, { params }) {
     const videos = await db
       .collection("videos")
       .find({ courseId: new ObjectId(id) })
-      .sort({ _id: 1 })
+      .sort({ order: 1, _id: 1 })
       .toArray();
 
     return NextResponse.json(videos, { status: 200 });

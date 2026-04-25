@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { RiPlayList2Fill } from "react-icons/ri";
 
@@ -9,24 +9,6 @@ const Search = ({ setShowSearchModal }) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState([]);
-
-  // fetch searched courses
-  const fetchCourses = async () => {
-    if (!debouncedQuery) return;
-    setError(null);
-    setLoading(true);
-
-    const courseRes = await fetch(`/api/courses?q=${debouncedQuery}`);
-    if (!courseRes.ok) {
-      setError("Couldn't fetch courses");
-      setLoading(false);
-      return;
-    }
-
-    const courseData = await courseRes.json();
-    setCourses(courseData);
-    setLoading(false);
-  };
 
   // Debounce logic
   useEffect(() => {
@@ -38,10 +20,33 @@ const Search = ({ setShowSearchModal }) => {
 
   // Runs only after debounce delay
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchCourses();
-    }, 0);
-    return () => clearTimeout(timer);
+    const fetchCourses = async () => {
+      if (!debouncedQuery) {
+        setCourses([]);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
+      setError(null);
+      setLoading(true);
+
+      const courseRes = await fetch(
+        `/api/courses?q=${encodeURIComponent(debouncedQuery)}`,
+      );
+
+      if (!courseRes.ok) {
+        setError("Couldn't fetch courses");
+        setLoading(false);
+        return;
+      }
+
+      const courseData = await courseRes.json();
+      setCourses(courseData);
+      setLoading(false);
+    };
+
+    fetchCourses();
   }, [debouncedQuery]);
 
   return (
@@ -82,9 +87,9 @@ const Search = ({ setShowSearchModal }) => {
               <div className="divider m-0"></div>
               <div className="skeleton h-4 w-60 mb-2"></div>
               <div className="divider m-0"></div>
-              <div className="skeleton h-4 w-58 mb-2"></div>
+              <div className="skeleton h-4 w-56 mb-2"></div>
               <div className="divider m-0"></div>
-              <div className="skeleton h-4 w-68"></div>
+              <div className="skeleton h-4 w-64"></div>
             </div>
           )}
 

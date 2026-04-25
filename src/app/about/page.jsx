@@ -24,7 +24,9 @@ export default function AboutPage() {
   return (
     <>
       <section>
-        <h2 className="text-center">About {process.env.SITE_NAME}</h2>
+        <h2 className="title-accent text-center">
+          About {process.env.SITE_NAME}
+        </h2>
         <p className="lead backdrop-blur-lg">
           {process.env.SITE_NAME} is a revolutionary learning platform that
           curates high-quality playlist-based courses from YouTube and makes

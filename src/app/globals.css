@@ -3,7 +3,7 @@
 
 @plugin "daisyui/theme" {
   name: "light";
-  default: true;
+  default: false;
   prefersdark: false;
   color-scheme: "light";
   --color-base-100: oklch(100% 0 0);
@@ -119,6 +119,6 @@ label {
   @apply pl-1;
 }
 
-.card-title {
-  @apply text-lg;
+.title-accent {
+  @apply text-accent;
 }

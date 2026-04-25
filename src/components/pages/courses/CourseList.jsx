@@ -39,7 +39,7 @@ const CoursesList = () => {
   return (
     <div>
       <div className="flex justify-between items-center">
-        <h2 className="-mb-3">All Courses</h2>
+        <h2 className="title-accent -mb-3">All Courses</h2>
         <div>
           <select
             value={sortBy}
@@ -53,16 +53,16 @@ const CoursesList = () => {
             <option value="updatedAt">Updated Recently</option>
           </select>
         </div>
-        {session?.user?.role === "user" ||
-          (session?.user?.role === "admin" && (
-            <Link
-              className="text-primary flex items-center gap-1"
-              href="/profile/courses/add"
-            >
-              <FaPlus className="mb-0.5" />
-              Add
-            </Link>
-          ))}
+        {(session?.user?.role === "user" ||
+          session?.user?.role === "admin") && (
+          <Link
+            className="text-primary flex items-center gap-1 btn btn-primary btn-sm"
+            href="/profile/courses/add"
+          >
+            <FaPlus className="mb-0.5" />
+            Add
+          </Link>
+        )}
       </div>
 
       {courses.length === 0 && <p>No approved courses</p>}

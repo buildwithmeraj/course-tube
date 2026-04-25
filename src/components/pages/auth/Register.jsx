@@ -139,92 +139,88 @@ const RegisterPage = () => {
     );
   }
   return (
-    <div className="flex items-center justify-center h-[80vh]">
-      <div className="card bg-base-100 w-fit max-w-2xl shadow-xl flex flex-row items-center">
-        <div className="flex flex-row justify-center items-center card bg-base-100 w-full shadow-xl">
-          <div className="max-w-md shrink-0">
-            <form className="card-body" onSubmit={handleCredentialsRegister}>
-              <h2 className="text-center">Register</h2>
-              {error && (
-                <div className="alert alert-error shadow-lg flex items-center mt-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="stroke-current shrink-0 h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span>{error}</span>
-                </div>
-              )}
-              <fieldset className="fieldset">
-                <label className="label">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  className="input"
-                  placeholder="Name"
+    <div className="flex items-center justify-center h-[84vh]">
+      <div className="card bg-base-200 w-full max-w-sm shadow-md flex flex-row items-center">
+        <form className="card-body" onSubmit={handleCredentialsRegister}>
+          <h2 className="title-accent text-center -mb-3">Register</h2>
+          {error && (
+            <div className="alert alert-error shadow-lg flex items-center mt-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
-                <label className="label">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  className="input"
-                  placeholder="Email"
-                />
-                <label className="label">Profile Picture</label>
-                <input type="file" className="file-input" name="photo" />
-                <label className="label">Password</label>
-                <input
-                  type="password"
-                  className="input"
-                  name="password"
-                  placeholder="Password"
-                />
-                <label className="label">Confirm Password</label>
-                <input
-                  type="password"
-                  className="input"
-                  name="confirmPassword"
-                  placeholder="Confirm Password"
-                />
-                <button
-                  className="btn btn-accent mt-2"
-                  disabled={isLoading || isUploading}
-                >
-                  <FaUserPlus size={20} />{" "}
-                  {isLoading || isUploading
-                    ? isLoading
-                      ? "Registering..."
-                      : "Uploading..."
-                    : "Register"}
-                </button>
-                <div className="divider m-0.5 font-semibold">OR</div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    className="btn btn-soft flex flex-1"
-                    type="button"
-                    onClick={handleGoogleRegister}
-                    disabled={isLoading || isUploading}
-                  >
-                    <FaGoogle size={20} />
-                    {isLoading || isUploading ? "Registering..." : "Register"}
-                  </button>
-                  <Link className="btn btn-soft flex flex-1" href="/login">
-                    <FaSignInAlt size={20} />
-                    Login
-                  </Link>
-                </div>
-              </fieldset>
-            </form>
-          </div>
-        </div>
+              </svg>
+              <span>{error}</span>
+            </div>
+          )}
+          <fieldset className="fieldset">
+            <label className="label">Name</label>
+            <input
+              type="text"
+              name="name"
+              className="input"
+              placeholder="Name"
+            />
+            <label className="label">Email</label>
+            <input
+              type="email"
+              name="email"
+              className="input"
+              placeholder="Email"
+            />
+            <label className="label">Profile Picture</label>
+            <input type="file" className="file-input" name="photo" />
+            <label className="label">Password</label>
+            <input
+              type="password"
+              className="input"
+              name="password"
+              placeholder="Password"
+            />
+            <label className="label">Confirm Password</label>
+            <input
+              type="password"
+              className="input"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+            />
+            <button
+              className="btn btn-accent mt-2"
+              disabled={isLoading || isUploading}
+            >
+              <FaUserPlus size={20} />{" "}
+              {isLoading || isUploading
+                ? isLoading
+                  ? "Registering..."
+                  : "Uploading..."
+                : "Register"}
+            </button>
+            <div className="divider m-0.5 font-semibold">OR</div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                className="btn btn-soft flex flex-1"
+                type="button"
+                onClick={handleGoogleRegister}
+                disabled={isLoading || isUploading}
+              >
+                <FaGoogle size={20} />
+                {isLoading || isUploading ? "Registering..." : "Register"}
+              </button>
+              <Link className="btn btn-soft flex flex-1" href="/login">
+                <FaSignInAlt size={20} />
+                Login
+              </Link>
+            </div>
+          </fieldset>
+        </form>
       </div>
     </div>
   );

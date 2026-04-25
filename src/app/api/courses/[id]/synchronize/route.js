@@ -4,6 +4,29 @@ import { ObjectId } from "mongodb";
 
 const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API;
 
+const buildYouTubeUrl = (baseUrl, params) => {
+  const url = new URL(baseUrl);
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      url.searchParams.set(key, value);
+    }
+  });
+  return url.toString();
+};
+
+const fetchYouTubeJson = async (url, fallbackMessage) => {
+  const res = await fetch(url);
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    const message =
+      data?.error?.message || data?.message || fallbackMessage || "YouTube API request failed";
+    throw new Error(message);
+  }
+
+  return data;
+};
+
 // Convert ISO 8601 duration → seconds + readable string
 const parseDuration = (iso) => {
   const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
@@ -29,13 +52,18 @@ const fetchDurations = async (videoIds) => {
   for (let i = 0; i < videoIds.length; i += 50) {
     const chunk = videoIds.slice(i, i + 50);
 
-    const res = await fetch(
-      `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${chunk.join(
-        ",",
-      )}&key=${API_KEY}`,
+    const data = await fetchYouTubeJson(
+      buildYouTubeUrl("https://www.googleapis.com/youtube/v3/videos", {
+        part: "contentDetails",
+        id: chunk.join(","),
+        key: API_KEY,
+      }),
+      "Failed to fetch video durations from YouTube",
     );
 
-    const data = await res.json();
+    if (!Array.isArray(data?.items)) {
+      throw new Error("Failed to fetch video durations from YouTube");
+    }
 
     data.items.forEach((item) => {
       map[item.id] = item.contentDetails.duration;
@@ -91,21 +119,22 @@ export async function PATCH(req, { params }) {
       );
     }
 
-    // Fetch playlist data from YouTube
-    const playlistResponse = await fetch(
-      `https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&id=${course.playlistId}&key=${API_KEY}`,
-    );
-
-    if (!playlistResponse.ok) {
-      const errorText = await playlistResponse.text();
-      console.error("YouTube API Error:", errorText);
+    if (!API_KEY) {
       return NextResponse.json(
-        { message: "Failed to fetch playlist data from YouTube" },
-        { status: 502 },
+        { message: "YouTube API key is missing" },
+        { status: 500 },
       );
     }
 
-    const playlistData = await playlistResponse.json();
+    // Fetch playlist data from YouTube
+    const playlistData = await fetchYouTubeJson(
+      buildYouTubeUrl("https://www.googleapis.com/youtube/v3/playlists", {
+        part: "snippet,contentDetails",
+        id: course.playlistId,
+        key: API_KEY,
+      }),
+      "Failed to fetch playlist data from YouTube",
+    );
 
     if (!playlistData.items || playlistData.items.length === 0) {
       return NextResponse.json(
@@ -123,20 +152,20 @@ export async function PATCH(req, { params }) {
     let nextPageToken = "";
 
     do {
-      const videoRes = await fetch(
-        `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${course.playlistId}&pageToken=${nextPageToken}&key=${API_KEY}`,
+      const videoData = await fetchYouTubeJson(
+        buildYouTubeUrl("https://www.googleapis.com/youtube/v3/playlistItems", {
+          part: "snippet",
+          maxResults: "50",
+          playlistId: course.playlistId,
+          pageToken: nextPageToken,
+          key: API_KEY,
+        }),
+        "Failed to fetch videos from YouTube",
       );
 
-      if (!videoRes.ok) {
-        const errorText = await videoRes.text();
-        console.error("YouTube API Error:", errorText);
-        return NextResponse.json(
-          { message: "Failed to fetch videos from YouTube" },
-          { status: 502 },
-        );
+      if (!Array.isArray(videoData?.items)) {
+        throw new Error("Failed to fetch videos from YouTube");
       }
-
-      const videoData = await videoRes.json();
 
       videos.push(
         ...videoData.items.map((item) => ({

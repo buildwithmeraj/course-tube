@@ -105,8 +105,10 @@ const ManageCourses = () => {
   return (
     <div>
       <div className="flex items-center justify-between flex-col lg:flex-row">
-        <h2>Manage Courses {courses.length > 0 && `(${courses.length})`}</h2>
-        <Link href="/profile/courses/add" className="btn btn-primary">
+        <h2 className="title-accent">
+          Manage Courses {courses.length > 0 && `(${courses.length})`}
+        </h2>
+        <Link href="/profile/courses/add" className="btn btn-primary btn-sm">
           <RiPlayListAddFill />
           Add
         </Link>

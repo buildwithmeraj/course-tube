@@ -27,13 +27,17 @@ const fetchDurations = async (videoIds) => {
   for (let i = 0; i < videoIds.length; i += 50) {
     const chunk = videoIds.slice(i, i + 50);
 
-    const res = await fetch(
-      `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${chunk.join(
-        ",",
-      )}&key=${API_KEY}`,
-    );
+    const url = new URL("https://www.googleapis.com/youtube/v3/videos");
+    url.searchParams.set("part", "contentDetails");
+    url.searchParams.set("id", chunk.join(","));
+    url.searchParams.set("key", API_KEY);
 
-    const data = await res.json();
+    const res = await fetch(url.toString());
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok || !Array.isArray(data?.items)) {
+      throw new Error("Failed to fetch video durations from YouTube");
+    }
 
     data.items.forEach((item) => {
       map[item.id] = item.contentDetails.duration;
@@ -47,11 +51,21 @@ const fetchAllVideos = async (playlistId) => {
   let nextPageToken = "";
 
   do {
-    const res = await fetch(
-      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&pageToken=${nextPageToken}&key=${API_KEY}`,
-    );
+    const url = new URL("https://www.googleapis.com/youtube/v3/playlistItems");
+    url.searchParams.set("part", "snippet");
+    url.searchParams.set("maxResults", "50");
+    url.searchParams.set("playlistId", playlistId);
+    if (nextPageToken) {
+      url.searchParams.set("pageToken", nextPageToken);
+    }
+    url.searchParams.set("key", API_KEY);
 
-    const data = await res.json();
+    const res = await fetch(url.toString());
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok || !Array.isArray(data?.items)) {
+      throw new Error("Failed to fetch videos from YouTube");
+    }
 
     videos.push(
       ...data.items.map((item) => ({

@@ -61,101 +61,105 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="prose prose-lg mx-auto px-4 max-w-xl">
-      <h2>Contact Us</h2>
-      <p className="alert alert-soft alert-info mb-3">
-        <FaInfoCircle className="inline-block" size={30} />
-        Have questions or feedback? We would love to hear from you. Fill out the
-        form below and we will get back to you as soon as possible.
-      </p>
+    <div className="flex items-center justify-center h-[84vh]">
+      <div className="card bg-base-200 w-full max-w-xl shadow-md">
+        <div className="card-body">
+          <h2 className="title-accent text-center">Contact Us</h2>
+          <p className="alert alert-soft alert-info mb-3">
+            <FaInfoCircle className="inline-block" size={30} />
+            Have questions or feedback? We would love to hear from you. Fill out
+            the form below and we will get back to you as soon as possible.
+          </p>
 
-      {success && (
-        <div className="alert alert-success mb-4">
-          <span>
-            <FaCheckCircle className="inline mr-2" />
-            Your message has been sent successfully!
-          </span>
+          {success && (
+            <div className="alert alert-success mb-4">
+              <span>
+                <FaCheckCircle className="inline mr-2" />
+                Your message has been sent successfully!
+              </span>
+            </div>
+          )}
+
+          {error && (
+            <div className="alert alert-error mb-4">
+              <span>
+                <PiWarningFill className="inline mr-2" />
+                {error}
+              </span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4 backdrop-blur-xl">
+            <div className="form-control">
+              <label className="label block">
+                <span className="label-text">Name</span>
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Your name"
+                className="input input-bordered w-full"
+                required
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label block">
+                <span className="label-text">Email</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="your@email.com"
+                className="input input-bordered w-full"
+                required
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label block">
+                <span className="label-text">Subject</span>
+              </label>
+              <input
+                type="text"
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                placeholder="Message subject"
+                className="input input-bordered w-full"
+                required
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label block">
+                <span className="label-text">Message</span>
+              </label>
+              <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                placeholder="Your message"
+                className="textarea textarea-bordered h-32 w-full"
+                required
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn btn-primary w-full"
+            >
+              <IoSend />
+              {loading ? "Sending..." : "Send Message"}
+            </button>
+          </form>
         </div>
-      )}
-
-      {error && (
-        <div className="alert alert-error mb-4">
-          <span>
-            <PiWarningFill className="inline mr-2" />
-            {error}
-          </span>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-4 backdrop-blur-xl">
-        <div className="form-control">
-          <label className="label block">
-            <span className="label-text">Name</span>
-          </label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Your name"
-            className="input input-bordered w-full"
-            required
-          />
-        </div>
-
-        <div className="form-control">
-          <label className="label block">
-            <span className="label-text">Email</span>
-          </label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="your@email.com"
-            className="input input-bordered w-full"
-            required
-          />
-        </div>
-
-        <div className="form-control">
-          <label className="label block">
-            <span className="label-text">Subject</span>
-          </label>
-          <input
-            type="text"
-            name="subject"
-            value={formData.subject}
-            onChange={handleChange}
-            placeholder="Message subject"
-            className="input input-bordered w-full"
-            required
-          />
-        </div>
-
-        <div className="form-control">
-          <label className="label block">
-            <span className="label-text">Message</span>
-          </label>
-          <textarea
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            placeholder="Your message"
-            className="textarea textarea-bordered h-32 w-full"
-            required
-          ></textarea>
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="btn btn-primary w-full"
-        >
-          <IoSend />
-          {loading ? "Sending..." : "Send Message"}
-        </button>
-      </form>
-    </main>
+      </div>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
-import Link from "next/link";
 import React from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
+import HomeButton from "./HomeButton";
 
 const NotFound = () => {
   return (
@@ -9,16 +9,14 @@ const NotFound = () => {
         <div className="flex items-center justify-center">
           <FaExclamationTriangle size={120} className="text-warning" />
         </div>
-        <h2>Ooooops!</h2>
+        <h2 className="title-accent">Page not found</h2>
         <p className="text-lg">
           The page you are looking for does not exist. It might have been moved
           or deleted.
         </p>
         <p className="text-lg">But you can return to the homepage.</p>
         <p>
-          <Link href="/" className="btn btn-success">
-            Home
-          </Link>
+          <HomeButton />
         </p>
       </div>
     </div>

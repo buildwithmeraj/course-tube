@@ -4,6 +4,7 @@ import Loading from "@/components/ui/Loading";
 import NotLoggedIn from "@/components/ui/NotLoggedIn";
 import VideoCard from "@/components/ui/VideoCard";
 import VideoCardSkeleton from "@/components/ui/VideoCardSkeleton";
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -12,7 +13,7 @@ import { MdOutlineAddToPhotos } from "react-icons/md";
 
 const CourseDetails = () => {
   const { data: session } = useSession();
-  const [videos, setVideos] = useState(null);
+  const [videos, setVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [course, setCourse] = useState(null);
   const [enrolled, setEnrolled] = useState(false);
@@ -27,45 +28,36 @@ const CourseDetails = () => {
 
     const fetchVideosAndProgress = async () => {
       try {
-        // set loading state
         setLoading(true);
-        // Fetch all videos for the course
-        const videosRes = await fetch(`/api/courses/${id}/videos`);
-        if (!videosRes.ok) {
-          setError("Failed to fetch course details");
-        }
-        const videosData = await videosRes.json();
-        setVideos(videosData);
+        const [videosRes, courseRes, progressRes] = await Promise.all([
+          fetch(`/api/courses/${id}/videos`),
+          fetch(`/api/courses/${id}`),
+          fetch(`/api/courses/${id}/progress`),
+        ]);
 
-        // Fetch course details
-        const resCourse = await fetch(`/api/courses/${id}`);
-        if (!resCourse.ok) {
-          setError("Failed to fetch course details");
+        if (!videosRes.ok || !courseRes.ok) {
+          setError("Failed to fetch course data");
+          return;
         }
-        const courseData = await resCourse.json();
+
+        const [videosData, courseData] = await Promise.all([
+          videosRes.json(),
+          courseRes.json(),
+        ]);
+        const progressData = progressRes.ok ? await progressRes.json() : null;
+
+        setVideos(Array.isArray(videosData) ? videosData : []);
         setCourse(courseData);
 
-        // Fetch user progress (single finished video)
-        const progressRes = await fetch(`/api/courses/${id}/progress`);
-        const progressData = await progressRes.json();
-
         const lastFinishedVideo = progressData?.finishedVideo || null;
-
-        // Determine next video to highlight
-        let nextVideoId = videosData[0]?._id; // default first video
-
-        if (lastFinishedVideo) {
-          const lastIndex = videosData.findIndex(
-            (v) => v._id === lastFinishedVideo,
-          );
-          if (lastIndex !== -1 && lastIndex + 1 < videosData.length) {
-            nextVideoId = videosData[lastIndex + 1]._id; // next video
-          }
-        }
+        const nextVideoId = Array.isArray(videosData)
+          ? getNextVideoId(videosData, lastFinishedVideo)
+          : null;
 
         setSelectedVideo(nextVideoId);
       } catch (err) {
         console.error(err);
+        setError("Failed to load course details");
       } finally {
         setLoading(false);
       }
@@ -79,13 +71,19 @@ const CourseDetails = () => {
       try {
         setEnrollLoading(true);
         const enrollData = await fetch(`/api/courses/${id}/enroll`);
+
+        if (!enrollData.ok) {
+          setEnrolled(false);
+          return;
+        }
+
         const enrollDataJson = await enrollData.json();
         if (enrollDataJson) {
           setEnrolled(true);
         }
-        setEnrollLoading(false);
       } catch (err) {
         console.error(err);
+      } finally {
         setEnrollLoading(false);
       }
     };
@@ -111,6 +109,27 @@ const CourseDetails = () => {
     }
   };
 
+  const selectedVideoPosition =
+    videos.find((video) => video?._id === selectedVideo)?.position ?? -1;
+
+  const getNextVideoId = (videoList, lastFinishedVideo) => {
+    if (!Array.isArray(videoList) || videoList.length === 0) {
+      return null;
+    }
+
+    if (!lastFinishedVideo) {
+      return videoList[0]?._id ?? null;
+    }
+
+    const lastIndex = videoList.findIndex((v) => v._id === lastFinishedVideo);
+
+    if (lastIndex !== -1 && lastIndex + 1 < videoList.length) {
+      return videoList[lastIndex + 1]._id;
+    }
+
+    return videoList[lastIndex]?._id ?? videoList[0]?._id ?? null;
+  };
+
   const closeModal = () => {
     setShowModal(false);
   };
@@ -125,12 +144,31 @@ const CourseDetails = () => {
     return <NotLoggedIn />;
   }
 
+  if (!loading && videos.length === 0) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center">
+        <div className="card bg-base-200 max-w-lg shadow-md text-center p-8 space-y-3">
+          <h2 className="title-accent">No videos yet</h2>
+          <p className="text-base-content/70">
+            This course does not have any published videos right now. Please
+            check back later or return to the courses list.
+          </p>
+          <div className="pt-2">
+            <Link className="btn btn-primary" href="/courses">
+              Back to Courses
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
-      <h2 className="flex flex-col lg:flex-row justify-between items-center">
-        <span>
-          {course?.title} ({videos?.length} Videos)
-        </span>
+        <h2 className="title-accent flex flex-col lg:flex-row justify-between items-center">
+          <span>
+            {course?.title} ({videos?.length} Videos)
+          </span>
         {!enrolled && (
           <button className="btn btn-primary" onClick={enrollInCourse}>
             <MdOutlineAddToPhotos />
@@ -153,7 +191,10 @@ const CourseDetails = () => {
               video={video}
               course={course}
               isSelected={video._id === selectedVideo}
-              isWatched={video._id < selectedVideo}
+              isWatched={
+                selectedVideoPosition !== -1 &&
+                video.position < selectedVideoPosition
+              }
               isEnrolled={enrolled}
               onSelect={(vid) => setSelectedVideo(vid)}
             />
