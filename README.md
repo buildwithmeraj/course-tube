@@ -1,4 +1,4 @@
-# Course Tube
+# <img src="public/icon.svg" alt="DRPY Icon" width="36" height="36" style="vertical-align: middle; margin-top: 4px;" /> Course Tube
 
 Course Tube is a Next.js app for discovering, syncing, and tracking free YouTube course playlists. Users can add playlists, track watched videos, and organize their learning, while admins review submissions, manage categories, and publish approved courses.
 
