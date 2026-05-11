@@ -165,10 +165,16 @@ const CourseDetails = () => {
 
   return (
     <div className="space-y-4">
-        <h2 className="title-accent flex flex-col lg:flex-row justify-between items-center">
-          <span>
-            {course?.title} ({videos?.length} Videos)
-          </span>
+      <h2 className="title-accent flex flex-col lg:flex-row justify-between items-center">
+        <span>
+          {loading ? (
+            <span className="loading loading-dots loading-xl"></span>
+          ) : (
+            <>
+              {course?.title} ({videos?.length} Videos)
+            </>
+          )}
+        </span>
         {!enrolled && (
           <button className="btn btn-primary" onClick={enrollInCourse}>
             <MdOutlineAddToPhotos />
