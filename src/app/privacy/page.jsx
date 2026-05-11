@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 export const metadata = {
-  title: `Privacy Policy | ${process.env.SITE_NAME}`,
+  title: "Privacy Policy",
   description: `Privacy Policy of ${process.env.SITE_NAME}. `,
 };
 export default function PrivacyPolicyPage() {

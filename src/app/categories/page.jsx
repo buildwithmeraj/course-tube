@@ -1,7 +1,7 @@
 import CategoryList from "@/components/pages/categoreis/CategoryList";
 import React from "react";
 export const metadata = {
-  title: `Categories | ${process.env.SITE_NAME}`,
+  title: "Categories",
   description: `All courses categories of ${process.env.SITE_NAME}. `,
 };
 

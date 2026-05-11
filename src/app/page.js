@@ -1,6 +1,6 @@
 import HomePage from "../components/pages/home/Home";
 export const metadata = {
-  title: `Home Page | ${process.env.SITE_NAME}`,
+  title: `${process.env.SITE_NAME} - Learn Smarter`,
   description:
     "Complete courses directly from youtube playlists while keeping track of progresses in an organized way.",
 };

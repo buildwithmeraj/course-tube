@@ -1,7 +1,7 @@
 import EnrolledCourses from "@/components/pages/private/EnrolledCourses";
 import React from "react";
 export const metadata = {
-  title: `Enrolled Courses | ${process.env.SITE_NAME}`,
+  title: "Enrolled Courses",
   description: `All courses enrolled by you. `,
 };
 const page = () => {

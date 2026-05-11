@@ -1,6 +1,6 @@
 import ContactPage from "@/components/pages/contact/ContactPage";
 export const metadata = {
-  title: `Contact | ${process.env.SITE_NAME}`,
+  title: "Contact",
   description: `Contact page of ${process.env.SITE_NAME}. `,
 };
 const page = () => {

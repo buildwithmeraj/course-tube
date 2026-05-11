@@ -7,7 +7,7 @@ import { GrStatusGood } from "react-icons/gr";
 import { RiCommunityLine } from "react-icons/ri";
 import { GoNorthStar } from "react-icons/go";
 export const metadata = {
-  title: `About | ${process.env.SITE_NAME}`,
+  title: "About",
   description: `Learn how ${process.env.SITE_NAME} turns YouTube playlists into structured courses with progress tracking and admin review.`,
 };
 
