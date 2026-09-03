@@ -21,7 +21,7 @@ export async function GET(req, { params }) {
 
   const db = await getCoursesDB();
   const enrollsCol = db.collection("enrolls");
-  const progressCol = db.collection("progress");
+  const progressCol = db.collection("videoProgress");
   const videosCol = db.collection("videos");
 
   const enrolls = await enrollsCol
@@ -41,41 +41,46 @@ export async function GET(req, { params }) {
     });
   }
 
-  const progressDocs = await progressCol
-    .find({ userEmail: session?.user?.email, courseId: { $in: courseIds } })
-    .toArray();
-
-  const progressByCourseId = new Map(
-    progressDocs.map((doc) => [doc.courseId.toString(), doc]),
-  );
-
-  const lastVideos = await videosCol
+  // Completion is now "every video in the course has a completedAt", rather
+  // than "the pointer happens to sit on the last video".
+  const completedPerCourse = await progressCol
     .aggregate([
-      { $match: { courseId: { $in: courseIds } } },
-      { $sort: { courseId: 1, order: -1, position: -1, _id: -1 } },
-      { $group: { _id: "$courseId", lastVideoId: { $first: "$_id" } } },
+      {
+        $match: {
+          userEmail: session.user.email,
+          courseId: { $in: courseIds },
+          completedAt: { $ne: null },
+        },
+      },
+      { $group: { _id: "$courseId", completed: { $sum: 1 } } },
     ])
     .toArray();
 
-  const lastVideoByCourseId = new Map(
-    lastVideos.map((doc) => [doc._id.toString(), doc.lastVideoId]),
+  const completedByCourseId = new Map(
+    completedPerCourse.map((doc) => [doc._id.toString(), doc.completed]),
+  );
+
+  const totalPerCourse = await videosCol
+    .aggregate([
+      { $match: { courseId: { $in: courseIds } } },
+      { $group: { _id: "$courseId", total: { $sum: 1 } } },
+    ])
+    .toArray();
+
+  const totalByCourseId = new Map(
+    totalPerCourse.map((doc) => [doc._id.toString(), doc.total]),
   );
 
   const courses = enrolls.map((enroll) => {
     const courseId = enroll.courseId?.toString();
-    const progress = courseId ? progressByCourseId.get(courseId) : null;
-    const lastVideoId = courseId ? lastVideoByCourseId.get(courseId) : null;
-    const finishedVideoId = progress?.finishedVideo || null;
-    const completed =
-      !!finishedVideoId &&
-      !!lastVideoId &&
-      finishedVideoId.toString() === lastVideoId.toString();
+    const completedVideos = completedByCourseId.get(courseId) || 0;
+    const totalVideos = totalByCourseId.get(courseId) || 0;
 
     return {
       courseId: enroll.courseId,
-      progress,
-      lastVideoId,
-      completed,
+      completedVideos,
+      totalVideos,
+      completed: totalVideos > 0 && completedVideos >= totalVideos,
     };
   });
 

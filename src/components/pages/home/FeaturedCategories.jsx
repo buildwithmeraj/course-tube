@@ -1,33 +1,10 @@
-"use client";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FaFolder, FaFolderOpen } from "react-icons/fa6";
+import { listCategories, toPlain } from "@/lib/queries";
 
-const FeaturedCategories = () => {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch("/api/categories");
-        if (!res.ok) throw new Error("Failed to fetch categories");
-
-        const data = await res.json();
-        const featured = Array.isArray(data)
-          ? data.slice().reverse().slice(0, 4)
-          : [];
-        setCategories(featured);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+const FeaturedCategories = async () => {
+  const categories = toPlain(await listCategories()).slice(0, 4);
 
   return categories.length > 0 ? (
     <section className="mt-8">
@@ -45,9 +22,7 @@ const FeaturedCategories = () => {
         </div>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {!loading &&
-            categories.length > 0 &&
-            categories.map((category) => (
+          {categories.map((category) => (
               <Link
                 key={category._id}
                 href={`/categories/${category._id}`}
@@ -60,7 +35,7 @@ const FeaturedCategories = () => {
                   </span>
                 </div>
               </Link>
-            ))}
+          ))}
         </div>
       </div>
     </section>

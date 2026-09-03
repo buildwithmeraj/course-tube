@@ -1,6 +1,5 @@
 import React from "react";
 import Icon from "../utilities/Icon";
-import "animate.css";
 
 const Loading = () => {
   return (
@@ -9,7 +8,7 @@ const Loading = () => {
         <Icon
           width={128}
           height={128}
-          classes="animate__animated animate__pulse animate__infinite"
+          classes="motion-safe:animate-pulse"
         />
       </div>
     </div>

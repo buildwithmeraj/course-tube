@@ -1,30 +1,17 @@
-"use client";
 import PlaylistCard from "@/components/ui/PlaylistCard";
-import PlaylistCardSkeleton from "@/components/ui/PlaylistCardSkeleton";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { GrLinkNext } from "react-icons/gr";
+import { listCourses, toPlain } from "@/lib/queries";
 
-const PopularCourses = () => {
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const fetchPopularCourses = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(
-          "/api/courses?approved=true&popular=true&limit=8",
-        );
-        const data = await res.json();
-        setCourses(data);
-      } catch (error) {
-        console.error("Error fetching popular courses:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPopularCourses();
-  }, []);
+const PopularCourses = async () => {
+  const courses = toPlain(
+    await listCourses({
+      filter: { approved: true },
+      sortBy: "enrollCount",
+      limit: 8,
+    }),
+  );
 
   return (
     <>
@@ -36,17 +23,9 @@ const PopularCourses = () => {
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {loading && (
-          <>
-            {Array.from({ length: 8 }).map((_, i) => (
-              <PlaylistCardSkeleton key={i} />
-            ))}
-          </>
-        )}
-        {!loading &&
-          courses.map((course) => (
-            <PlaylistCard key={course._id} playlist={course} />
-          ))}
+        {courses.map((course) => (
+          <PlaylistCard key={course._id} playlist={course} />
+        ))}
       </div>
       <div className="text-center">
         <Link href="/courses/" className="btn btn-primary mt-4">

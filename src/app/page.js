@@ -5,6 +5,8 @@ export const metadata = {
     "Complete courses directly from youtube playlists while keeping track of progresses in an organized way.",
 };
 
+export const revalidate = 3600;
+
 export default function Home() {
   return <HomePage />;
 }

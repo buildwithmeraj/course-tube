@@ -3,7 +3,6 @@ import Link from "next/link";
 import React from "react";
 import { BsFillHandIndexThumbFill } from "react-icons/bs";
 import { FaPlay } from "react-icons/fa6";
-import "animate.css";
 
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "CourseTube";
 
@@ -17,7 +16,7 @@ const Hero = () => {
           width={450}
           height={450}
           sizes="100vw"
-          className="animate__animated animate__pulse animate__slow animate__infinite"
+          className="motion-safe:animate-pulse [animation-duration:3s]"
         />
         <div>
           <h1 className="text-4xl font-bold">Learn smarter with {siteName}</h1>

@@ -1,45 +1,13 @@
-"use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BiSolidTimeFive } from "react-icons/bi";
 import { FaFolderOpen, FaVideo } from "react-icons/fa6";
 import { HiUserGroup } from "react-icons/hi";
 import { RiGraduationCapFill } from "react-icons/ri";
+import { getPlatformStats } from "@/lib/queries";
 
-const Stats = () => {
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
+const Stats = async () => {
+  const c = await getPlatformStats();
 
-  useEffect(() => {
-    let mounted = true;
-    fetch("/api/stats")
-      .then((res) => res.json())
-      .then((data) => {
-        if (mounted) setStats(data);
-      })
-      .catch(() => {
-        if (mounted) setStats(null);
-      })
-      .finally(() => mounted && setLoading(false));
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 my-3">
-        <h2 className="col-span-full text-center">Platform snapshot</h2>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div
-            key={i}
-            className="p-4 bg-primary/30 rounded-lg animate-pulse h-20"
-          />
-        ))}
-      </div>
-    );
-  }
-
-  const c = stats || {};
   const seconds = Number(c.totalVideoDurationSeconds || 0);
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);

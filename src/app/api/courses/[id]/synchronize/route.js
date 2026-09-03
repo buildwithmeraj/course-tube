@@ -3,6 +3,8 @@ import { getCoursesDB } from "@/lib/getDB";
 import { ObjectId } from "mongodb";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { checkRateLimit } from "@/lib/rateLimit";
+import { MAX_SYNCS_PER_DAY } from "@/lib/limits";
 import {
   YouTubeError,
   fetchPlaylistInfo,
@@ -48,6 +50,25 @@ export async function PATCH(req, { params }) {
       return NextResponse.json(
         { message: "You must be enrolled in this course to synchronize it" },
         { status: 403 },
+      );
+    }
+  }
+
+  // Cap how much quota one person can spend a day, independent of the
+  // per-course interval below
+  if (session.user.role !== "admin") {
+    const { allowed } = await checkRateLimit({
+      key: `sync:${session.user.email}`,
+      limit: MAX_SYNCS_PER_DAY,
+      windowMs: 24 * 60 * 60 * 1000,
+    });
+
+    if (!allowed) {
+      return NextResponse.json(
+        {
+          message: `You can synchronize ${MAX_SYNCS_PER_DAY} courses per day. Try again tomorrow.`,
+        },
+        { status: 429 },
       );
     }
   }

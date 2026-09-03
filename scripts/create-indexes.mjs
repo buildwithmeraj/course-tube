@@ -20,10 +20,13 @@ const INDEXES = [
   ["users", "users", { email: 1 }, { unique: true, name: "email_unique" }, "email"],
   ["courses", "courses", { playlistId: 1 }, { unique: true, name: "playlistId_unique" }, "playlistId"],
   ["courses", "courses", { approved: 1 }, { name: "approved" }, null],
+  ["courses", "courses", { ownerEmail: 1, createdAt: -1 }, { name: "ownerEmail_createdAt" }, null],
   ["courses", "enrolls", { userEmail: 1 }, { name: "userEmail" }, null],
   ["courses", "enrolls", { courseId: 1, userEmail: 1 }, { unique: true, name: "courseId_userEmail_unique" }, ["courseId", "userEmail"]],
   ["courses", "progress", { courseId: 1, userEmail: 1 }, { unique: true, name: "courseId_userEmail_unique" }, ["courseId", "userEmail"]],
   ["courses", "videos", { courseId: 1, order: 1 }, { name: "courseId_order" }, null],
+  ["courses", "videoProgress", { userEmail: 1, courseId: 1 }, { name: "userEmail_courseId" }, null],
+  ["courses", "videoProgress", { courseId: 1, videoId: 1, userEmail: 1 }, { unique: true, name: "course_video_user_unique" }, ["courseId", "videoId", "userEmail"]],
   ["courses", "videos", { courseId: 1, videoId: 1 }, { unique: true, name: "courseId_videoId_unique" }, ["courseId", "videoId"]],
   ["courses", "rateLimits", { expiresAt: 1 }, { expireAfterSeconds: 0, name: "expiresAt_ttl" }, null],
 ];

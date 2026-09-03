@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { MdExpandMore, MdExpandLess } from "react-icons/md";
 import { BiDetail } from "react-icons/bi";
 
-const VideoDescription = ({ description }) => {
+const VideoDescription = ({ description, loading = false }) => {
   const [descriptionOpen, setDescriptionOpen] = useState(false);
   const parseDescription = (text) => {
     if (!text) return null;
@@ -58,7 +58,13 @@ const VideoDescription = ({ description }) => {
         </div>
       </div>
       <div className="collapse-content text-sm">
-        {description && parseDescription(description)}
+        {loading ? (
+          <span className="loading loading-dots loading-sm" />
+        ) : description ? (
+          parseDescription(description)
+        ) : (
+          <span className="text-base-content/60">No description.</span>
+        )}
       </div>
     </div>
   );

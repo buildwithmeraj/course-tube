@@ -15,6 +15,7 @@ const CourseDetails = () => {
   const { data: session } = useSession();
   const [videos, setVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const [completedIds, setCompletedIds] = useState(() => new Set());
   const [course, setCourse] = useState(null);
   const [enrolled, setEnrolled] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -49,12 +50,18 @@ const CourseDetails = () => {
         setVideos(Array.isArray(videosData) ? videosData : []);
         setCourse(courseData);
 
-        const lastFinishedVideo = progressData?.finishedVideo || null;
-        const nextVideoId = Array.isArray(videosData)
-          ? getNextVideoId(videosData, lastFinishedVideo)
-          : null;
+        const completed = new Set(
+          Object.entries(progressData?.videos || {})
+            .filter(([, record]) => record?.completedAt)
+            .map(([videoId]) => videoId),
+        );
 
-        setSelectedVideo(nextVideoId);
+        setCompletedIds(completed);
+        setSelectedVideo(
+          Array.isArray(videosData)
+            ? getNextVideoId(videosData, completed, progressData?.lastVideoId)
+            : null,
+        );
       } catch (err) {
         console.error(err);
         setError("Failed to load course details");
@@ -112,25 +119,19 @@ const CourseDetails = () => {
     }
   };
 
-  const selectedVideoPosition =
-    videos.find((video) => video?._id === selectedVideo)?.position ?? -1;
-
-  const getNextVideoId = (videoList, lastFinishedVideo) => {
+  // Resume the last video touched if unfinished, else the first unfinished one
+  const getNextVideoId = (videoList, completed, lastVideoId) => {
     if (!Array.isArray(videoList) || videoList.length === 0) {
       return null;
     }
 
-    if (!lastFinishedVideo) {
-      return videoList[0]?._id ?? null;
+    if (lastVideoId && !completed.has(lastVideoId)) {
+      const stillExists = videoList.some((v) => v._id === lastVideoId);
+      if (stillExists) return lastVideoId;
     }
 
-    const lastIndex = videoList.findIndex((v) => v._id === lastFinishedVideo);
-
-    if (lastIndex !== -1 && lastIndex + 1 < videoList.length) {
-      return videoList[lastIndex + 1]._id;
-    }
-
-    return videoList[lastIndex]?._id ?? videoList[0]?._id ?? null;
+    const firstUnfinished = videoList.find((v) => !completed.has(v._id));
+    return (firstUnfinished || videoList[0])._id;
   };
 
   const closeModal = () => {
@@ -200,10 +201,7 @@ const CourseDetails = () => {
               video={video}
               course={course}
               isSelected={video._id === selectedVideo}
-              isWatched={
-                selectedVideoPosition !== -1 &&
-                video.position < selectedVideoPosition
-              }
+              isWatched={completedIds.has(video._id)}
               isEnrolled={enrolled}
               onSelect={(vid) => setSelectedVideo(vid)}
             />

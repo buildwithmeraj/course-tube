@@ -4,8 +4,10 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-// Where a video sits in the playlist; `order` is the stored fallback
-const positionOf = (video) => video?.position ?? video?.order ?? 0;
+// A video counts as finished once this much of it has been watched. The old
+// model only completed on the player's ENDED event, so skipping an outro left
+// the video permanently unfinished.
+const COMPLETION_RATIO = 0.9;
 
 export async function GET(req, { params }) {
   const { id } = await params;
@@ -20,26 +22,46 @@ export async function GET(req, { params }) {
   }
 
   const db = await getCoursesDB();
-  const progressCol = db.collection("progress");
+  const courseId = new ObjectId(id);
 
-  const progress = await progressCol.findOne({
-    courseId: new ObjectId(id),
-    userEmail: session.user.email,
-  });
+  const records = await db
+    .collection("videoProgress")
+    .find({ courseId, userEmail: session.user.email })
+    .toArray();
 
-  return NextResponse.json(progress);
+  const videos = {};
+  let completedCount = 0;
+  let lastVideoId = null;
+  let lastUpdatedAt = null;
+
+  for (const record of records) {
+    const key = record.videoId.toString();
+    videos[key] = {
+      completedAt: record.completedAt ?? null,
+      positionSeconds: record.positionSeconds ?? 0,
+    };
+
+    if (record.completedAt) completedCount++;
+
+    if (!lastUpdatedAt || (record.updatedAt && record.updatedAt > lastUpdatedAt)) {
+      lastUpdatedAt = record.updatedAt;
+      lastVideoId = key;
+    }
+  }
+
+  return NextResponse.json({ videos, completedCount, lastVideoId });
 }
 
 export async function PATCH(req, { params }) {
   const { id } = await params;
-  const finishedVideoId = req.nextUrl.searchParams.get("videoId");
+  const requestedVideoId = req.nextUrl.searchParams.get("videoId");
   const session = await getServerSession(authOptions);
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json({ message: "Invalid course ID" }, { status: 400 });
   }
 
-  if (!ObjectId.isValid(finishedVideoId)) {
+  if (!ObjectId.isValid(requestedVideoId)) {
     return NextResponse.json({ message: "Invalid video ID" }, { status: 400 });
   }
 
@@ -47,15 +69,28 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const db = await getCoursesDB();
-  const progressCol = db.collection("progress");
-  const videosCol = db.collection("videos");
+  const body = await req.json().catch(() => ({}));
+  const positionSeconds = Number(body?.positionSeconds);
+  const explicitlyCompleted = body?.completed === true;
 
+  if (
+    body?.positionSeconds !== undefined &&
+    (!Number.isFinite(positionSeconds) || positionSeconds < 0)
+  ) {
+    return NextResponse.json(
+      { message: "positionSeconds must be a non-negative number" },
+      { status: 400 },
+    );
+  }
+
+  const db = await getCoursesDB();
   const courseId = new ObjectId(id);
-  const videoId = new ObjectId(finishedVideoId);
+  const videoId = new ObjectId(requestedVideoId);
   const userEmail = session.user.email;
 
-  const video = await videosCol.findOne({ _id: videoId, courseId });
+  const video = await db
+    .collection("videos")
+    .findOne({ _id: videoId, courseId });
 
   if (!video) {
     return NextResponse.json(
@@ -64,26 +99,43 @@ export async function PATCH(req, { params }) {
     );
   }
 
-  const courseProgress = await progressCol.findOne({ courseId, userEmail });
+  const progressCol = db.collection("videoProgress");
+  const existing = await progressCol.findOne({ courseId, videoId, userEmail });
 
-  if (courseProgress?.finishedVideo) {
-    const finished = await videosCol.findOne({
-      _id: courseProgress.finishedVideo,
-      courseId,
-    });
+  // Completion is decided server-side from the stored duration, so a client
+  // cannot mark a video finished by asserting it.
+  const duration = Number(video.durationSeconds) || 0;
+  const reachedThreshold =
+    duration > 0 && positionSeconds >= duration * COMPLETION_RATIO;
 
-    // Progress only moves forward. Compare playlist position, not _id — ids
-    // are not minted in playlist order once a course has been synchronized.
-    if (finished && positionOf(finished) >= positionOf(video)) {
-      return NextResponse.json({ message: "Video already watched or older" });
-    }
+  const set = {
+    userEmail,
+    courseId,
+    videoId,
+    updatedAt: new Date(),
+  };
+
+  if (Number.isFinite(positionSeconds)) {
+    set.positionSeconds = positionSeconds;
   }
 
-  await progressCol.updateOne(
-    { courseId, userEmail },
-    { $set: { finishedVideo: videoId, updatedAt: new Date() } },
-    { upsert: true },
-  );
+  // Once complete, a video stays complete — rewatching must not undo it
+  if (!existing?.completedAt && (explicitlyCompleted || reachedThreshold)) {
+    set.completedAt = new Date();
+  }
 
-  return NextResponse.json({ message: "Progress updated" });
+  // `completedAt` must not appear in both operators or the update conflicts
+  const update = { $set: set };
+  if (!("completedAt" in set)) {
+    update.$setOnInsert = { completedAt: null };
+  }
+
+  await progressCol.updateOne({ courseId, videoId, userEmail }, update, {
+    upsert: true,
+  });
+
+  return NextResponse.json({
+    message: "Progress saved",
+    completed: Boolean(existing?.completedAt || set.completedAt),
+  });
 }

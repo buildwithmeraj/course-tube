@@ -4,8 +4,11 @@ export const metadata = {
   title: "Courses List",
   description: `List of all courses at ${process.env.SITE_NAME}. `,
 };
-const page = () => {
-  return <CoursesList />;
+export const revalidate = 3600;
+
+const page = async ({ searchParams }) => {
+  const { sortBy } = await searchParams;
+  return <CoursesList sortBy={sortBy} />;
 };
 
 export default page;

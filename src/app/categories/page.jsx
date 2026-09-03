@@ -5,6 +5,8 @@ export const metadata = {
   description: `All courses categories of ${process.env.SITE_NAME}. `,
 };
 
+export const revalidate = 3600;
+
 const page = () => {
   return <CategoryList />;
 };

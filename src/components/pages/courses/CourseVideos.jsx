@@ -13,7 +13,7 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import {
   FaArrowAltCircleLeft,
@@ -31,8 +31,11 @@ const CourseVideos = () => {
   const [enrolled, setEnrolled] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [updated, setUpdated] = useState(false);
-  const [lastFinishedVideo, setLastFinishedVideo] = useState(null);
+  const [progress, setProgress] = useState({ videos: {}, lastVideoId: null });
+  const lastReportedRef = useRef({ videoId: null, seconds: -1 });
   const [manuallySelectedVideo, setManuallySelectedVideo] = useState(null);
+  const [descriptionsById, setDescriptionsById] = useState({});
+  const requestedDescriptionsRef = useRef(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [synchronizing, setSynchronizing] = useState(false);
@@ -89,7 +92,11 @@ const CourseVideos = () => {
         isUpdatedWithinDays(courseData?.updatedAt || courseData?.createdAt, 7),
       );
       setVideos(Array.isArray(videosData) ? videosData : []);
-      setLastFinishedVideo(progressData?.finishedVideo || null);
+      setProgress(
+        progressData && typeof progressData === "object"
+          ? { videos: progressData.videos || {}, lastVideoId: progressData.lastVideoId ?? null }
+          : { videos: {}, lastVideoId: null },
+      );
     } catch (err) {
       console.error(err);
       setError("Failed to load course data");
@@ -122,22 +129,73 @@ const CourseVideos = () => {
       return videoIdFromUrl;
     }
 
-    // 3) Continue from last finished
-    if (lastFinishedVideo) {
-      const lastIndex = videos.findIndex((v) => v._id === lastFinishedVideo);
-
-      if (lastIndex !== -1) {
-        return videos[lastIndex + 1]?._id || videos[lastIndex]._id;
+    // 3) Resume the most recently watched video if it is unfinished
+    const last = progress.lastVideoId;
+    if (last) {
+      const lastVideo = videos.find((v) => v._id === last);
+      if (lastVideo) {
+        if (!progress.videos?.[last]?.completedAt) return last;
+        const lastIndex = videos.indexOf(lastVideo);
+        if (videos[lastIndex + 1]) return videos[lastIndex + 1]._id;
       }
     }
 
-    // 4) Default: first video
-    return videos[0]._id;
-  }, [videos, manuallySelectedVideo, searchParams, lastFinishedVideo]);
+    // 4) Otherwise the first video that is not finished
+    const firstUnfinished = videos.find(
+      (v) => !progress.videos?.[v._id]?.completedAt,
+    );
+
+    return (firstUnfinished || videos[0])._id;
+  }, [videos, manuallySelectedVideo, searchParams, progress]);
 
   const selectedVideoData = useMemo(() => {
     return videos.find((v) => v._id === selectedVideo) || null;
   }, [videos, selectedVideo]);
+
+  const isCompleted = useCallback(
+    (videoId) => Boolean(progress.videos?.[videoId]?.completedAt),
+    [progress],
+  );
+
+  const completedCount = useMemo(
+    () => videos.filter((v) => isCompleted(v._id)).length,
+    [videos, isCompleted],
+  );
+
+  // Resume where this video was left off, unless it is already finished
+  const resumeSeconds = useMemo(() => {
+    if (!selectedVideo) return 0;
+    const record = progress.videos?.[selectedVideo];
+    if (!record || record.completedAt) return 0;
+    return record.positionSeconds || 0;
+  }, [progress, selectedVideo]);
+
+  // Descriptions are excluded from the video listing and fetched per video
+  useEffect(() => {
+    if (!id || !selectedVideo) return;
+    if (requestedDescriptionsRef.current.has(selectedVideo)) return;
+
+    requestedDescriptionsRef.current.add(selectedVideo);
+    let cancelled = false;
+
+    const store = (text) => {
+      if (!cancelled) {
+        setDescriptionsById((prev) => ({ ...prev, [selectedVideo]: text }));
+      }
+    };
+
+    fetch(`/api/courses/${id}/videos/${selectedVideo}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => store(data?.description ?? ""))
+      .catch(() => {
+        requestedDescriptionsRef.current.delete(selectedVideo);
+        store("");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id, selectedVideo]);
 
   const updateVideoParam = (videoId) => {
     const params = new URLSearchParams(searchParams);
@@ -145,11 +203,63 @@ const CourseVideos = () => {
     router.replace(`${pathname}?${params.toString()}`);
   };
 
+  const saveProgress = useCallback(
+    async (video, positionSeconds, { completed = false } = {}) => {
+      if (!video?._id) return;
+
+      try {
+        const res = await fetch(
+          `/api/courses/${id}/progress?videoId=${video._id}`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ positionSeconds, completed }),
+          },
+        );
+        if (!res.ok) return;
+
+        const data = await res.json().catch(() => ({}));
+        setProgress((prev) => ({
+          lastVideoId: video._id,
+          videos: {
+            ...prev.videos,
+            [video._id]: {
+              completedAt: data.completed
+                ? prev.videos?.[video._id]?.completedAt || new Date().toISOString()
+                : (prev.videos?.[video._id]?.completedAt ?? null),
+              positionSeconds,
+            },
+          },
+        }));
+      } catch (err) {
+        console.error("Error saving progress:", err);
+      }
+    },
+    [id],
+  );
+
+  // The player ticks every 5s; only persist meaningful movement
+  const handleProgress = useCallback(
+    (seconds, _duration, video) => {
+      if (!video?._id || !Number.isFinite(seconds)) return;
+
+      // Pin the video being watched: without this it would be deselected the
+      // moment it crosses the completion threshold, mid-playback.
+      setManuallySelectedVideo(video._id);
+
+      const last = lastReportedRef.current;
+      if (last.videoId === video._id && Math.abs(seconds - last.seconds) < 10) {
+        return;
+      }
+
+      lastReportedRef.current = { videoId: video._id, seconds };
+      saveProgress(video, seconds);
+    },
+    [saveProgress],
+  );
+
   const handleVideoEnd = (video) => {
-    setLastFinishedVideo(video._id);
-    fetch(`/api/courses/${id}/progress?videoId=${video._id}`, {
-      method: "PATCH",
-    }).catch((err) => console.error("Error marking progress:", err));
+    saveProgress(video, 0, { completed: true });
 
     const currentIndex = videos.findIndex((v) => v._id === video._id);
     const nextVideoId =
@@ -304,6 +414,8 @@ const CourseVideos = () => {
               video={selectedVideoData}
               onEnd={handleVideoEnd}
               course={course}
+              startSeconds={resumeSeconds}
+              onProgress={handleProgress}
             />
           )}
           <div className="flex items-center justify-between">
@@ -322,21 +434,23 @@ const CourseVideos = () => {
               <FaArrowAltCircleRight />
             </button>
           </div>
-          <VideoDescription description={selectedVideoData?.description} />
+          <VideoDescription
+            description={descriptionsById[selectedVideo]}
+            loading={
+              Boolean(selectedVideo) &&
+              descriptionsById[selectedVideo] === undefined
+            }
+          />
           <div className="flex justify-between flex-col md:flex-row items-center">
             <div className="text-lg font-semibold items-center gap-4">
               Course Progress{" "}
               <progress
                 className={`progress w-28 xl:w-56 transition-all duration-300 ${progressColor(
-                  course?.totalCount,
-                  videos.find((v) => v._id === lastFinishedVideo)?.position +
-                    1 || 0,
+                  videos.length || course?.totalCount,
+                  completedCount,
                 )}`}
-                value={
-                  videos.find((v) => v._id === lastFinishedVideo)?.position +
-                    1 || 0
-                }
-                max={course?.totalCount}
+                value={completedCount}
+                max={videos.length || course?.totalCount}
                 id="progress"
               ></progress>
             </div>
@@ -381,20 +495,13 @@ const CourseVideos = () => {
               <VideoListCardSkeleton key={i} />
             ))}
           {videos.map((video) => {
-            const lastWatchedVideo = videos.find(
-              (v) => v._id === lastFinishedVideo,
-            );
-
             return (
               <VideoListCard
                 key={video._id.toString()}
                 video={video}
                 course={course}
                 isSelected={video._id === selectedVideo}
-                isWatched={
-                  !!lastWatchedVideo &&
-                  video.position <= lastWatchedVideo.position
-                }
+                isWatched={isCompleted(video._id)}
               />
             );
           })}

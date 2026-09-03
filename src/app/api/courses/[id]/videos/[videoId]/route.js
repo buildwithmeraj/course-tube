@@ -5,19 +5,19 @@ import { ObjectId } from "mongodb";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
+// One video, including the description the listing endpoint leaves out.
 export async function GET(req, { params }) {
   try {
-    const { id } = await params;
+    const { id, videoId } = await params;
 
-    if (!ObjectId.isValid(id)) {
+    if (!ObjectId.isValid(id) || !ObjectId.isValid(videoId)) {
       return NextResponse.json({ message: "Invalid ID" }, { status: 400 });
     }
 
     const db = await getCoursesDB();
+    const courseId = new ObjectId(id);
 
-    const course = await db
-      .collection("courses")
-      .findOne({ _id: new ObjectId(id) });
+    const course = await db.collection("courses").findOne({ _id: courseId });
 
     if (!course) {
       return NextResponse.json(
@@ -26,7 +26,6 @@ export async function GET(req, { params }) {
       );
     }
 
-    // A pending course's videos are as private as the course itself
     const session = await getServerSession(authOptions);
     if (!(await canViewCourse(course, session, db))) {
       return NextResponse.json(
@@ -35,18 +34,17 @@ export async function GET(req, { params }) {
       );
     }
 
-    // Descriptions average ~2.2 KB and only the selected video's is ever shown,
-    // so they are excluded here and fetched per video instead. Including them
-    // costs ~500 KB on the largest courses.
-    const videos = await db
+    const video = await db
       .collection("videos")
-      .find({ courseId: new ObjectId(id) }, { projection: { description: 0 } })
-      .sort({ order: 1, _id: 1 })
-      .toArray();
+      .findOne({ _id: new ObjectId(videoId), courseId });
 
-    return NextResponse.json(videos, { status: 200 });
+    if (!video) {
+      return NextResponse.json({ message: "Video not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(video, { status: 200 });
   } catch (err) {
-    console.error("Error fetching videos:", err);
+    console.error("Error fetching video:", err);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 },

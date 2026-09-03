@@ -1,56 +1,32 @@
-"use client";
-import Loading from "@/components/ui/Loading";
 import PlaylistCard from "@/components/ui/PlaylistCard";
-import PlaylistCardSkeleton from "@/components/ui/PlaylistCardSkeleton";
-import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { notFound } from "next/navigation";
+import { ObjectId } from "mongodb";
 import { FaCircleInfo } from "react-icons/fa6";
+import { getCategory, toPlain } from "@/lib/queries";
 
-const CategoryDetails = () => {
-  const [category, setCategory] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { id } = useParams();
+const CategoryDetails = async ({ id }) => {
+  if (!ObjectId.isValid(id)) notFound();
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        setLoading(true);
-        let url = `/api/categories/${id}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        setCategory(data);
-      } catch (error) {
-        setError("Error fetching courses:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCourses();
-  }, [id]);
-  if (loading) return <Loading />;
+  const category = toPlain(await getCategory(new ObjectId(id)));
+
+  if (!category) notFound();
+
+  const courses = category.courses || [];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
       <h2 className="col-span-full title-accent">
-        {category.title} ({category.courses.length} Courses)
+        {category.title} ({courses.length} Courses)
       </h2>
-      {category?.description && (
+      {category.description && (
         <p className="col-span-full alert alert-soft alert-info rounded-lg">
           <FaCircleInfo className="inline -mr-2.5 mb-0.5" />
-          {category?.description}
+          {category.description}
         </p>
       )}
-
-      {loading && (
-        <>
-          {Array.from({ length: 12 }).map((_, i) => (
-            <PlaylistCardSkeleton key={i} />
-          ))}
-        </>
-      )}
-      {category.courses.map((item) => (
-        <PlaylistCard key={item._id.toString()} playlist={item} />
+      {courses.map((item) => (
+        <PlaylistCard key={item._id} playlist={item} />
       ))}
     </div>
   );

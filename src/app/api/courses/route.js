@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { getCoursesDB } from "@/lib/getDB";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { checkCourseAddLimits } from "@/lib/courseLimits";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { RATE_LIMITS } from "@/lib/limits";
 import {
   YouTubeError,
   fetchPlaylistInfo,
@@ -66,6 +69,21 @@ export async function GET(req) {
     }
 
     if (query && query.length > 0) {
+      const { allowed, retryAfterSeconds } = await checkRateLimit({
+        key: `search:${getClientIp(req)}`,
+        ...RATE_LIMITS.search,
+      });
+
+      if (!allowed) {
+        return NextResponse.json(
+          { message: "Too many searches. Please slow down." },
+          {
+            status: 429,
+            headers: { "Retry-After": String(retryAfterSeconds) },
+          },
+        );
+      }
+
       filter.title = {
         $regex: escapeRegex(query.slice(0, MAX_QUERY_LENGTH)),
         $options: "i",
@@ -185,12 +203,21 @@ export async function POST(req) {
       );
     }
 
+    const limited = await checkCourseAddLimits(db, session);
+    if (limited) {
+      return NextResponse.json(
+        { message: limited.message },
+        { status: limited.status },
+      );
+    }
+
     const { title, totalCount } = await fetchPlaylistInfo(playlistId);
     const videos = await fetchPlaylistVideos(playlistId);
 
     // Insert course
     const courseRes = await coursesCol.insertOne({
       playlistId,
+      ownerEmail: session.user.email,
       title,
       totalCount: totalCount || videos.length,
       thumbnailUrl: videos[0]?.thumbnail || "",

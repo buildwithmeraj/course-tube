@@ -1,8 +1,9 @@
 // Server-only: reads YOUTUBE_API_KEY, which must never reach the browser.
 import { getServerYouTubeApiKey, getSiteUrl } from "./youtube";
+import { chargeQuota } from "./quota";
+import { MAX_COURSE_VIDEOS } from "./limits";
 
-// Maximum number of videos a single course may hold
-export const MAX_COURSE_VIDEOS = 200;
+export { MAX_COURSE_VIDEOS };
 
 // Error carrying the HTTP status a route should answer with
 export class YouTubeError extends Error {
@@ -38,6 +39,16 @@ const buildYouTubeUrl = (baseUrl, params) => {
 };
 
 const fetchYouTubeJson = async (url, fallbackMessage) => {
+  // Charged before the request so the breaker cannot be bypassed by a new
+  // caller: playlists.list, playlistItems.list and videos.list are 1 unit each.
+  const quota = await chargeQuota(1);
+  if (!quota.allowed) {
+    throw new YouTubeError(
+      "Daily YouTube API budget reached. Adding and syncing courses will resume tomorrow.",
+      503,
+    );
+  }
+
   const res = await fetch(url, {
     headers: {
       Referer: getSiteUrl(),

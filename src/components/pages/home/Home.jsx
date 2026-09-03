@@ -1,4 +1,3 @@
-"use client";
 import CTA from "@/components/pages/home/CTA";
 import Hero from "@/components/pages/home/Hero";
 import HowItWorks from "@/components/pages/home/HowItWorks";

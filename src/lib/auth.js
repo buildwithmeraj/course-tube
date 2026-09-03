@@ -1,11 +1,28 @@
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { getDB } from "./getDB";
+import { getUsersDB } from "./getDB";
+import { checkRateLimit } from "./rateLimit";
+import { RATE_LIMITS } from "./limits";
 
 // Registration stores emails lowercased, so every lookup must match that
 const normaliseEmail = (email) =>
   typeof email === "string" ? email.trim().toLowerCase() : email;
+
+// NextAuth hands `authorize` a request whose headers may be a plain object or
+// a Headers instance depending on the adapter
+const headerValue = (req, name) => {
+  const headers = req?.headers;
+  if (!headers) return null;
+  if (typeof headers.get === "function") return headers.get(name);
+  return headers[name] ?? null;
+};
+
+const clientIpFrom = (req) => {
+  const forwarded = headerValue(req, "x-forwarded-for");
+  if (forwarded) return forwarded.split(",")[0].trim();
+  return headerValue(req, "x-real-ip") || "unknown";
+};
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -25,22 +42,35 @@ export const authOptions = {
       },
 
       // Authorize user credentials
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         // if no credentials, return error
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password required");
         }
 
         try {
+          // Throttle before touching the database: per account, so one address
+          // cannot be brute-forced, and per IP, so one host cannot spray many.
+          const email = normaliseEmail(credentials.email);
+          const attempts = await Promise.all([
+            checkRateLimit({ key: `signin:email:${email}`, ...RATE_LIMITS.signIn }),
+            checkRateLimit({
+              key: `signin:ip:${clientIpFrom(req)}`,
+              ...RATE_LIMITS.signIn,
+            }),
+          ]);
+
+          if (attempts.some((attempt) => !attempt.allowed)) {
+            throw new Error("Too many sign-in attempts. Please try again later.");
+          }
+
           // connect to database
-          const db = await getDB();
+          const db = await getUsersDB();
           // access users collection
           const usersCollection = db.collection("users");
 
           // find user by email
-          const user = await usersCollection.findOne({
-            email: normaliseEmail(credentials.email),
-          });
+          const user = await usersCollection.findOne({ email });
 
           if (!user) throw new Error("No user found with this email");
 
@@ -78,7 +108,7 @@ export const authOptions = {
     // Handle actions after sign in
     async signIn({ user, account }) {
       if (account?.provider === "google") {
-        const db = await getDB();
+        const db = await getUsersDB();
         const usersCollection = db.collection("users");
 
         const existingUser = await usersCollection.findOne({
@@ -111,7 +141,7 @@ export const authOptions = {
 
       // ALWAYS fetch role from DB for Google users AND credentials users
       if (token.email && (account?.provider === "google" || !account)) {
-        const db = await getDB();
+        const db = await getUsersDB();
         const usersCollection = db.collection("users");
 
         const dbUser = await usersCollection.findOne({
