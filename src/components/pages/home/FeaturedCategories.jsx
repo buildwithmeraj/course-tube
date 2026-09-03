@@ -28,7 +28,6 @@ const FeaturedCategories = () => {
 
     fetchCategories();
   }, []);
-  if (error) console.log(error);
 
   return categories.length > 0 ? (
     <section className="mt-8">

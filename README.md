@@ -84,9 +84,7 @@ npm install
 ```
 SITE_NAME=Course Tube
 NEXT_PUBLIC_SITE_NAME=Course Tube
-PAGE_TITLE=Course Tube
 NEXTAUTH_URL=http://localhost:3000
-NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 
 MONGODB_URI=your_mongodb_connection_string
 NEXTAUTH_SECRET=your_nextauth_secret
@@ -94,8 +92,8 @@ NEXTAUTH_SECRET=your_nextauth_secret
 GOOGLE_CLIENT_ID=your_google_oauth_client_id
 GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
 
-NEXT_PUBLIC_YOUTUBE_API=your_public_youtube_api_key
-YOUTUBE_API_KEY=your_server_side_youtube_api_key
+YOUTUBE_API_KEY=your_youtube_api_key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_IMGBB_API_KEY=your_imgbb_key
 
 EMAIL_SERVICE=gmail
@@ -127,14 +125,15 @@ Open http://localhost:3000
   - Create and manage categories
 - Public courses appear under categories and are discoverable by others.
 
-## YouTube API keys
+## YouTube API key
 
-This app uses separate keys for client-side and server-side YouTube requests:
+All YouTube Data API requests are made server-side with `YOUTUBE_API_KEY`. The key is never
+sent to the browser: adding a course posts only the playlist URL, and the server resolves the
+playlist, fetches its videos, and stores them.
 
-- `NEXT_PUBLIC_YOUTUBE_API` is used by browser-side playlist and video fetches.
-- `YOUTUBE_API_KEY` is used by the server-side course synchronization route.
-
-If sync fails with a referer or access error, check that the server key is valid and allowed for server requests.
+Requests are sent with a `Referer` of `NEXT_PUBLIC_SITE_URL`, so if sync or course creation
+fails with a referer or access error, check that the key is valid and that any HTTP-referrer
+restriction on it allows that origin.
 
 ## Project structure (important parts)
 

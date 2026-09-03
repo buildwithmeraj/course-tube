@@ -1,6 +1,8 @@
 import { authOptions } from "@/lib/auth";
-import clientPromise from "@/lib/db";
+import { getCoursesDB } from "@/lib/getDB";
+import { canViewCourse } from "@/lib/courseAccess";
 import { ObjectId } from "mongodb";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
@@ -11,8 +13,27 @@ export async function GET(req, { params }) {
       return NextResponse.json({ message: "Invalid ID" }, { status: 400 });
     }
 
-    const client = await clientPromise;
-    const db = client.db("courses");
+    const db = await getCoursesDB();
+
+    const course = await db
+      .collection("courses")
+      .findOne({ _id: new ObjectId(id) });
+
+    if (!course) {
+      return NextResponse.json(
+        { message: "Course not found" },
+        { status: 404 },
+      );
+    }
+
+    // A pending course's videos are as private as the course itself
+    const session = await getServerSession(authOptions);
+    if (!(await canViewCourse(course, session, db))) {
+      return NextResponse.json(
+        { message: "Course not found" },
+        { status: 404 },
+      );
+    }
 
     const videos = await db
       .collection("videos")

@@ -1,8 +1,7 @@
-import clientPromise from "@/lib/db";
+import { getCoursesDB } from "@/lib/getDB";
 
 export async function GET(req) {
-  const client = await clientPromise;
-  const db = client.db("courses");
+  const db = await getCoursesDB();
 
   try {
     // Categories

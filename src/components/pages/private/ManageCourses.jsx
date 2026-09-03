@@ -25,6 +25,7 @@ const ManageCourses = () => {
         const res = await fetch("/api/courses");
         if (!res.ok) {
           toast.error("Failed to fetch courses!");
+          return;
         }
         const data = await res.json();
         setCourses(data);
@@ -57,8 +58,9 @@ const ManageCourses = () => {
 
     if (!res.ok) {
       toast.error("Failed to update course!");
+      return;
     }
-    toast.success("Course updated successfuly!");
+    toast.success("Course updated successfully!");
 
     setCourses((prev) =>
       prev.map((c) => (c._id === id ? { ...c, approved } : c)),
@@ -72,8 +74,9 @@ const ManageCourses = () => {
 
     if (!res.ok) {
       toast.error("Failed to delete course!");
+      return;
     }
-    toast.success("Course deleted successfuly!");
+    toast.success("Course deleted successfully!");
     setCourses((prev) => prev.filter((c) => c._id !== id));
   };
 

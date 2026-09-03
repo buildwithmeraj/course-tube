@@ -1,4 +1,4 @@
-import clientPromise from "@/lib/db";
+import { getCoursesDB } from "@/lib/getDB";
 import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
@@ -12,53 +12,64 @@ export async function GET(req, { params }) {
     return NextResponse.json({ message: "Invalid ID" }, { status: 400 });
   }
 
-  const client = await clientPromise;
-  const db = client.db("courses");
-  const enrollsCol = db.collection("enrolls");
-
-  if (!session) {
+  if (!session?.user?.email) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
+  const db = await getCoursesDB();
+  const enrollsCol = db.collection("enrolls");
+
   const enrollment = await enrollsCol.findOne({
     courseId: new ObjectId(id),
-    userEmail: session?.user?.email,
+    userEmail: session.user.email,
   });
 
   return NextResponse.json(enrollment);
 }
 
 export async function POST(req, { params }) {
-  const { id } = await params;
-  const client = await clientPromise;
-  const db = client.db("courses");
-  const enrollsCol = db.collection("enrolls");
-  const courseId = new ObjectId(id);
-  const session = await getServerSession(authOptions);
+  try {
+    const { id } = await params;
 
-  if (!ObjectId.isValid(id)) {
-    return NextResponse.json({ message: "Invalid course ID" }, { status: 400 });
-  }
+    // Validate before constructing an ObjectId, which throws on bad input
+    if (!ObjectId.isValid(id)) {
+      return NextResponse.json(
+        { message: "Invalid course ID" },
+        { status: 400 },
+      );
+    }
 
-  if (!session) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
+    const session = await getServerSession(authOptions);
 
-  // Fetch existing progress
-  const courseProgress = await enrollsCol.findOne({
-    courseId,
-    userEmail: session?.user?.email,
-  });
+    if (!session?.user?.email) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
 
-  if (!courseProgress) {
-    // enroll the user if not enrolled
+    const db = await getCoursesDB();
+    const enrollsCol = db.collection("enrolls");
+    const courseId = new ObjectId(id);
+
+    const existing = await enrollsCol.findOne({
+      courseId,
+      userEmail: session.user.email,
+    });
+
+    if (existing) {
+      return NextResponse.json({ message: "Already enrolled" });
+    }
+
     await enrollsCol.insertOne({
       courseId,
-      userEmail: session?.user?.email,
+      userEmail: session.user.email,
       enrolledAt: new Date(),
     });
+
     return NextResponse.json({ message: "Enrolled successfully" });
-  } else {
-    return NextResponse.json({ message: "Already enrolled" });
+  } catch (err) {
+    console.error("Error enrolling in course:", err);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

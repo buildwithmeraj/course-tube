@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { BiSolidTimeFive } from "react-icons/bi";
 import { FaFolderOpen, FaVideo } from "react-icons/fa6";

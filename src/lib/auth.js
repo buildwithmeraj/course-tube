@@ -3,6 +3,10 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { getDB } from "./getDB";
 
+// Registration stores emails lowercased, so every lookup must match that
+const normaliseEmail = (email) =>
+  typeof email === "string" ? email.trim().toLowerCase() : email;
+
 export const authOptions = {
   // Configure one or more authentication providers
   providers: [
@@ -35,7 +39,7 @@ export const authOptions = {
 
           // find user by email
           const user = await usersCollection.findOne({
-            email: credentials.email,
+            email: normaliseEmail(credentials.email),
           });
 
           if (!user) throw new Error("No user found with this email");
@@ -78,12 +82,12 @@ export const authOptions = {
         const usersCollection = db.collection("users");
 
         const existingUser = await usersCollection.findOne({
-          email: user.email,
+          email: normaliseEmail(user.email),
         });
 
         if (!existingUser) {
           await usersCollection.insertOne({
-            email: user.email,
+            email: normaliseEmail(user.email),
             name: user.name,
             image: user.image,
             role: "user",
@@ -111,7 +115,7 @@ export const authOptions = {
         const usersCollection = db.collection("users");
 
         const dbUser = await usersCollection.findOne({
-          email: token.email,
+          email: normaliseEmail(token.email),
         });
         token.role = dbUser?.role || "user";
       }

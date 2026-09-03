@@ -1,8 +1,9 @@
-import clientPromise from "@/lib/db";
+import { getCoursesDB } from "@/lib/getDB";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
+import { canViewCourse } from "@/lib/courseAccess";
 
 export async function PATCH(req, { params }) {
   const { id } = await params;
@@ -21,8 +22,7 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ message: "Invalid payload" }, { status: 400 });
   }
 
-  const client = await clientPromise;
-  const db = client.db("courses");
+  const db = await getCoursesDB();
   const coursesCol = db.collection("courses");
 
   const courseId = new ObjectId(id);
@@ -51,8 +51,7 @@ export async function DELETE(req, { params }) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const client = await clientPromise;
-  const db = client.db("courses");
+  const db = await getCoursesDB();
   const coursesCol = db.collection("courses");
 
   const courseId = new ObjectId(id);
@@ -79,8 +78,7 @@ export async function GET(req, { params }) {
     return NextResponse.json({ message: "Invalid ID" }, { status: 400 });
   }
 
-  const client = await clientPromise;
-  const db = client.db("courses");
+  const db = await getCoursesDB();
   const coursesCol = db.collection("courses");
 
   const course = await coursesCol.findOne({
@@ -88,6 +86,12 @@ export async function GET(req, { params }) {
   });
 
   if (!course) {
+    return NextResponse.json({ message: "Course not found" }, { status: 404 });
+  }
+
+  // Do not disclose that a pending course exists to people who cannot see it
+  const session = await getServerSession(authOptions);
+  if (!(await canViewCourse(course, session, db))) {
     return NextResponse.json({ message: "Course not found" }, { status: 404 });
   }
 

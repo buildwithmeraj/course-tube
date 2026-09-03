@@ -216,10 +216,13 @@ const CourseVideos = () => {
       const res = await fetch(`/api/courses/${id}/enroll`, {
         method: "POST",
       });
-      const data = await res.json();
-      if (res.ok) {
-        setEnrolled(true);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast.error(data.message || "Failed to enrol in this course");
+        setEnrollLoading(false);
+        return;
       }
+      setEnrolled(true);
       toast.success("Enrolled successfully");
       setShowModal(true);
       setEnrollLoading(false);
@@ -392,7 +395,6 @@ const CourseVideos = () => {
                   !!lastWatchedVideo &&
                   video.position <= lastWatchedVideo.position
                 }
-                onSelect={(vid) => setManuallySelectedVideo(vid)}
               />
             );
           })}

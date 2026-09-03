@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/db";
+import { getCoursesDB } from "@/lib/getDB";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 export async function GET() {
   try {
-    const client = await clientPromise;
-    const db = client.db("courses");
+    const session = await getServerSession(authOptions);
+    const isAdmin = session?.user?.role === "admin";
+
+    const db = await getCoursesDB();
 
     const categories = await db
       .collection("categories")
@@ -26,8 +28,15 @@ export async function GET() {
         {
           $lookup: {
             from: "courses",
-            localField: "courseObjectIds",
-            foreignField: "_id",
+            let: { ids: "$courseObjectIds" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $in: ["$_id", { $ifNull: ["$$ids", []] }] },
+                  ...(isAdmin ? {} : { approved: true }),
+                },
+              },
+            ],
             as: "courses",
           },
         },
@@ -76,8 +85,7 @@ export async function POST(req) {
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("courses");
+    const db = await getCoursesDB();
     const categoriesCol = db.collection("categories");
 
     const existing = await categoriesCol.findOne({ title });

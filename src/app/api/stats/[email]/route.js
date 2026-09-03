@@ -1,4 +1,4 @@
-import clientPromise from "@/lib/db";
+import { getCoursesDB } from "@/lib/getDB";
 import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
@@ -19,8 +19,7 @@ export async function GET(req, { params }) {
     );
   }
 
-  const client = await clientPromise;
-  const db = client.db("courses");
+  const db = await getCoursesDB();
   const enrollsCol = db.collection("enrolls");
   const progressCol = db.collection("progress");
   const videosCol = db.collection("videos");

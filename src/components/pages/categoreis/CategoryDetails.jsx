@@ -28,7 +28,6 @@ const CategoryDetails = () => {
     };
     fetchCourses();
   }, [id]);
-  if (error) console.log(error);
   if (loading) return <Loading />;
 
   return (

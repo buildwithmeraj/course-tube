@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { MdExpandMore, MdExpandLess } from "react-icons/md";
 import { BiDetail } from "react-icons/bi";
@@ -7,8 +8,9 @@ const VideoDescription = ({ description }) => {
   const parseDescription = (text) => {
     if (!text) return null;
 
-    // URL regex pattern
+    // Splitting needs the global flag; testing must not share its lastIndex
     const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const isUrl = (value) => /^https?:\/\/[^\s]+$/.test(value);
 
     return text.split("\n").map((line, lineIndex) => {
       const parts = line.split(urlRegex);
@@ -16,7 +18,7 @@ const VideoDescription = ({ description }) => {
       return (
         <div key={lineIndex}>
           {parts.map((part, partIndex) => {
-            if (urlRegex.test(part)) {
+            if (isUrl(part)) {
               return (
                 <a
                   key={partIndex}

@@ -37,7 +37,6 @@ const YouTubePlayer = ({ video, onEnd, course }) => {
           onStateChange: (event) => {
             // 0 = ended
             if (event.data === window.YT.PlayerState.ENDED) {
-              console.log("Video finished:", video.title);
               if (onEnd) onEnd(video);
             }
           },

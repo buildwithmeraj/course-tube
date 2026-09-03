@@ -1,8 +1,6 @@
 import getUserPlaylist from "@/actions/server/getUserPlaylist";
 import PlaylistCard from "@/components/ui/PlaylistCard";
-import PlaylistCardSkeleton from "@/components/ui/PlaylistCardSkeleton";
 import Link from "next/link";
-import { Suspense } from "react";
 import { GrLinkNext } from "react-icons/gr";
 import { RiPlayListAddFill } from "react-icons/ri";
 
@@ -22,19 +20,9 @@ const EnrolledCourses = async () => {
       {courses.length === 0 && <p>No enrolled courses</p>}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-        <Suspense
-          fallback={
-            <>
-              {Array.from({ length: 12 }).map((_, i) => (
-                <PlaylistCardSkeleton key={i} />
-              ))}
-            </>
-          }
-        >
-          {courses.map((item) => (
-            <PlaylistCard key={item._id.toString()} playlist={item.course} />
-          ))}
-        </Suspense>
+        {courses.map((item) => (
+          <PlaylistCard key={item._id.toString()} playlist={item.course} />
+        ))}
       </div>
       <div className="text-center">
         <Link href="/courses/" className="btn btn-primary mt-4">

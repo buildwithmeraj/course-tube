@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/db";
+import { getCoursesDB } from "@/lib/getDB";
 import { ObjectId } from "mongodb";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 export async function GET(_, { params }) {
   try {
+    const session = await getServerSession(authOptions);
+    const isAdmin = session?.user?.role === "admin";
+
     const { id } = await params;
 
     if (!ObjectId.isValid(id)) {
@@ -15,8 +18,7 @@ export async function GET(_, { params }) {
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("courses");
+    const db = await getCoursesDB();
 
     const category = await db
       .collection("categories")
@@ -36,8 +38,15 @@ export async function GET(_, { params }) {
         {
           $lookup: {
             from: "courses",
-            localField: "courseObjectIds",
-            foreignField: "_id",
+            let: { ids: "$courseObjectIds" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $in: ["$_id", { $ifNull: ["$$ids", []] }] },
+                  ...(isAdmin ? {} : { approved: true }),
+                },
+              },
+            ],
             as: "courses",
           },
         },
@@ -99,8 +108,7 @@ export async function PATCH(req, { params }) {
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("courses");
+    const db = await getCoursesDB();
 
     const result = await db
       .collection("categories")
@@ -118,7 +126,7 @@ export async function PATCH(req, { params }) {
     }
 
     return NextResponse.json(
-      { message: "Category updated", category: result.value },
+      { message: "Category updated", category: result },
       { status: 200 },
     );
   } catch (err) {
@@ -147,14 +155,13 @@ export async function DELETE(_, { params }) {
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("courses");
+    const db = await getCoursesDB();
 
     const result = await db.collection("categories").findOneAndDelete({
       _id: new ObjectId(id),
     });
 
-    if (!result.value) {
+    if (!result) {
       return NextResponse.json(
         { message: "Category not found" },
         { status: 404 },

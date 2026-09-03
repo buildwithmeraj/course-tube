@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import clientPromise from "@/lib/db";
+import { getCoursesDB } from "@/lib/getDB";
 
 const getUserPlaylist = async () => {
   const session = await getServerSession(authOptions);
@@ -10,8 +10,7 @@ const getUserPlaylist = async () => {
   }
 
   try {
-    const client = await clientPromise;
-    const db = client.db("courses");
+    const db = await getCoursesDB();
 
     const enrollsCol = db.collection("enrolls");
 
@@ -27,7 +26,13 @@ const getUserPlaylist = async () => {
           },
         },
         { $unwind: "$course" },
-        { $sort: { createdAt: -1 } },
+        // Enrolments created before the field was unified carry createdAt
+        {
+          $addFields: {
+            enrolledAt: { $ifNull: ["$enrolledAt", "$createdAt"] },
+          },
+        },
+        { $sort: { enrolledAt: -1 } },
       ])
       .toArray();
 

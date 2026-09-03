@@ -31,6 +31,7 @@ const ManageCategories = () => {
         const res = await fetch("/api/categories");
         if (!res.ok) {
           toast.error("Failed to fetch categories!");
+          return;
         }
 
         const data = await res.json();
@@ -76,8 +77,9 @@ const ManageCategories = () => {
 
       if (!res.ok) {
         toast.error("Failed to update category!");
+        return;
       }
-      toast.success("Category updated successfuly!");
+      toast.success("Category updated successfully!");
 
       setCategories((prev) =>
         prev.map((cat) =>
@@ -99,8 +101,9 @@ const ManageCategories = () => {
 
       if (!res.ok) {
         toast.error("Failed to delete category!");
+        return;
       }
-      toast.success("Category deleted successfuly!");
+      toast.success("Category deleted successfully!");
 
       setCategories((prev) =>
         prev.filter((cat) => cat._id !== selectedCategory._id),

@@ -10,6 +10,15 @@ import { MdDashboard } from "react-icons/md";
 import { RiGraduationCapFill } from "react-icons/ri";
 import { RxResume } from "react-icons/rx";
 
+// Pure helper: kept out of the component so it is stable across renders
+const normalizeCourseId = (courseId) => {
+  if (!courseId) return "";
+  if (typeof courseId === "string") return courseId;
+  if (typeof courseId === "object" && courseId.$oid) return courseId.$oid;
+  if (typeof courseId?.toString === "function") return courseId.toString();
+  return "";
+};
+
 export default function Profile() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -20,15 +29,8 @@ export default function Profile() {
   const [stats, setStats] = useState(null);
   const statsLoading =
     status === "loading" || (session?.user?.email && stats === null);
-  const [ongoingCourses, setOngoingCourses] = useState([]);
-  const [coursesLoading, setCoursesLoading] = useState(true);
-  const normalizeCourseId = (courseId) => {
-    if (!courseId) return "";
-    if (typeof courseId === "string") return courseId;
-    if (typeof courseId === "object" && courseId.$oid) return courseId.$oid;
-    if (typeof courseId?.toString === "function") return courseId.toString();
-    return "";
-  };
+  // null until the ongoing courses have been fetched for the current stats
+  const [fetchedCourses, setFetchedCourses] = useState(null);
 
   useEffect(() => {
     if (!session?.user?.email) return;
@@ -71,34 +73,18 @@ export default function Profile() {
     ? "Loading..."
     : `${enrolledStats.progress}%`;
 
-  useEffect(() => {
-    if (!stats?.courses) {
-      setTimeout(() => {
-        setOngoingCourses([]);
-        setCoursesLoading(false);
-      }, 0);
-
-      return;
-    }
-
-    const ongoingIds = stats.courses
+  const ongoingIds = useMemo(() => {
+    if (!stats?.courses) return [];
+    return stats.courses
       .filter((course) => !course?.completed)
       .map((course) => normalizeCourseId(course?.courseId))
       .filter(Boolean);
+  }, [stats]);
 
-    if (ongoingIds.length === 0) {
-      setTimeout(() => {
-        setOngoingCourses([]);
-        setCoursesLoading(false);
-      }, 0);
-
-      return;
-    }
+  useEffect(() => {
+    if (ongoingIds.length === 0) return;
 
     let cancelled = false;
-    setTimeout(() => {
-      setCoursesLoading(true);
-    }, 0);
 
     Promise.all(
       ongoingIds.map((courseId) =>
@@ -106,20 +92,19 @@ export default function Profile() {
           .then((res) => (res.ok ? res.json() : null))
           .catch(() => null),
       ),
-    )
-      .then((courses) => {
-        if (!cancelled) {
-          setOngoingCourses(courses.filter(Boolean));
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setCoursesLoading(false);
-      });
+    ).then((courses) => {
+      if (!cancelled) setFetchedCourses(courses.filter(Boolean));
+    });
 
     return () => {
       cancelled = true;
     };
-  }, [stats]);
+  }, [ongoingIds]);
+
+  // Derived rather than stored, so the effect never sets state synchronously
+  const ongoingCourses = ongoingIds.length === 0 ? [] : (fetchedCourses ?? []);
+  const coursesLoading =
+    statsLoading || (ongoingIds.length > 0 && fetchedCourses === null);
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/" });

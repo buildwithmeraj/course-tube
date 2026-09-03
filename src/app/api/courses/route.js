@@ -1,13 +1,23 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/db";
+import { getCoursesDB } from "@/lib/getDB";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import {
+  YouTubeError,
+  fetchPlaylistInfo,
+  fetchPlaylistVideos,
+  parsePlaylistId,
+} from "@/lib/youtubeApi";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const DEFAULT_LIMIT = 1000000;
+const DEFAULT_LIMIT = 1000;
 const MAX_LIMIT = 1000;
+const MAX_QUERY_LENGTH = 100;
+
+// Neutralise regex metacharacters so a search term cannot become a pattern
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export async function GET(req) {
   try {
@@ -37,19 +47,32 @@ export async function GET(req) {
       limit = parsedLimit;
     }
 
+    const session = await getServerSession(authOptions);
+    const isAdmin = session?.user?.role === "admin";
+
     // Build filter
     let filter = {};
-    if (approved === "true") {
+    if (isAdmin) {
+      // Only admins may narrow by approval state, or list every course
+      if (approved === "true") {
+        filter.approved = true;
+      } else if (approved === "false") {
+        filter.approved = false;
+      }
+    } else {
+      // Pending courses stay private to their uploader, who reaches them
+      // through their enrolments rather than this listing
       filter.approved = true;
-    } else if (approved === "false") {
-      filter.approved = false;
-    }
-    if (query && query.length > 0) {
-      filter.title = { $regex: query, $options: "i" };
     }
 
-    const client = await clientPromise;
-    const db = client.db("courses");
+    if (query && query.length > 0) {
+      filter.title = {
+        $regex: escapeRegex(query.slice(0, MAX_QUERY_LENGTH)),
+        $options: "i",
+      };
+    }
+
+    const db = await getCoursesDB();
     let courses = [];
 
     if (popular === "true") {
@@ -136,53 +159,20 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { playlistId, title, totalCount, videos } = body;
 
-    console.log("POST request body:", {
-      playlistId,
-      title,
-      totalCount,
-      videoCount: videos?.length,
-    });
+    // The client sends only a playlist reference; everything else is fetched
+    // here so the YouTube key stays on the server and the stored documents
+    // cannot be shaped by the caller.
+    const playlistId = parsePlaylistId(body?.url ?? body?.playlistId);
 
-    // Validation
-    if (!playlistId?.trim()) {
+    if (!playlistId) {
       return NextResponse.json(
-        { message: "playlistId is required" },
+        { message: "A valid YouTube playlist URL is required" },
         { status: 400 },
       );
     }
 
-    if (!title?.trim()) {
-      return NextResponse.json(
-        { message: "title is required" },
-        { status: 400 },
-      );
-    }
-
-    if (!Array.isArray(videos)) {
-      return NextResponse.json(
-        { message: "videos must be an array" },
-        { status: 400 },
-      );
-    }
-
-    if (videos.length === 0) {
-      return NextResponse.json(
-        { message: "Course must have at least one video" },
-        { status: 400 },
-      );
-    }
-
-    if (videos.length > 200) {
-      return NextResponse.json(
-        { message: "Course exceeds maximum video limit of 200" },
-        { status: 400 },
-      );
-    }
-
-    const client = await clientPromise;
-    const db = client.db("courses");
+    const db = await getCoursesDB();
     const coursesCol = db.collection("courses");
     const videosCol = db.collection("videos");
 
@@ -195,28 +185,27 @@ export async function POST(req) {
       );
     }
 
-    // Get thumbnail from first video if available
-    const thumbnailUrl = videos[0]?.thumbnail || "";
+    const { title, totalCount } = await fetchPlaylistInfo(playlistId);
+    const videos = await fetchPlaylistVideos(playlistId);
 
     // Insert course
     const courseRes = await coursesCol.insertOne({
       playlistId,
       title,
       totalCount: totalCount || videos.length,
-      thumbnailUrl,
+      thumbnailUrl: videos[0]?.thumbnail || "",
       approved: false,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
 
     const courseId = courseRes.insertedId;
-    console.log("Course created with ID:", courseId);
 
     // Enroll user to this course
     await db.collection("enrolls").insertOne({
       courseId,
       userEmail: session.user.email,
-      createdAt: new Date(),
+      enrolledAt: new Date(),
     });
 
     // Insert videos
@@ -229,13 +218,15 @@ export async function POST(req) {
       { ordered: false },
     );
 
-    console.log(`Inserted ${videos.length} videos for course ${courseId}`);
-
     return NextResponse.json(
       { message: "Course and videos stored successfully", courseId },
       { status: 201 },
     );
   } catch (err) {
+    if (err instanceof YouTubeError) {
+      return NextResponse.json({ message: err.message }, { status: err.status });
+    }
+
     console.error("Error creating course:", err);
     return NextResponse.json(
       { message: "Internal server error", error: err.message },
