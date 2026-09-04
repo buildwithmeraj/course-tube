@@ -204,6 +204,30 @@ label {
   }
 }
 
+/* Playing indicator on the video list. scaleY is compositor-only, so a rail
+   of 60+ cards costs nothing; transform-origin keeps the bars sitting on the
+   baseline. Under reduced motion the bars hold their staggered heights and
+   still read as an equaliser. */
+@keyframes equalize {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.eq-bar {
+  transform-origin: bottom;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .eq-bar {
+    animation: equalize 900ms ease-in-out infinite;
+  }
+}
+
 /* daisyUI already themes `scrollbar-color` on :root; this only narrows it.
    Replaces `scrollbar-thin scrollbar-thumb-* scrollbar-track-*`, which needed
    a plugin the project does not install. */
