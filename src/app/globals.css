@@ -208,6 +208,62 @@ label {
   }
 }
 
+/* Scrub and volume sliders in the custom player bar. A range input gives
+   keyboard and screen-reader behaviour for free; the track is painted with a
+   gradient so the buffered range shows behind the played range. */
+.player-scrub {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 14px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.player-scrub::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--color-accent) 0 var(--played),
+    rgb(255 255 255 / 0.45) var(--played) var(--buffered),
+    rgb(255 255 255 / 0.22) var(--buffered) 100%
+  );
+}
+
+.player-scrub::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--color-accent) 0 var(--played),
+    rgb(255 255 255 / 0.45) var(--played) var(--buffered),
+    rgb(255 255 255 / 0.22) var(--buffered) 100%
+  );
+}
+
+.player-scrub::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 11px;
+  height: 11px;
+  margin-top: -3.5px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.player-scrub::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.player-scrub:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
 /* Playing indicator on the video list. scaleY is compositor-only, so a rail
    of 60+ cards costs nothing; transform-origin keeps the bars sitting on the
    baseline. Under reduced motion the bars hold their staggered heights and

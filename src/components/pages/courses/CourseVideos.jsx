@@ -680,9 +680,15 @@ const CourseVideos = ({ initialCourse = null, initialVideos = [] }) => {
 
             <div>
               <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-3 text-sm">
-                <span className="font-semibold">
+                <span className="flex items-center gap-2 font-semibold">
                   {completedCount} of {watchable.length || course?.totalCount}{" "}
                   videos done
+                  {/* The arrow keys seek without focusing the iframe, which is
+                      only discoverable if we say so. */}
+                  <span className="hidden font-normal text-base-content/50 sm:inline">
+                    <kbd className="kbd kbd-xs">←</kbd>{" "}
+                    <kbd className="kbd kbd-xs">→</kbd> seek 5s
+                  </span>
                 </span>
                 {runtime.total > 0 && (
                   <span className="text-base-content/70">

@@ -6,8 +6,10 @@ import {
   useImperativeHandle,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 import { FaPlay } from "react-icons/fa";
+import PlayerControls from "./PlayerControls";
 
 const IFRAME_API_SRC = "https://www.youtube.com/iframe_api";
 
@@ -42,10 +44,41 @@ const loadYouTubeApi = () => {
 
 const PROGRESS_INTERVAL_MS = 5000;
 
+// Matches YouTube's own arrow-key step.
+const SEEK_STEP_SECONDS = 5;
+
+// Keys pressed while typing belong to the field, not the player. The notes
+// input sits a few hundred pixels below the video, so this matters.
+const isTypingTarget = (el) =>
+  Boolean(el) &&
+  (el.isContentEditable ||
+    el.tagName === "INPUT" ||
+    el.tagName === "TEXTAREA" ||
+    el.tagName === "SELECT");
+
 // hqdefault exists for every video (maxresdefault does not). It is 4:3 with
 // letterbox bars, so object-cover crops back to the 16:9 frame.
 const posterFor = (videoId) =>
   `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+
+// Touch devices keep YouTube's own controls: they are tuned for a finger, and
+// a custom bar would be a downgrade there. Pointer devices get ours instead,
+// which is the only way to drop YouTube's title strip and hover chrome.
+const COARSE_QUERY = "(pointer: coarse)";
+
+const subscribeCoarse = (onChange) => {
+  if (typeof window === "undefined" || !window.matchMedia) return () => {};
+  const mq = window.matchMedia(COARSE_QUERY);
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
+};
+
+const useCoarsePointer = () =>
+  useSyncExternalStore(
+    subscribeCoarse,
+    () => window.matchMedia?.(COARSE_QUERY).matches ?? false,
+    () => false,
+  );
 
 const YouTubePlayer = ({
   video,
@@ -57,7 +90,9 @@ const YouTubePlayer = ({
   ref,
 }) => {
   const containerRef = useRef(null);
+  const wrapperRef = useRef(null);
   const playerRef = useRef(null);
+  const coarsePointer = useCoarsePointer();
   const loadedVideoIdRef = useRef(null);
 
   // Until someone presses play this renders a poster instead of the embed.
@@ -145,13 +180,23 @@ const YouTubePlayer = ({
         width: "100%",
         height: "100%",
         playerVars: {
-          controls: 1,
-          modestbranding: 1,
-          rel: 0, // Do not show related videos
+          controls: coarsePointer ? 1 : 0,
+          rel: 0, // Related videos stay on the same channel
           autoplay: 1, // Only ever reached from a user gesture
           start,
+          // Without this iOS Safari takes the video fullscreen the moment it
+          // plays, which loses the chapter list and the notes field.
+          playsinline: 1,
+          iv_load_policy: 3, // No annotation overlays on top of the lesson
+          modestbranding: 1, // Deprecated by YouTube; harmless to keep asking
         },
         events: {
+          onReady: () => {
+            if (!coarsePointer) {
+              playerRef.current?.unloadModule?.("captions");
+              playerRef.current?.unloadModule?.("cc");
+            }
+          },
           onStateChange: (event) => {
             if (event.data === YT.PlayerState.PLAYING) {
               startTicking();
@@ -177,7 +222,7 @@ const YouTubePlayer = ({
     return () => {
       cancelled = true;
     };
-  }, [activated, video?.videoId, startTicking, stopTicking]);
+  }, [activated, coarsePointer, video?.videoId, startTicking, stopTicking]);
 
   // Lets the parent read the exact play head when a note is written, rather
   // than the value from the last 5-second tick.
@@ -198,6 +243,34 @@ const YouTubePlayer = ({
     playerRef.current.playVideo?.();
   }, [seekRequest]);
 
+  // Seek with the arrow keys without having to click into the iframe first.
+  // Once focus *is* inside the iframe these events never reach the document,
+  // so YouTube's own handling takes over and the two cannot both fire.
+  useEffect(() => {
+    if (!activated) return;
+
+    const onKeyDown = (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      if (isTypingTarget(event.target)) return;
+
+      const player = playerRef.current;
+      if (!player?.getCurrentTime || !player.seekTo) return;
+
+      event.preventDefault();
+
+      const step =
+        event.key === "ArrowRight" ? SEEK_STEP_SECONDS : -SEEK_STEP_SECONDS;
+      const duration = player.getDuration?.() || 0;
+      const target = Math.max(0, player.getCurrentTime() + step);
+
+      player.seekTo(duration > 0 ? Math.min(target, duration) : target, true);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [activated]);
+
   // Tear down only when the component actually goes away
   useEffect(
     () => () => {
@@ -211,9 +284,17 @@ const YouTubePlayer = ({
 
   return (
     <div className="w-full">
-      <div className="relative w-full overflow-hidden rounded-box pt-[56.25%]">
+      <div
+        ref={wrapperRef}
+        className="relative w-full overflow-hidden rounded-box bg-black pt-[56.25%]"
+      >
         {activated ? (
-          <div ref={containerRef} className="absolute inset-0 h-full w-full" />
+          <>
+            <div ref={containerRef} className="absolute inset-0 h-full w-full" />
+            {!coarsePointer && (
+              <PlayerControls playerRef={playerRef} wrapperRef={wrapperRef} />
+            )}
+          </>
         ) : (
           <button
             type="button"
