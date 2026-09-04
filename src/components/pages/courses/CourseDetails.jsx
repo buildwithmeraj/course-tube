@@ -1,6 +1,5 @@
 "use client";
 import NotFound from "@/components/shared/NotFound";
-import Loading from "@/components/ui/Loading";
 import NotLoggedIn from "@/components/ui/NotLoggedIn";
 import VideoCard from "@/components/ui/VideoCard";
 import VideoCardSkeleton from "@/components/ui/VideoCardSkeleton";
@@ -12,7 +11,7 @@ import toast from "react-hot-toast";
 import { MdOutlineAddToPhotos } from "react-icons/md";
 
 const CourseDetails = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [videos, setVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [completedIds, setCompletedIds] = useState(() => new Set());
@@ -142,9 +141,7 @@ const CourseDetails = () => {
     return <NotFound />;
   }
 
-  if (enrollLoading) return <Loading />;
-
-  if (!session) {
+  if (status === "unauthenticated") {
     return <NotLoggedIn />;
   }
 
@@ -152,7 +149,7 @@ const CourseDetails = () => {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
         <div className="card bg-base-200 max-w-lg shadow-md text-center p-8 space-y-3">
-          <h2 className="title-accent">No videos yet</h2>
+          <h1 className="page-title text-accent">No videos yet</h1>
           <p className="text-base-content/70">
             This course does not have any published videos right now. Please
             check back later or return to the courses list.
@@ -169,7 +166,7 @@ const CourseDetails = () => {
 
   return (
     <div className="space-y-4">
-      <h2 className="title-accent flex flex-col lg:flex-row justify-between items-center">
+      <h1 className="page-title text-accent flex flex-col lg:flex-row justify-between items-center">
         <span>
           {loading ? (
             <span className="loading loading-dots loading-xl"></span>
@@ -179,14 +176,14 @@ const CourseDetails = () => {
             </>
           )}
         </span>
-        {!enrolled && (
+        {!enrollLoading && !enrolled && (
           <button className="btn btn-primary" onClick={enrollInCourse}>
             <MdOutlineAddToPhotos />
             Enroll Now
           </button>
         )}
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      </h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
         {loading && (
           <>
             {Array.from({ length: 12 }).map((_, i) => (
@@ -214,7 +211,7 @@ const CourseDetails = () => {
           className="modal modal-open modal-bottom sm:modal-middle"
         >
           <div className="modal-box text-success text-center">
-            <h2 className="font-bold ">Congratulations!</h2>
+            <h3 className="subsection-title">Congratulations!</h3>
             <p className="py-4">
               You have successfully enrolled in the course. Start learning now!
               Good luck!

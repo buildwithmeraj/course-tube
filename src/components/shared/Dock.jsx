@@ -13,7 +13,7 @@ const Dock = () => {
   const { data: session, status } = useSession();
   const { showSearchModal, setShowSearchModal } = useSearch();
   return (
-    <div className="z-20 dock bg-primary/60 backdrop-blur-xl lg:hidden">
+    <div className="z-20 dock bg-surface/60 backdrop-blur-xl lg:hidden">
       <DockNavLink href="/">
         <IoHomeSharp size={20} />
         <span className="dock-label">Home</span>

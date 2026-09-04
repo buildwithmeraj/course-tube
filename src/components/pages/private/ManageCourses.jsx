@@ -128,9 +128,9 @@ const ManageCourses = () => {
     <div className="space-y-3 mt-1">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-2">
-          <h2 className="title-accent text-3xl font-black">
+          <h1 className="page-title text-accent">
             Manage Courses {courses.length > 0 && `(${courses.length})`}
-          </h2>
+          </h1>
         </div>
         <Link href="/profile/courses/add" className="btn btn-primary btn-sm">
           <RiPlayListAddFill />
@@ -139,7 +139,7 @@ const ManageCourses = () => {
       </div>
 
       {courses.length === 0 ? (
-        <div className="min-h-[50vh] flex items-center justify-center rounded-3xl border border-base-200 bg-base-100/80 p-10 shadow-sm">
+        <div className="min-h-[50vh] flex items-center justify-center rounded-xl border border-base-200 bg-base-100/80 p-10 shadow-sm">
           <div className="text-center text-xl text-base-content/60 flex items-center justify-center flex-col gap-3">
             <FaCircleInfo size={56} />
             No courses found
@@ -150,7 +150,7 @@ const ManageCourses = () => {
           </div>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-3xl border border-base-200 bg-base-100/90 shadow-sm backdrop-blur-xl">
+        <div className="overflow-hidden rounded-xl border border-base-200 bg-base-100/90 shadow-sm">
           <div className="overflow-x-auto">
             <table className="table">
               <thead>
@@ -251,8 +251,8 @@ const ManageCourses = () => {
       )}
       {action && selectedCourse && (
         <div className="modal modal-open">
-          <div className="modal-box rounded-3xl">
-            <h3 className="title-accent font-bold text-lg capitalize">
+          <div className="modal-box rounded-xl">
+            <h3 className="card-heading text-accent capitalize">
               {action} Course
             </h3>
 

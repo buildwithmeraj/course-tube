@@ -5,9 +5,9 @@ import { RiGraduationCapFill } from "react-icons/ri";
 
 const CTA = () => {
   return (
-    <div className="bg-accent my-6 rounded-lg py-16 px-4 sm:px-6 lg:px-8 text-secondary-content">
+    <div className="bg-surface/60 rounded-xl py-16 px-4 sm:px-6 lg:px-8 text-base-content">
       <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-4xl sm:text-5xl font-bold  mb-4">
+        <h2 className="section-title text-3xl sm:text-4xl mb-4">
           Ready to keep learning?
         </h2>
         <p className="text-xl  mb-8 max-w-2xl mx-auto">
@@ -16,11 +16,11 @@ const CTA = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link className="btn btn-soft" href="/courses">
+          <Link className="btn btn-primary" href="/courses">
             <RiGraduationCapFill />
             Browse Courses
           </Link>
-          <Link className="btn btn-secondary" href="/categories">
+          <Link className="btn btn-soft" href="/categories">
             <FaFolderOpen />
             Explore Topics
           </Link>

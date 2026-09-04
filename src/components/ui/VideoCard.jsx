@@ -8,7 +8,7 @@ const VideoCard = ({ video, isSelected, course, isWatched, isEnrolled }) => {
     <Link
       href={`/courses/${video.courseId}/videos?video=${video._id}`}
       className={`group cursor-pointer rounded-xl ${
-        isEnrolled && isSelected ? "border-blue-500" : "border-gray-300"
+        isEnrolled && isSelected ? "border-primary" : "border-base-300"
       }`}
     >
       <figure className="relative">
@@ -20,14 +20,14 @@ const VideoCard = ({ video, isSelected, course, isWatched, isEnrolled }) => {
           sizes="100vw"
           className={`w-full rounded-xl ${isEnrolled && isWatched ? "opacity-50" : ""} ${
             isEnrolled && isSelected
-              ? "border-4 border-blue-500"
+              ? "border-4 border-primary"
               : " border border-base-content"
           }`}
         />
-        <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs md:text-sm px-2 py-1 rounded">
+        <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs md:text-sm px-2 py-1 rounded-lg">
           {video.position + 1}/{course?.totalCount || "?"}
         </div>
-        <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs md:text-sm px-2 py-1 rounded">
+        <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs md:text-sm px-2 py-1 rounded-lg">
           {video.duration}
         </div>
         <div

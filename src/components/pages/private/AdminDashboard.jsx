@@ -12,8 +12,8 @@ import {
 } from "react-icons/fa";
 import { HiMiniWrenchScrewdriver } from "react-icons/hi2";
 
-const StatCard = ({ title, value, color, icon: Icon, hint }) => (
-  <div className="rounded-3xl border border-base-200 bg-base-100/90 p-5 shadow-sm backdrop-blur-xl">
+const StatCard = ({ title, value, color, tint, icon: Icon, hint }) => (
+  <div className="rounded-xl border border-base-200 bg-base-100/90 p-5 shadow-sm">
     <div className="flex items-start justify-between gap-3">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-base-content/50">
@@ -22,7 +22,7 @@ const StatCard = ({ title, value, color, icon: Icon, hint }) => (
         <div className={`mt-2 text-3xl font-black ${color}`}>{value}</div>
         <p className="mt-2 text-sm text-base-content/60">{hint}</p>
       </div>
-      <div className={`rounded-2xl p-3 ${color} bg-opacity-10`}>
+      <div className={`rounded-xl p-3 ${color} ${tint}`}>
         <Icon size={22} />
       </div>
     </div>
@@ -36,7 +36,7 @@ const DashboardCard = ({ icon: Icon, title, description, href, color }) => (
     <div className="card-body gap-5 bg-base-100/90">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className={`rounded-2xl p-3 ${color} text-white shadow-sm`}>
+          <div className={`rounded-xl p-3 ${color} text-accent-content shadow-sm`}>
             <Icon size={20} />
           </div>
           <div>
@@ -88,6 +88,7 @@ const AdminDashboard = () => {
       title: "Total Courses",
       value: loading ? "..." : (s.coursesCount ?? 0),
       color: "text-primary",
+      tint: "bg-primary/10",
       icon: FaBook,
       hint: "Courses published across the platform",
     },
@@ -95,6 +96,7 @@ const AdminDashboard = () => {
       title: "Total Enrolls",
       value: loading ? "..." : (s.enrollsCount ?? 0),
       color: "text-info",
+      tint: "bg-info/10",
       icon: FaRegChartBar,
       hint: "Learners currently participating",
     },
@@ -102,6 +104,7 @@ const AdminDashboard = () => {
       title: "Total Categories",
       value: loading ? "..." : (s.categoriesCount ?? 0),
       color: "text-success",
+      tint: "bg-success/10",
       icon: FaLayerGroup,
       hint: "Structured content groups",
     },
@@ -109,6 +112,7 @@ const AdminDashboard = () => {
       title: "Total Videos",
       value: loading ? "..." : (s.videosCount ?? 0),
       color: "text-warning",
+      tint: "bg-warning/10",
       icon: FaList,
       hint: "Tracked playlist videos",
     },
@@ -118,7 +122,7 @@ const AdminDashboard = () => {
     <div className="space-y-3">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-2xl space-y-2">
-          <h2 className="title-accent text-4xl font-black">Admin Dashboard</h2>
+          <h1 className="page-title text-accent">Admin Dashboard</h1>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -149,7 +153,7 @@ const AdminDashboard = () => {
 
         <div className="card border border-base-200 bg-gradient-to-br from-accent/10 via-base-100 to-primary/10 shadow-sm col-span-full">
           <div className="card-body">
-            <h3 className="card-title title-accent text-2xl">
+            <h3 className="card-title text-accent text-2xl">
               Workflow snapshot
             </h3>
             <div className="space-y-3 text-sm text-base-content/70">

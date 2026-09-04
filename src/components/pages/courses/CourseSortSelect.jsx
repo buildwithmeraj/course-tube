@@ -28,7 +28,7 @@ const CourseSortSelect = () => {
 
   return (
     <select
-      className="select"
+      className="select select-sm w-auto"
       value={searchParams.get("sortBy") || ""}
       onChange={onChange}
       aria-label="Sort courses"

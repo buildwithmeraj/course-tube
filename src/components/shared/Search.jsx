@@ -1,10 +1,12 @@
 "use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { IoSearch } from "react-icons/io5";
 import { RiPlayList2Fill } from "react-icons/ri";
 
 const Search = ({ setShowSearchModal }) => {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [error, setError] = useState(null);
@@ -50,25 +52,31 @@ const Search = ({ setShowSearchModal }) => {
     fetchCourses();
   }, [debouncedQuery]);
 
+  const openResultsPage = (event) => {
+    event.preventDefault();
+    const value = query.trim();
+    if (!value) return;
+    setShowSearchModal(false);
+    router.push(`/search?q=${encodeURIComponent(value)}`);
+  };
+
   return (
     <dialog className="modal modal-open">
       <div className="modal-box space-y-3">
-        <h3 className="text-center font-semibold text-xl">Search Courses</h3>
+        <h3 className="subsection-title text-center">Search Courses</h3>
         <div className="min-h-[10vh]">
-          <p className="text-center">
-            <label className="input">
-              <IoSearch
-                className="ml-1 text-base-content/60 mb-0.5"
-                size={18}
-              />
+          <form onSubmit={openResultsPage} className="flex justify-center">
+            <label className="input w-full">
+              <IoSearch className="mb-0.5 ml-1 text-base-content/60" size={18} />
               <input
                 type="search"
-                placeholder="Search"
+                placeholder="Search courses and video titles"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
+                autoFocus
               />
             </label>
-          </p>
+          </form>
           {error && <>{error}</>}
           {!loading && debouncedQuery && (
             <div className="text-center font-semibold my-3">
@@ -126,15 +134,23 @@ const Search = ({ setShowSearchModal }) => {
             </div>
           )}
         </div>
-        <div className="modal-action justify-center">
-          <form method="dialog">
-            <button
-              className="btn btn-sm btn-soft hover:btn-error"
+        <div className="modal-action justify-center gap-2">
+          {debouncedQuery && courses.length > 0 && (
+            <Link
+              href={`/search?q=${encodeURIComponent(debouncedQuery)}`}
+              className="btn btn-sm btn-primary"
               onClick={() => setShowSearchModal(false)}
             >
-              Close
-            </button>
-          </form>
+              See all results
+            </Link>
+          )}
+          <button
+            type="button"
+            className="btn btn-sm btn-soft"
+            onClick={() => setShowSearchModal(false)}
+          >
+            Close
+          </button>
         </div>
       </div>
     </dialog>

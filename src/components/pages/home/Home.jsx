@@ -9,17 +9,17 @@ import ContinueLearning from "@/components/ui/ContinueLearning";
 export default function HomePage() {
   return (
     <>
-      <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen bg-primary/65 -mt-4">
+      <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen bg-surface/65 -mt-6">
         <Hero />
       </section>
-      <div className="mt-6">
+      <div className="mt-10 space-y-14">
         <ContinueLearning />
+        <HowItWorks />
+        <PopularCourses />
+        <FeaturedCategories />
+        <Stats />
+        <CTA />
       </div>
-      <HowItWorks />
-      <PopularCourses />
-      <FeaturedCategories />
-      <Stats />
-      <CTA />
     </>
   );
 }

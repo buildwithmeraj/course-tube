@@ -1,4 +1,4 @@
-import { Cabin, Figtree, Nunito_Sans, Poltawski_Nowy } from "next/font/google";
+import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
@@ -10,6 +10,15 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 const FigtreeFont = Figtree({
   subsets: ["latin"],
   variable: "--font-figtree",
+  fallback: ["system-ui", "sans-serif"],
+});
+
+// Headings only. Figtree is an even geometric sans and reads the same at every
+// size; the display face gives the type scale somewhere to actually go.
+const DisplayFont = Bricolage_Grotesque({
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  variable: "--font-display",
   fallback: ["system-ui", "sans-serif"],
 });
 
@@ -27,7 +36,7 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${FigtreeFont.variable} antialiased flex flex-col min-h-screen overflow-x-hidden`}
+        className={`${FigtreeFont.variable} ${DisplayFont.variable} antialiased flex flex-col min-h-screen overflow-x-hidden`}
       >
         <SpeedInsights />
         <Providers>
@@ -36,10 +45,14 @@ export default function RootLayout({ children }) {
               <Navbar />
             </nav>
           </header>
-          <main className="container mx-auto mt-20 px-4 mb-6 lg:mb-4 flex-1">
+          <main className="container mx-auto flex-1 px-4 pt-[calc(var(--nav-h)+1.5rem)] pb-6 lg:pb-4">
             {children}
           </main>
-          <Toaster position="bottom-center" reverseOrder={false} />
+          <Toaster
+            position="bottom-center"
+            reverseOrder={false}
+            containerStyle={{ bottom: "calc(var(--dock-offset) + 1rem)" }}
+          />
           <footer>
             <Footer />
             <Dock />

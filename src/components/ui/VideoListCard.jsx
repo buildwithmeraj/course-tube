@@ -26,7 +26,7 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
       className={`
         grid gap-2 items-start 
         grid-cols-7 md:grid-cols-3 
-        ${isSelected ? "border-blue-500" : "border-gray-300"}
+        ${isSelected ? "border-primary" : "border-base-300"}
       `}
     >
       <figure
@@ -48,15 +48,15 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
             lg:max-w-48 
             rounded-lg 
             ${isWatchedButNotSelected ? "opacity-50" : ""}
-            ${isSelected ? "border-4 border-blue-500" : "border border-base-content"}
+            ${isSelected ? "border-4 border-primary" : "border border-base-content"}
           `}
         />
 
-        <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+        <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-lg">
           {video.position + 1}/{course?.totalCount || "?"}
         </div>
 
-        <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+        <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-lg">
           {unavailable ? "Unavailable" : video.duration}
         </div>
 

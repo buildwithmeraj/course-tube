@@ -15,12 +15,12 @@ const CategoryDetails = async ({ id }) => {
   const courses = category.courses || [];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-      <h2 className="col-span-full title-accent">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4 mt-4">
+      <h1 className="col-span-full page-title text-accent">
         {category.title} ({courses.length} Courses)
-      </h2>
+      </h1>
       {category.description && (
-        <p className="col-span-full alert alert-soft alert-info rounded-lg">
+        <p className="col-span-full alert alert-soft alert-info">
           <FaCircleInfo className="inline -mr-2.5 mb-0.5" />
           {category.description}
         </p>

@@ -21,7 +21,7 @@ const CourseLanguageSelect = () => {
 
   return (
     <select
-      className="select"
+      className="select select-sm w-auto"
       value={searchParams.get("language") || ""}
       onChange={onChange}
       aria-label="Filter by language"

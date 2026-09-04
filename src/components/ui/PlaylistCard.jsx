@@ -8,39 +8,33 @@ import { languageLabel } from "@/lib/languages";
 
 const PlaylistCard = ({ playlist }) => {
   return (
-    <div className="rounded-lg">
-      <Link href={`/courses/${playlist._id}`}>
-        <div className="stack w-full">
-          <div className="relative group">
-            <Image
-              src={playlist.thumbnailUrl}
-              alt={playlist.title}
-              width={0}
-              height={0}
-              sizes="100vw"
-              className="w-full rounded-xl"
-            />
-            <div
-              className="absolute inset-0 flex items-center justify-center
-                  bg-black/40 text-white text-xl opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
-            >
-              <RiPlayList2Fill size={56} />
-            </div>
-            {playlist.enrollCount >= 0 && (
-              <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs md:text-sm px-2 py-1 rounded-lg flex items-center gap-1">
-                <RiGraduationCapFill size={15} className="mb-0.5" />{" "}
-                {playlist.enrollCount} Enrolls
-              </div>
-            )}
-            <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs md:text-sm px-2 py-1 rounded-lg flex items-center gap-1">
-              <FaVideo size={14} className="mb-0.5" /> {playlist.totalCount}{" "}
-              Videos
-            </div>
+    <div>
+      <Link
+        href={`/courses/${playlist._id}`}
+        className="group relative block overflow-hidden rounded-xl"
+      >
+        <Image
+          src={playlist.thumbnailUrl}
+          alt={playlist.title}
+          width={0}
+          height={0}
+          sizes="100vw"
+          className="w-full rounded-xl"
+        />
+        <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100">
+          <RiPlayList2Fill size={56} />
+        </div>
+        {playlist.enrollCount >= 0 && (
+          <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-lg bg-black/50 px-2 py-1 text-xs text-white md:text-sm">
+            <RiGraduationCapFill size={15} className="mb-0.5" />{" "}
+            {playlist.enrollCount} Enrolls
           </div>
-          <div className="card shadow-md border border-accent bg-accent"></div>
-          <div className="card shadow-md border border-info bg-info/70"></div>
+        )}
+        <div className="absolute right-2 bottom-2 flex items-center gap-1 rounded-lg bg-black/50 px-2 py-1 text-xs text-white md:text-sm">
+          <FaVideo size={14} className="mb-0.5" /> {playlist.totalCount} Videos
         </div>
       </Link>
+
       <h3 className="card-title mt-2 line-clamp-2">
         <Link href={`/courses/${playlist._id}`}>{playlist.title}</Link>
       </h3>

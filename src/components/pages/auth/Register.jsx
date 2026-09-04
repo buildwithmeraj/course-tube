@@ -142,9 +142,9 @@ const RegisterPage = () => {
     <div className="flex items-center justify-center h-[84vh]">
       <div className="card bg-base-200 w-full max-w-sm shadow-md flex flex-row items-center">
         <form className="card-body" onSubmit={handleCredentialsRegister}>
-          <h2 className="title-accent text-center -mb-3">Register</h2>
+          <h1 className="page-title text-accent text-center">Register</h1>
           {error && (
-            <div className="alert alert-error shadow-lg flex items-center mt-2">
+            <div className="alert alert-error flex items-center mt-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="stroke-current shrink-0 h-6 w-6"

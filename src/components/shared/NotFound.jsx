@@ -9,7 +9,7 @@ const NotFound = () => {
         <div className="flex items-center justify-center">
           <FaExclamationTriangle size={120} className="text-warning" />
         </div>
-        <h2 className="title-accent">Page not found</h2>
+        <h1 className="page-title text-accent">Page not found</h1>
         <p className="text-lg">
           The page you are looking for does not exist. It might have been moved
           or deleted.

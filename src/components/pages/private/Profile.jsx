@@ -119,7 +119,7 @@ export default function Profile() {
   return (
     <section className="mx-auto max-w-5xl">
       <ContinueLearning />
-      <div className="rounded-2xl border border-base-200 bg-base-100 p-6 shadow-md md:p-8">
+      <div className="rounded-xl border border-base-200 bg-base-100 p-6 shadow-sm md:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
             <div className="relative">
@@ -138,9 +138,9 @@ export default function Profile() {
               )}
             </div>
             <div>
-              <h2 className="text-2xl font-semibold text-base-content">
+              <h1 className="page-title mb-0 text-base-content">
                 {displayName}
-              </h2>
+              </h1>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <span className="rounded-full border border-base-200 bg-base-200/60 px-3 py-1 text-xs font-semibold text-base-content">
                   {role}
@@ -265,9 +265,9 @@ export default function Profile() {
 
       <ActivityHeatmap />
 
-      <div className="mt-6 rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm">
+      <div className="mt-6 rounded-xl border border-base-200 bg-base-100 p-6 shadow-sm">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-base-content">
+          <h3 className="card-heading text-base-content">
             Ongoing courses
           </h3>
           <Link href="/profile/courses" className="text-sm font-medium link">
@@ -297,7 +297,7 @@ export default function Profile() {
                   key={courseId || course?.title}
                   className="flex items-center gap-3 rounded-lg border border-base-300 bg-base-300 p-3"
                 >
-                  <div className="h-12 w-20 overflow-hidden rounded-md bg-base-200/60">
+                  <div className="h-12 w-20 overflow-hidden rounded-lg bg-base-200/60">
                     {course?.thumbnailUrl ? (
                       <Image
                         src={course.thumbnailUrl}

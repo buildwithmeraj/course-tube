@@ -184,7 +184,7 @@ const YouTubePlayer = ({
         ></div>
       </div>
       {video && (
-        <h3 className="mt-2 font-semibold text-xl">
+        <h3 className="subsection-title mt-2">
           <span className="badge badge-lg badge-info badge-soft rounded-xl mr-2">
             {video.position + 1}/{course?.totalCount}
           </span>{" "}

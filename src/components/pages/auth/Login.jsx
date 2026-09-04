@@ -45,9 +45,7 @@ const LoginPage = () => {
         setError("Invalid email or password");
       } else {
         toast.success("Login successful!");
-        setTimeout(() => {
-          router.push("/profile");
-        }, 2000);
+        router.push("/profile");
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -80,9 +78,9 @@ const LoginPage = () => {
     <div className="flex items-center justify-center h-[84vh]">
       <div className="card bg-base-200 w-full max-w-sm shadow-md flex flex-row items-center">
         <form className="card-body" onSubmit={handleCredentialsLogin}>
-          <h2 className="title-accent text-center -mb-3">Login</h2>
+          <h1 className="page-title text-accent text-center">Login</h1>
           {error && (
-            <div className="alert alert-error shadow-lg flex items-center mt-2">
+            <div className="alert alert-error flex items-center mt-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="stroke-current shrink-0 h-6 w-6"
@@ -132,7 +130,7 @@ const LoginPage = () => {
                 disabled={isLoading}
               >
                 <FaGoogle size={20} />
-                {isLoading ? "Logging in..." : "Login"}
+                Continue with Google
               </button>
               <Link className="btn btn-soft flex-1" href="/register">
                 <FaUserPlus size={20} />

@@ -9,9 +9,9 @@ const EnrolledCourses = async () => {
   return (
     <div>
       <div className="flex justify-between gap-4 flex-col lg:items-center lg:flex-row">
-        <h2 className="title-accent">
+        <h1 className="page-title text-accent">
           Your Courses {courses.length > 0 && `(${courses.length})`}
-        </h2>
+        </h1>
         <Link href="/profile/courses/add" className="btn btn-primary">
           <RiPlayListAddFill />
           Add
@@ -19,7 +19,7 @@ const EnrolledCourses = async () => {
       </div>
       {courses.length === 0 && <p>No enrolled courses</p>}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4 mt-4">
         {courses.map((item) => (
           <PlaylistCard key={item._id.toString()} playlist={item.course} />
         ))}

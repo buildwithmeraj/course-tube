@@ -11,7 +11,7 @@ const AddCourseLink = () => {
 
   return (
     <Link
-      className="text-primary flex items-center gap-1 btn btn-primary btn-sm"
+      className="btn btn-primary btn-sm"
       href="/profile/courses/add"
     >
       <FaPlus className="mb-0.5" />

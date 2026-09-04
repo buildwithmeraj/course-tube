@@ -93,14 +93,14 @@ const AddCategory = () => {
 
   return (
     <div className="lg:flex lg:items-center lg:justify-center lg:h-[82vh] mx-auto">
-      <div className="card bg-base-200 shadow-xl flex flex-row">
+      <div className="card bg-base-200 shadow-md flex flex-row">
         <form
           className="card-body w-full max-w-sm"
           onSubmit={handleAddCategory}
         >
-          <h2 className="title-accent text-center text-xl font-semibold">
+          <h1 className="page-title text-accent text-center">
             Add Category
-          </h2>
+          </h1>
 
           {error && (
             <p className="alert alert-error">
@@ -147,7 +147,7 @@ const AddCategory = () => {
               onChange={(e) => setCourseSearch(e.target.value)}
             />
 
-            <div className="max-h-40 overflow-y-auto space-y-1 border p-2 rounded-lg">
+            <div className="max-h-40 overflow-y-auto space-y-1 border p-2 rounded-xl">
               {loadingCourses ? (
                 <p className="text-sm opacity-70">Loading courses...</p>
               ) : filteredCourses.length > 0 ? (

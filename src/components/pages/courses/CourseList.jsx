@@ -13,20 +13,20 @@ const CoursesList = async ({ sortBy, language }) => {
 
   return (
     <div>
-      <div className="flex justify-between items-center">
-        <h2 className="title-accent -mb-3">All Courses</h2>
-        <div className="flex gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="page-title mb-0 text-accent">All Courses</h1>
+        <div className="flex flex-wrap items-center gap-2">
           <CourseLanguageSelect />
           <CourseSortSelect />
+          <AddCourseLink />
         </div>
-        <AddCourseLink />
       </div>
 
       {courses.length === 0 && (
         <p className="mt-4">No courses match this filter.</p>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4 mt-4">
         {courses.map((item) => (
           <PlaylistCard key={item._id} playlist={item} />
         ))}

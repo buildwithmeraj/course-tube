@@ -1,6 +1,5 @@
 "use client";
 import NotFound from "@/components/shared/NotFound";
-import Loading from "@/components/ui/Loading";
 import NotLoggedIn from "@/components/ui/NotLoggedIn";
 import VideoListCard from "@/components/ui/VideoListCard";
 import VideoListCardSkeleton from "@/components/ui/VideoListCardSkeleton";
@@ -22,10 +21,24 @@ import {
 } from "react-icons/fa";
 import { RiGraduationCapFill, RiPlayListAddFill } from "react-icons/ri";
 import { IoHelpCircle } from "react-icons/io5";
+import { MdOutlineFormatListNumbered } from "react-icons/md";
+import { FaRegNoteSticky } from "react-icons/fa6";
+import { BiDetail } from "react-icons/bi";
 import VideoDescription from "@/components/ui/VideoDescription";
 import { formatDuration } from "@/lib/duration";
 import ChapterList from "@/components/ui/ChapterList";
 import VideoNotes from "@/components/ui/VideoNotes";
+
+const TABS = [
+  {
+    id: "chapters",
+    label: "Chapters",
+    Icon: MdOutlineFormatListNumbered,
+    count: (c) => c.chapters,
+  },
+  { id: "notes", label: "Notes", Icon: FaRegNoteSticky, count: (c) => c.notes },
+  { id: "description", label: "Description", Icon: BiDetail, count: () => 0 },
+];
 
 const CourseVideos = () => {
   const { data: session } = useSession();
@@ -42,6 +55,7 @@ const CourseVideos = () => {
   const [playheadSeconds, setPlayheadSeconds] = useState(0);
   const [lastActiveAt, setLastActiveAt] = useState(null);
   const [notes, setNotes] = useState([]);
+  const [tab, setTab] = useState("chapters");
   const playerApiRef = useRef(null);
   const requestedDescriptionsRef = useRef(new Set());
   const [loading, setLoading] = useState(true);
@@ -231,6 +245,26 @@ const CourseVideos = () => {
     () => notes.filter((note) => note.videoId === selectedVideo),
     [notes, selectedVideo],
   );
+
+  const counts = useMemo(
+    () => ({
+      chapters: selectedVideoData?.chapters?.length || 0,
+      notes: notesForSelected.length,
+    }),
+    [selectedVideoData, notesForSelected],
+  );
+
+  // A video without chapters hides that tab, so the selection is derived
+  // rather than stored — switching videos can never strand it on a tab that
+  // is no longer there.
+  const availableTabs = useMemo(() => {
+    const ids = [];
+    if (counts.chapters > 0) ids.push("chapters");
+    ids.push("notes", "description");
+    return ids;
+  }, [counts.chapters]);
+
+  const activeTab = availableTabs.includes(tab) ? tab : availableTabs[0];
 
   const addNote = useCallback(
     async (text) => {
@@ -493,16 +527,42 @@ const CourseVideos = () => {
     return <NotLoggedIn />;
   }
 
-  if (enrollLoading) return <Loading />;
+  // The page's own shape while enrolment resolves, rather than a full-screen
+  // spinner that tells the reader nothing about what is coming.
+  if (enrollLoading) {
+    return (
+      <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-7 xl:grid-cols-3">
+        <div className="col-span-full">
+          <div className="skeleton h-9 w-2/3 rounded-lg" />
+        </div>
+        <div className="col-span-full space-y-3 lg:col-span-4 xl:col-span-2">
+          <YouTubePlayerSkeleton />
+          <div className="skeleton h-28 w-full rounded-xl" />
+        </div>
+        <div className="col-span-full space-y-2 lg:col-span-3 xl:col-span-1">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <VideoListCardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (!enrolled) {
     return (
-      <div className="flex items-center justify-center h-[80vh]">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center flex-col">
-          <RiGraduationCapFill size={128} className="text-base-content/50" />
-          <h2 className="title-accent text-2xl mb-4 text-center">
-            You are not enrolled in this course.
-          </h2>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="max-w-md space-y-4 text-center">
+          <RiGraduationCapFill
+            size={96}
+            className="mx-auto text-base-content/40"
+          />
+          <h1 className="page-title text-accent">
+            You are not enrolled in this course
+          </h1>
+          <p className="text-base-content/70">
+            Enrolling keeps your progress, notes and resume position for every
+            video in it.
+          </p>
           <button className="btn btn-primary" onClick={enrollInCourse}>
             <RiPlayListAddFill />
             Enroll Now
@@ -516,7 +576,7 @@ const CourseVideos = () => {
     <div className="space-y-3">
       <div className="grid grid-cols-1 lg:grid-cols-7 xl:grid-cols-3 gap-4 w-full">
         <div className="col-span-full -mb-2">
-          <h2 className="title-accent">{course?.title}</h2>
+          <h1 className="page-title text-accent">{course?.title}</h1>
           {newVideos.length > 0 && (
             <div className="alert alert-info alert-soft mt-2 py-2">
               <FaSyncAlt className="inline" />
@@ -528,7 +588,7 @@ const CourseVideos = () => {
             </div>
           )}
         </div>
-        <div className="col-span-full lg:col-span-4 xl:col-span-2 space-y-3 w-full">
+        <div className="col-span-full lg:col-span-4 xl:col-span-2 w-full space-y-3">
           {loading ? (
             <YouTubePlayerSkeleton />
           ) : (
@@ -542,101 +602,137 @@ const CourseVideos = () => {
               ref={playerApiRef}
             />
           )}
-          <div className="flex items-center justify-between">
-            <button
-              className="btn btn-soft"
-              onClick={() => changeVideo("prev")}
-            >
-              <FaArrowAltCircleLeft />
-              Previous
-            </button>
-            <button
-              className="btn btn-soft"
-              onClick={() => changeVideo("next")}
-            >
-              Next
-              <FaArrowAltCircleRight />
-            </button>
-          </div>
-          <ChapterList
-            chapters={selectedVideoData?.chapters}
-            currentSeconds={playheadSeconds}
-            onSeek={(seconds) =>
-              setSeekRequest({ seconds, nonce: Date.now() })
-            }
-          />
-          <VideoNotes
-            notes={notesForSelected}
-            onAdd={addNote}
-            onDelete={deleteNote}
-            onSeek={(seconds) => setSeekRequest({ seconds, nonce: Date.now() })}
-            disabled={!selectedVideo}
-          />
-          <VideoDescription
-            description={descriptionsById[selectedVideo]}
-            loading={
-              Boolean(selectedVideo) &&
-              descriptionsById[selectedVideo] === undefined
-            }
-          />
-          <div className="flex justify-between flex-col md:flex-row items-center">
-            <div className="text-lg font-semibold items-center gap-4">
-              {runtime.total > 0 && (
-                <div className="text-sm font-normal text-base-content/70 mb-1">
-                  {runtime.remaining > 0
-                    ? `${formatDuration(runtime.remaining)} left of ${formatDuration(runtime.total)}`
-                    : `All ${formatDuration(runtime.total)} watched`}
-                  {runtime.unknown > 0 &&
-                    ` · ${runtime.unknown} video${runtime.unknown === 1 ? "" : "s"} without a duration`}
+
+          {/* Status bar: the two things this page exists to expose — where you
+              are in the course, and how to pull in new videos — stay directly
+              under the player instead of below whatever the tabs contain. */}
+          <div className="space-y-3 rounded-xl border border-base-300 bg-base-100 p-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                className="btn btn-soft btn-sm"
+                onClick={() => changeVideo("prev")}
+              >
+                <FaArrowAltCircleLeft />
+                Previous
+              </button>
+              <button
+                className="btn btn-soft btn-sm"
+                onClick={() => changeVideo("next")}
+              >
+                Next
+                <FaArrowAltCircleRight />
+              </button>
+
+              <div className="ml-auto flex items-center gap-2">
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={handleSynchronize}
+                  disabled={synchronizing || updated}
+                >
+                  <FaSyncAlt className={synchronizing ? "animate-spin" : ""} />
+                  {synchronizing ? "Synchronizing…" : "Sync Course"}
+                </button>
+                <div
+                  className="tooltip tooltip-left"
+                  data-tip={
+                    updated
+                      ? "Already synchronized within the last 7 days"
+                      : "Check YouTube for new videos"
+                  }
+                >
+                  <button className="btn btn-circle btn-soft btn-sm" type="button">
+                    <IoHelpCircle />
+                  </button>
                 </div>
-              )}
-              Course Progress{" "}
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-3 text-sm">
+                <span className="font-semibold">
+                  {completedCount} of {watchable.length || course?.totalCount}{" "}
+                  videos done
+                </span>
+                {runtime.total > 0 && (
+                  <span className="text-base-content/70">
+                    {runtime.remaining > 0
+                      ? `${formatDuration(runtime.remaining)} left of ${formatDuration(runtime.total)}`
+                      : `All ${formatDuration(runtime.total)} watched`}
+                    {runtime.unknown > 0 &&
+                      ` · ${runtime.unknown} video${runtime.unknown === 1 ? "" : "s"} without a duration`}
+                  </span>
+                )}
+              </div>
               <progress
-                className={`progress w-28 xl:w-56 transition-all duration-300 ${progressColor(
+                className={`progress w-full transition-all duration-300 ${progressColor(
                   watchable.length || course?.totalCount,
                   completedCount,
                 )}`}
                 value={completedCount}
                 max={watchable.length || course?.totalCount}
-                id="progress"
               ></progress>
             </div>
-            <div>
-              <button
-                className="btn btn-info btn-sm"
-                onClick={handleSynchronize}
-                disabled={synchronizing || updated}
-              >
-                {synchronizing ? (
-                  <>
-                    <FaSyncAlt className="animate-spin" /> Synchronizing ...
-                  </>
-                ) : (
-                  <>
-                    <FaSyncAlt /> Sync Course
-                  </>
-                )}{" "}
-              </button>
-              <div
-                className="tooltip tooltip-top"
-                data-tip={
-                  updated
-                    ? `Already synchronized within last 7 days`
-                    : `Get latest videos YouTube`
-                }
-              >
+          </div>
+
+          {/* Chapters, notes and description share one slot rather than
+              stacking, so the status bar above never gets pushed off-screen. */}
+          <div>
+            <div role="tablist" className="tabs tabs-border">
+              {TABS.filter((t) => availableTabs.includes(t.id)).map((t) => (
                 <button
-                  className="btn btn-circle btn-soft ml-2 btn-sm"
+                  key={t.id}
+                  role="tab"
                   type="button"
+                  aria-selected={activeTab === t.id}
+                  className={`tab gap-2 ${activeTab === t.id ? "tab-active" : ""}`}
+                  onClick={() => setTab(t.id)}
                 >
-                  <IoHelpCircle />
+                  <t.Icon size={16} />
+                  {t.label}
+                  {t.count(counts) > 0 && (
+                    <span className="badge badge-xs badge-info badge-soft">
+                      {t.count(counts)}
+                    </span>
+                  )}
                 </button>
-              </div>
+              ))}
+            </div>
+
+            <div className="min-h-40 rounded-b-xl border border-t-0 border-base-300 bg-base-100 p-4">
+              {activeTab === "chapters" && (
+                <ChapterList
+                  chapters={selectedVideoData?.chapters}
+                  currentSeconds={playheadSeconds}
+                  onSeek={(seconds) =>
+                    setSeekRequest({ seconds, nonce: Date.now() })
+                  }
+                />
+              )}
+              {activeTab === "notes" && (
+                <VideoNotes
+                  notes={notesForSelected}
+                  onAdd={addNote}
+                  onDelete={deleteNote}
+                  onSeek={(seconds) =>
+                    setSeekRequest({ seconds, nonce: Date.now() })
+                  }
+                  disabled={!selectedVideo}
+                />
+              )}
+              {activeTab === "description" && (
+                <VideoDescription
+                  description={descriptionsById[selectedVideo]}
+                  loading={
+                    Boolean(selectedVideo) &&
+                    descriptionsById[selectedVideo] === undefined
+                  }
+                />
+              )}
             </div>
           </div>
         </div>
 
-        <div className="col-span-full lg:col-span-3 xl:col-span-1 overflow-y-auto max-h-[82vh] space-y-2  scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100  rounded-lg w-full backdrop-blur-lg">
+        <div className="col-span-full lg:col-span-3 xl:col-span-1 overflow-y-auto max-h-[82vh] space-y-2  scrollbar-slim  rounded-lg w-full">
           {loading &&
             Array.from({ length: 12 }).map((_, i) => (
               <VideoListCardSkeleton key={i} />
@@ -660,7 +756,7 @@ const CourseVideos = () => {
           className="modal modal-open modal-bottom sm:modal-middle"
         >
           <div className="modal-box text-success text-center">
-            <h2 className="font-bold ">Congratulations!</h2>
+            <h3 className="subsection-title">Congratulations!</h3>
             <p className="py-4">
               You have successfully enrolled in the course. Start learning now!
               Good luck!

@@ -39,7 +39,7 @@ const ContinueLearning = () => {
       : 0;
 
   return (
-    <section className="mb-6 rounded-2xl border border-base-300 bg-base-200 p-4 shadow-sm">
+    <section className="rounded-xl border border-base-300 bg-base-200 p-4 shadow-sm">
       <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-base-content/50">
         Continue where you left off
       </p>

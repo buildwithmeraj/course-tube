@@ -33,7 +33,7 @@ const HowItWorks = () => {
   return (
     <div className="mx-auto">
       <div className="text-center mb-6 mt-2">
-        <h2 className="text-4xl font-bold mb-2">How {siteName} works</h2>
+        <h2 className="section-title mb-2">How {siteName} works</h2>
         <p className="text-lg text-base-content/70">
           A simple workflow that turns public playlists into structured,
           trackable learning.
@@ -46,7 +46,7 @@ const HowItWorks = () => {
           return (
             <div
               key={index}
-              className="card bg-base-200 shadow-md hover:shadow-lg transition-shadow"
+              className="card bg-base-200 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="card-body text-center">
                 <div className="flex justify-center mb-4">

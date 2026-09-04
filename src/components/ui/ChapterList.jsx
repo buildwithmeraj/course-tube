@@ -1,6 +1,4 @@
 "use client";
-import { useState } from "react";
-import { MdOutlineFormatListNumbered } from "react-icons/md";
 
 const stamp = (seconds) => {
   const h = Math.floor(seconds / 3600);
@@ -11,11 +9,17 @@ const stamp = (seconds) => {
 };
 
 // Chapters are parsed from the video description at ingest, so this is just a
-// list of seek targets.
+// list of seek targets. The panel chrome belongs to the tab strip that hosts
+// it, not here.
 const ChapterList = ({ chapters, onSeek, currentSeconds = 0 }) => {
-  const [open, setOpen] = useState(false);
-
-  if (!Array.isArray(chapters) || chapters.length === 0) return null;
+  if (!Array.isArray(chapters) || chapters.length === 0) {
+    return (
+      <p className="text-sm text-base-content/60">
+        This video has no chapters. They are read from timestamps in the
+        video&rsquo;s description.
+      </p>
+    );
+  }
 
   const activeIndex = chapters.reduce(
     (active, chapter, index) =>
@@ -24,40 +28,24 @@ const ChapterList = ({ chapters, onSeek, currentSeconds = 0 }) => {
   );
 
   return (
-    <div className="collapse bg-base-100 border-base-300 border backdrop-blur-lg">
-      <input
-        type="checkbox"
-        checked={open}
-        onChange={(event) => setOpen(event.target.checked)}
-      />
-      <div className="collapse-title font-semibold flex items-center gap-2">
-        <MdOutlineFormatListNumbered size={20} />
-        Chapters
-        <span className="badge badge-sm badge-info badge-soft">
-          {chapters.length}
-        </span>
-      </div>
-      <div className="collapse-content">
-        <ol className="flex flex-col">
-          {chapters.map((chapter, index) => (
-            <li key={`${chapter.seconds}-${index}`}>
-              <button
-                type="button"
-                onClick={() => onSeek?.(chapter.seconds)}
-                className={`w-full text-left text-sm py-1.5 px-2 rounded hover:bg-base-200 flex gap-3 ${
-                  index === activeIndex ? "text-info font-semibold" : ""
-                }`}
-              >
-                <span className="font-mono text-xs opacity-70 pt-0.5 shrink-0">
-                  {stamp(chapter.seconds)}
-                </span>
-                <span className="flex-1">{chapter.label}</span>
-              </button>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </div>
+    <ol className="flex flex-col">
+      {chapters.map((chapter, index) => (
+        <li key={`${chapter.seconds}-${index}`}>
+          <button
+            type="button"
+            onClick={() => onSeek?.(chapter.seconds)}
+            className={`flex w-full gap-3 rounded-lg px-2 py-1.5 text-left text-sm hover:bg-base-200 ${
+              index === activeIndex ? "bg-base-200 font-semibold text-info" : ""
+            }`}
+          >
+            <span className="shrink-0 pt-0.5 font-mono text-xs opacity-70">
+              {stamp(chapter.seconds)}
+            </span>
+            <span className="flex-1">{chapter.label}</span>
+          </button>
+        </li>
+      ))}
+    </ol>
   );
 };
 

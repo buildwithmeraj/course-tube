@@ -153,10 +153,10 @@ const ManageCategories = () => {
     <div className="space-y-3 mt-1">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-2">
-          <h2 className="title-accent text-3xl font-black">
+          <h1 className="page-title text-accent">
             Manage Categories{" "}
             {categories.length > 0 && `(${categories.length})`}
-          </h2>
+          </h1>
         </div>
         <Link
           href="/dashboard/categories/add"
@@ -167,7 +167,7 @@ const ManageCategories = () => {
         </Link>
       </div>
       {categories.length === 0 ? (
-        <div className="min-h-[50vh] flex items-center justify-center rounded-3xl border border-base-200 bg-base-100/80 p-10 shadow-sm">
+        <div className="min-h-[50vh] flex items-center justify-center rounded-xl border border-base-200 bg-base-100/80 p-10 shadow-sm">
           <div className="text-center text-xl text-base-content/60 flex items-center justify-center flex-col gap-3">
             <FaCircleInfo size={56} />
             No categories found
@@ -181,7 +181,7 @@ const ManageCategories = () => {
           </div>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-3xl border border-base-200 bg-base-100/90 shadow-sm backdrop-blur-xl">
+        <div className="overflow-hidden rounded-xl border border-base-200 bg-base-100/90 shadow-sm">
           <div className="overflow-x-auto">
             <table className="table">
               <thead>
@@ -205,7 +205,7 @@ const ManageCategories = () => {
                       {cat.description || "-"}
                     </td>
                     <td>
-                      <span className="badge rounded-xl badge-info">
+                      <span className="badge badge-info">
                         {cat.courseIds?.length || 0}
                       </span>
                     </td>
@@ -232,10 +232,10 @@ const ManageCategories = () => {
       )}
       {action && selectedCategory && (
         <div className="modal modal-open">
-          <div className="modal-box rounded-3xl">
+          <div className="modal-box rounded-xl">
             {action === ACTIONS.EDIT && (
               <>
-                <h3 className="title-accent font-bold text-lg mb-4">
+                <h3 className="card-heading text-accent mb-4">
                   Edit Category
                 </h3>
 
@@ -256,7 +256,7 @@ const ManageCategories = () => {
                   placeholder="Description"
                 />
 
-                <div className="border rounded-lg p-3 max-h-60 overflow-y-auto">
+                <div className="border rounded-xl p-3 max-h-60 overflow-y-auto">
                   <p className="font-semibold mb-2">Select Courses</p>
                   <input
                     type="text"
@@ -299,7 +299,7 @@ const ManageCategories = () => {
 
             {action === ACTIONS.DELETE && (
               <>
-                <h3 className="font-bold text-lg">Delete Category</h3>
+                <h3 className="card-heading">Delete Category</h3>
                 <p className="py-4">
                   Are you sure you want to delete{" "}
                   <span className="font-semibold">

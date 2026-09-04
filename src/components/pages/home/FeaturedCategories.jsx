@@ -7,9 +7,9 @@ const FeaturedCategories = async () => {
   const categories = toPlain(await listCategories()).slice(0, 4);
 
   return categories.length > 0 ? (
-    <section className="mt-8">
-      <div className="rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm">
-        <h2 className="text-center">Featured Categories</h2>
+    <section>
+      <div className="rounded-xl border border-base-200 bg-base-100 p-6 shadow-sm">
+        <h2 className="section-title text-center">Featured Categories</h2>
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <p className="mt-1 text-sm text-base-content/60">
             Jump into a topic and find playlists that match what you want to

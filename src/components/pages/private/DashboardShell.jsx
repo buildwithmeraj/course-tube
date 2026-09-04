@@ -55,7 +55,7 @@ const DashboardShell = ({ children }) => {
     <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
         <aside className="hidden lg:block">
-          <div className="sticky top-24 rounded-3xl border border-base-200 bg-base-100/90 p-4 shadow-sm backdrop-blur-xl">
+          <div className="sticky top-24 rounded-xl border border-base-200 bg-base-100/90 p-4 shadow-sm">
             <div className="mb-4">
               <p className="mt-1 text-lg font-bold">Dashboard navigation</p>
             </div>
@@ -69,7 +69,7 @@ const DashboardShell = ({ children }) => {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-start gap-3 rounded-2xl border p-3 transition ${
+                    className={`flex items-start gap-3 rounded-xl border p-3 transition ${
                       isActive
                         ? "border-primary bg-primary/10"
                         : "border-base-200 bg-base-100 hover:border-base-300 hover:bg-base-200/70"
@@ -98,7 +98,7 @@ const DashboardShell = ({ children }) => {
         </aside>
 
         <div className="space-y-6">
-          <div className="grid gap-2 rounded-3xl border border-base-200 bg-base-100 p-3 shadow-sm lg:hidden">
+          <div className="grid gap-2 rounded-xl border border-base-200 bg-base-100 p-3 shadow-sm lg:hidden">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeHref === item.href;
@@ -107,7 +107,7 @@ const DashboardShell = ({ children }) => {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium ${
+                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium ${
                     isActive
                       ? "bg-primary text-primary-content"
                       : "bg-base-200/60 text-base-content"

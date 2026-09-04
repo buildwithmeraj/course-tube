@@ -41,9 +41,9 @@ const AddCourse = () => {
 
   return (
     <div className="flex items-center justify-center h-[76vh]">
-      <div className="card bg-base-200 shadow-xl flex flex-row w-full max-w-md">
+      <div className="card bg-base-200 shadow-md flex flex-row w-full max-w-md">
         <form className="card-body" onSubmit={handleAddCourse}>
-          <h2 className="title-accent text-center">Add Course</h2>
+          <h1 className="page-title text-accent text-center">Add Course</h1>
 
           {error && (
             <p className="alert alert-error">

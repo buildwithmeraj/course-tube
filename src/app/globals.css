@@ -1,34 +1,47 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+/* Two rules govern this palette:
+   1. Every `*-content` token is measured against its own colour at >= 4.5:1
+      (WCAG AA for body text). The ratio is noted beside each pair.
+   2. A colour is either a surface or an action, never both. The pale sky that
+      used to be `primary` is now `--surface` below; `primary` is an action. */
+
 @plugin "daisyui/theme" {
   name: "light";
   default: false;
   prefersdark: false;
   color-scheme: "light";
-  --color-base-100: oklch(100% 0 0);
-  --color-base-200: oklch(98% 0 0);
-  --color-base-300: oklch(95% 0 0);
-  --color-base-content: oklch(21% 0.006 285.885);
-  --color-primary: hsl(199, 64%, 73%);
-  --color-primary-content: oklch(12% 0.042 264.695);
-  --color-secondary: hsl(199, 95%, 14%);
-  --color-secondary-content: oklch(98% 0.003 247.858);
-  --color-accent: #487d96;
-  --color-accent-content: oklch(98% 0.003 247.858);
-  --color-neutral: oklch(14% 0.005 285.823);
-  --color-neutral-content: oklch(92% 0.004 286.32);
-  --color-info: oklch(68% 0.169 237.323);
-  --color-info-content: oklch(98% 0.003 247.858);
-  --color-success: oklch(69% 0.17 162.48);
-  --color-success-content: oklch(96% 0.007 247.896);
-  --color-warning: oklch(76% 0.188 70.08);
-  --color-warning-content: oklch(98% 0.003 247.858);
-  --color-error: oklch(63% 0.237 25.331);
-  --color-error-content: oklch(98% 0.003 247.858);
+
+  /* Neutrals carry a few points of the accent's hue rather than being pure
+     grey, so the surfaces read as a set. */
+  --color-base-100: #ffffff;
+  --color-base-200: #f2f5f7;
+  --color-base-300: #e3e9ed;
+  --color-base-content: #141a1f;
+
+  --color-primary: #0f6b84;            /* action  */
+  --color-primary-content: #ffffff;    /*  6.08:1 */
+  --color-secondary: #023046;
+  --color-secondary-content: #ffffff;  /* 13.87:1 */
+  --color-accent: #3d6d84;
+  --color-accent-content: #ffffff;     /*  5.65:1 */
+  --color-neutral: #141a1f;
+  --color-neutral-content: #f2f5f7;    /* 16.02:1 */
+
+  --color-info: #0369a1;
+  --color-info-content: #ffffff;       /*  5.93:1 */
+  --color-success: #15803d;
+  --color-success-content: #ffffff;    /*  5.02:1 */
+  --color-warning: #a15c07;            /* dark enough to also be legible as
+                                          text in the -soft variants */
+  --color-warning-content: #ffffff;    /*  5.19:1 */
+  --color-error: #b3261e;
+  --color-error-content: #ffffff;      /*  6.54:1 */
+
   --radius-selector: 0.5rem;
   --radius-field: 0.5rem;
-  --radius-box: 0.5rem;
+  --radius-box: 0.75rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
@@ -41,29 +54,35 @@
   default: false;
   prefersdark: true;
   color-scheme: "dark";
-  --color-base-100: oklch(30.857% 0.023 264.149);
-  --color-base-200: oklch(28.036% 0.019 264.182);
-  --color-base-300: oklch(26.346% 0.018 262.177);
-  --color-base-content: oklch(98% 0.003 247.858);
-  --color-primary: hsl(199, 64%, 73%);
-  --color-primary-content: oklch(12% 0.042 264.695);
-  --color-secondary: hsl(199, 95%, 14%);
-  --color-secondary-content: oklch(98% 0.003 247.858);
-  --color-accent: #487d96;
-  --color-accent-content: oklch(98% 0.003 247.858);
-  --color-neutral: oklch(24.731% 0.02 264.094);
-  --color-neutral-content: oklch(82.901% 0.031 222.959);
-  --color-info: oklch(68% 0.169 237.323);
-  --color-info-content: oklch(98% 0.003 247.858);
-  --color-success: oklch(69% 0.17 162.48);
-  --color-success-content: oklch(96% 0.007 247.896);
-  --color-warning: oklch(76% 0.188 70.08);
-  --color-warning-content: oklch(98% 0.003 247.858);
-  --color-error: oklch(63% 0.237 25.331);
-  --color-error-content: oklch(98% 0.003 247.858);
+
+  /* base-100 is the darkest ground and 200/300 step *up* in lightness, so a
+     raised card lifts off the page instead of sinking into it. */
+  --color-base-100: #0e1417;
+  --color-base-200: #151e22;
+  --color-base-300: #1f2b31;
+  --color-base-content: #e4ecef;
+
+  --color-primary: #5cb6d1;
+  --color-primary-content: #04222c;    /*  7.14:1 */
+  --color-secondary: #a3dced;
+  --color-secondary-content: #04222c;  /* 11.03:1 */
+  --color-accent: #7fc7de;
+  --color-accent-content: #06262f;     /*  8.39:1 */
+  --color-neutral: #1f2b31;
+  --color-neutral-content: #e4ecef;    /* 12.11:1 */
+
+  --color-info: #63b3e8;
+  --color-info-content: #04202f;       /*  7.30:1 */
+  --color-success: #5fd39a;
+  --color-success-content: #04241a;    /*  8.86:1 */
+  --color-warning: #e8b45f;
+  --color-warning-content: #2e2100;    /*  8.34:1 */
+  --color-error: #ff8a80;
+  --color-error-content: #33100c;      /*  7.54:1 */
+
   --radius-selector: 0.5rem;
   --radius-field: 0.5rem;
-  --radius-box: 0.5rem;
+  --radius-box: 0.75rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
@@ -71,54 +90,123 @@
   --noise: 0;
 }
 
+/* The pale sky is a ground, never an action: only used at low alpha behind
+   content (navbar, hero band, stat tiles). Registered inline so the utility
+   reads the variable at runtime and follows the theme. */
+@theme inline {
+  --color-surface: var(--surface);
+}
+
+:root {
+  --surface: #8ecae6;
+}
+
+[data-theme="dark"] {
+  --surface: #2e5f70;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --surface: #2e5f70;
+  }
+}
+
 body {
   font-family: var(--font-figtree);
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1440' height='720' preserveAspectRatio='none' viewBox='0 0 1440 720'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1043%26quot%3b)' fill='none'%3e%3cpath d='M725.56 407.36L749.39 407.36L749.39 431.19L725.56 431.19z' fill='rgba(231%2c 54%2c 53%2c 0.07)'%3e%3c/path%3e%3cpath d='M1255.48 215.85a28.1 28.1 0 1 0-41.38-38.02z' fill='rgba(211%2c 183%2c 20%2c 0.08)'%3e%3c/path%3e%3cpath d='M50.71 573.38a29.53 29.53 0 1 0 24.01-53.96z' stroke='rgba(211%2c 183%2c 20%2c 0.08)'%3e%3c/path%3e%3cpath d='M262.61 44.76L276.17 44.76L276.17 58.32L262.61 58.32z' stroke='rgba(211%2c 183%2c 20%2c 0.08)'%3e%3c/path%3e%3cpath d='M155.68 327.35a62.35 62.35 0 1 0 124.66 3.08z' stroke='rgba(3%2c 123%2c 11%2c 0.07)'%3e%3c/path%3e%3cpath d='M951.09 317.72 a49.26 49.26 0 1 0 98.52 0 a49.26 49.26 0 1 0 -98.52 0z' fill='rgba(3%2c 123%2c 11%2c 0.07)'%3e%3c/path%3e%3cpath d='M505.16 50.09 a1.3 1.3 0 1 0 2.6 0 a1.3 1.3 0 1 0 -2.6 0z' fill='rgba(3%2c 123%2c 11%2c 0.07)'%3e%3c/path%3e%3cpath d='M546.43 541.92a19.94 19.94 0 1 0 12.17 37.98z' fill='rgba(3%2c 123%2c 11%2c 0.07)'%3e%3c/path%3e%3cpath d='M530.93 478.05L583.81 478.05L583.81 517.68L530.93 517.68z' stroke='rgba(231%2c 54%2c 53%2c 0.07)'%3e%3c/path%3e%3cpath d='M1160.12 337.29 a11.64 11.64 0 1 0 23.28 0 a11.64 11.64 0 1 0 -23.28 0z' stroke='rgba(3%2c 123%2c 11%2c 0.07)'%3e%3c/path%3e%3cpath d='M114 675.75 a21.62 21.62 0 1 0 43.24 0 a21.62 21.62 0 1 0 -43.24 0z' fill='rgba(211%2c 183%2c 20%2c 0.08)'%3e%3c/path%3e%3cpath d='M122.44 337.16L156.69 337.16L156.69 390.45L122.44 390.45z' fill='rgba(3%2c 123%2c 11%2c 0.07)'%3e%3c/path%3e%3cpath d='M491.77 415.78 a3.83 3.83 0 1 0 7.66 0 a3.83 3.83 0 1 0 -7.66 0z' stroke='rgba(211%2c 183%2c 20%2c 0.08)'%3e%3c/path%3e%3cpath d='M392.33 568.91L432.29 568.91L432.29 608.87L392.33 608.87z' stroke='rgba(3%2c 123%2c 11%2c 0.07)'%3e%3c/path%3e%3cpath d='M1224.35 326.45a15.14 15.14 0 1 0 20.52-22.26z' fill='rgba(211%2c 183%2c 20%2c 0.08)'%3e%3c/path%3e%3cpath d='M558.25 682.44a7.46 7.46 0 1 0-12.13-8.68z' stroke='rgba(3%2c 123%2c 11%2c 0.07)'%3e%3c/path%3e%3cpath d='M1299.49 480.51 a57.94 57.94 0 1 0 115.88 0 a57.94 57.94 0 1 0 -115.88 0z' fill='rgba(3%2c 123%2c 11%2c 0.07)'%3e%3c/path%3e%3cpath d='M443.59 354.99a45.5 45.5 0 1 0-39.29 82.09z' stroke='rgba(3%2c 123%2c 11%2c 0.07)'%3e%3c/path%3e%3cpath d='M1371.89 568.24a52.99 52.99 0 1 0 20.76-103.93z' stroke='rgba(211%2c 183%2c 20%2c 0.08)'%3e%3c/path%3e%3cpath d='M1262.6 534.52 a21.21 21.21 0 1 0 42.42 0 a21.21 21.21 0 1 0 -42.42 0z' fill='rgba(211%2c 183%2c 20%2c 0.08)'%3e%3c/path%3e%3cpath d='M592.87 125.44L653.27 125.44L653.27 185.84L592.87 185.84z' stroke='rgba(211%2c 183%2c 20%2c 0.08)'%3e%3c/path%3e%3cpath d='M911.95 295.94L979.33 295.94L979.33 323.57L911.95 323.57z' fill='rgba(231%2c 54%2c 53%2c 0.07)'%3e%3c/path%3e%3cpath d='M420.18 45.39a11.64 11.64 0 1 0 6.46 22.37z' stroke='rgba(211%2c 183%2c 20%2c 0.08)'%3e%3c/path%3e%3cpath d='M991.54 675.25L1048.02 675.25L1048.02 731.73L991.54 731.73z' fill='rgba(231%2c 54%2c 53%2c 0.07)'%3e%3c/path%3e%3cpath d='M197.57 617.87L219.2 617.87L219.2 639.5L197.57 639.5z' stroke='rgba(3%2c 123%2c 11%2c 0.07)'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1043'%3e%3crect width='1440' height='720' fill='white'%3e%3c/rect%3e%3c/mask%3e%3c/defs%3e%3c/svg%3e");
 }
 
-nav {
-  font-family: var(--font-nunito);
+/* Chrome heights, so page padding is derived from them rather than guessed.
+   `.navbar` and `.dock` are both 4rem tall in daisyUI. */
+:root {
+  --nav-h: 4rem;
+  --dock-h: 4rem;
+  /* Space the dock actually occupies. Zero once it is hidden, so the footer
+     and the toast stack follow it without each hard-coding a breakpoint. */
+  --dock-offset: var(--dock-h);
 }
 
-h2 {
-  @apply text-3xl font-bold py-3;
+@media (width >= 64rem) {
+  :root {
+    --dock-offset: 0rem;
+  }
 }
 
-h5 {
-  @apply text-2xl py-3 font-semibold underline;
-}
+/* ---- Type scale ---------------------------------------------------------
+   Replaces the global `h2`, `h5` and `.btn` element rules, which forced one
+   size onto every heading and button and were then overridden page by page.
+   Size is chosen by the heading's role, not by its tag; colour is applied
+   separately so the two axes stay independent.
 
-.btn {
-  @apply text-lg;
-}
+   These live in the components layer so a utility on the element (`mb-0`,
+   `text-2xl`) still wins, whatever order the classes appear in. */
 
-.btn,
-input[type="text"],
-input[type="number"],
-input[type="email"],
-input[type="file"],
-input[type="url"],
-input[type="password"] {
-  @apply rounded-full;
-}
-textarea {
-  @apply rounded-2xl;
-}
+@layer components {
+  .page-title {
+    font-family: var(--font-display), var(--font-figtree), sans-serif;
+    @apply text-3xl sm:text-4xl font-bold tracking-tight mb-4;
+    text-wrap: balance;
+  }
 
-.btn-primary,
-.btn-secondary,
-.btn-accent,
-.btn-neutral,
-.btn-info,
-.btn-success,
-.btn-error {
-  @apply text-white;
+  .section-title {
+    font-family: var(--font-display), var(--font-figtree), sans-serif;
+    @apply text-2xl sm:text-3xl font-bold tracking-tight mb-3;
+    text-wrap: balance;
+  }
+
+  .subsection-title {
+    font-family: var(--font-display), var(--font-figtree), sans-serif;
+    @apply text-xl font-semibold;
+    text-wrap: balance;
+  }
+
+  .card-heading {
+    font-family: var(--font-display), var(--font-figtree), sans-serif;
+    @apply text-lg font-semibold;
+  }
+
+  /* Long-form document body. Supplies the list styling and inner rhythm the
+     `prose` classes were expected to bring — @tailwindcss/typography is not
+     installed, so daisyUI only defines the --tw-prose-* variables. */
+  .doc section {
+    @apply space-y-3;
+  }
+
+  .doc ul {
+    @apply list-disc space-y-1 pl-6;
+  }
+
+  .doc :where(h3) {
+    @apply pt-2;
+  }
+
+  /* Intro paragraph. Previously written as `lead`, which matched no rule. */
+  .lede {
+    @apply text-lg text-base-content/70;
+    max-width: 65ch;
+  }
 }
 
 label {
   @apply pl-1;
 }
 
-.title-accent {
-  @apply text-accent;
+/* daisyUI rings .btn, .tab, .toggle, .input and menu items. Plain links and
+   unstyled buttons — most of the card, chapter and video-list UI — had no
+   focus state at all. */
+@layer base {
+  a:not(.btn):focus-visible,
+  button:not(.btn):focus-visible,
+  summary:focus-visible,
+  [tabindex]:not(.btn):focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-field);
+  }
+}
+
+/* daisyUI already themes `scrollbar-color` on :root; this only narrows it.
+   Replaces `scrollbar-thin scrollbar-thumb-* scrollbar-track-*`, which needed
+   a plugin the project does not install. */
+.scrollbar-slim {
+  scrollbar-width: thin;
 }

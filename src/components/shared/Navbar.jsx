@@ -44,7 +44,7 @@ const Navbar = ({ forceHardNavigation = false }) => {
       <div className="drawer">
         <input id="sidebar" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
-          <div className="navbar fixed w-full z-20 top-0 start-0 bg-primary/60 px-5 backdrop-blur-xl">
+          <div className="navbar fixed w-full z-20 top-0 start-0 bg-surface/60 px-5 backdrop-blur-xl">
             <div className="navbar-start flex items-center">
               <div className="dropdown">
                 <label htmlFor="sidebar" className="flex lg:hidden">
@@ -186,7 +186,7 @@ const Navbar = ({ forceHardNavigation = false }) => {
             </li>
             {session?.user?.role === "admin" && (
               <li>
-                <Link className="" href="/dashboard" {...navigateHard("/dashboard")}>
+                <Link href="/dashboard" {...navigateHard("/dashboard")}>
                   <MdDashboard size={15} />
                   Dashboard
                 </Link>
@@ -194,14 +194,14 @@ const Navbar = ({ forceHardNavigation = false }) => {
             )}
             {session ? (
               <li>
-                <Link className="" href="/profile" {...navigateHard("/profile")}>
+                <Link href="/profile" {...navigateHard("/profile")}>
                   <FaUser size={15} />
                   Profile
                 </Link>
               </li>
             ) : (
               <li>
-                <Link className="" href="/login" {...navigateHard("/login")}>
+                <Link href="/login" {...navigateHard("/login")}>
                   <FaSignInAlt />
                   Login
                 </Link>

@@ -8,8 +8,8 @@ const YouTubePlayerSkeleton = () => {
       </div>
 
       <div className="mt-2 space-y-2">
-        <div className="h-7.5  w-3/4 bg-base-300 rounded skeleton" />
-        <div className="h-7.5  w-1/2 bg-base-300 rounded skeleton" />
+        <div className="h-7.5  w-3/4 bg-base-300 rounded-lg skeleton" />
+        <div className="h-7.5  w-1/2 bg-base-300 rounded-lg skeleton" />
       </div>
     </div>
   );
