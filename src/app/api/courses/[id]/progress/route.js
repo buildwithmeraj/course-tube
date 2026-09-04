@@ -49,7 +49,13 @@ export async function GET(req, { params }) {
     }
   }
 
-  return NextResponse.json({ videos, completedCount, lastVideoId });
+  return NextResponse.json({
+    videos,
+    completedCount,
+    lastVideoId,
+    // Lets the client show which videos arrived since the last visit
+    lastActiveAt: lastUpdatedAt,
+  });
 }
 
 export async function PATCH(req, { params }) {

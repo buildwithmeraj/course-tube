@@ -9,6 +9,9 @@ export const MAX_COURSES_PER_DAY = 10;
 export const MAX_PENDING_PER_USER = 5;
 export const MAX_SYNCS_PER_DAY = 5;
 
+export const MAX_NOTES_PER_COURSE = 500;
+export const MAX_NOTE_LENGTH = 2000;
+
 // Per course
 export const MAX_COURSE_VIDEOS = 300; // largest existing course is 121
 

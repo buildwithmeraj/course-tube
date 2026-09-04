@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { LANGUAGES } from "@/lib/languages";
 import { FaCircleCheck, FaCircleInfo } from "react-icons/fa6";
 import { IoWarning } from "react-icons/io5";
 import { RiPlayListAddFill } from "react-icons/ri";
@@ -22,7 +23,7 @@ const AddCourse = () => {
       const res = await fetch("/api/courses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url, language: formData.get("language") || null }),
       });
 
       if (!res.ok) {
@@ -65,6 +66,16 @@ const AddCourse = () => {
             required
             placeholder="https://www.youtube.com/playlist?list=PL..."
           />
+
+          <label className="label mt-2">Language</label>
+          <select className="select w-full" name="language" defaultValue="">
+            <option value="">Not specified</option>
+            {LANGUAGES.map((language) => (
+              <option key={language.value} value={language.value}>
+                {language.label}
+              </option>
+            ))}
+          </select>
 
           <button className="btn btn-accent mt-2" disabled={isLoading}>
             <RiPlayListAddFill size={20} />

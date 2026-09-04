@@ -2,7 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { RiPlayList2Fill, RiGraduationCapFill } from "react-icons/ri";
-import { FaVideo } from "react-icons/fa6";
+import { FaVideo, FaRegClock } from "react-icons/fa6";
+import { formatDuration } from "@/lib/duration";
+import { languageLabel } from "@/lib/languages";
 
 const PlaylistCard = ({ playlist }) => {
   return (
@@ -42,6 +44,19 @@ const PlaylistCard = ({ playlist }) => {
       <h3 className="card-title mt-2 line-clamp-2">
         <Link href={`/courses/${playlist._id}`}>{playlist.title}</Link>
       </h3>
+      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-base-content/60">
+        {playlist.totalDurationSeconds > 0 && (
+          <span className="flex items-center gap-1.5">
+            <FaRegClock size={13} />
+            {formatDuration(playlist.totalDurationSeconds)} of video
+          </span>
+        )}
+        {languageLabel(playlist.language) && (
+          <span className="badge badge-sm badge-ghost">
+            {languageLabel(playlist.language)}
+          </span>
+        )}
+      </div>
     </div>
   );
 };

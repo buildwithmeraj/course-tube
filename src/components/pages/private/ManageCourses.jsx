@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaCircleInfo } from "react-icons/fa6";
 import { RiPlayListAddFill } from "react-icons/ri";
+import { LANGUAGES } from "@/lib/languages";
 
 const ACTIONS = {
   APPROVE: "approve",
@@ -64,6 +65,24 @@ const ManageCourses = () => {
 
     setCourses((prev) =>
       prev.map((c) => (c._id === id ? { ...c, approved } : c)),
+    );
+  };
+
+  const updateCourseLanguage = async (id, language) => {
+    const res = await fetch(`/api/courses/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ language: language || null }),
+    });
+
+    if (!res.ok) {
+      toast.error("Failed to update language!");
+      return;
+    }
+    toast.success("Language updated");
+
+    setCourses((prev) =>
+      prev.map((c) => (c._id === id ? { ...c, language: language || null } : c)),
     );
   };
 
@@ -138,6 +157,7 @@ const ManageCourses = () => {
                 <tr className="bg-base-200/60 text-base-content/70">
                   <th>Title</th>
                   <th>Approved</th>
+                  <th>Language</th>
                   <th>Total Videos</th>
                   <th>Actions</th>
                 </tr>
@@ -159,6 +179,23 @@ const ManageCourses = () => {
                       >
                         {item.approved ? "Approved" : "Pending"}
                       </span>
+                    </td>
+                    <td>
+                      <select
+                        className="select select-xs"
+                        value={item.language || ""}
+                        onChange={(e) =>
+                          updateCourseLanguage(item._id, e.target.value)
+                        }
+                        aria-label={`Language for ${item.title}`}
+                      >
+                        <option value="">—</option>
+                        {LANGUAGES.map((language) => (
+                          <option key={language.value} value={language.value}>
+                            {language.label}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td>{item.totalCount}</td>
 

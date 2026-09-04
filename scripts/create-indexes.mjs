@@ -28,6 +28,9 @@ const INDEXES = [
   ["courses", "videoProgress", { userEmail: 1, courseId: 1 }, { name: "userEmail_courseId" }, null],
   ["courses", "videoProgress", { courseId: 1, videoId: 1, userEmail: 1 }, { unique: true, name: "course_video_user_unique" }, ["courseId", "videoId", "userEmail"]],
   ["courses", "videos", { courseId: 1, videoId: 1 }, { unique: true, name: "courseId_videoId_unique" }, ["courseId", "videoId"]],
+  ["courses", "notes", { userEmail: 1, courseId: 1, videoId: 1, seconds: 1 }, { name: "user_course_video_seconds" }, null],
+  ["courses", "videoProgress", { userEmail: 1, updatedAt: -1 }, { name: "userEmail_updatedAt" }, null],
+  ["courses", "courses", { language: 1, approved: 1 }, { name: "language_approved" }, null],
   ["courses", "rateLimits", { expiresAt: 1 }, { expireAfterSeconds: 0, name: "expiresAt_ttl" }, null],
 ];
 

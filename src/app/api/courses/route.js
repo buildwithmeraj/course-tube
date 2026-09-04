@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { checkCourseAddLimits } from "@/lib/courseLimits";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { RATE_LIMITS } from "@/lib/limits";
+import { isValidLanguage } from "@/lib/languages";
 import {
   YouTubeError,
   fetchPlaylistInfo,
@@ -29,6 +30,7 @@ export async function GET(req) {
     const popular = params.get("popular");
     const limitParam = params.get("limit");
     const query = params.get("q");
+    const language = params.get("language");
     const sortBy = params.get("sortBy");
 
     // Parse limit
@@ -55,6 +57,8 @@ export async function GET(req) {
 
     // Build filter
     let filter = {};
+    let titlePattern = null;
+    let matchedVideosByCourse = new Map();
     if (isAdmin) {
       // Only admins may narrow by approval state, or list every course
       if (approved === "true") {
@@ -66,6 +70,10 @@ export async function GET(req) {
       // Pending courses stay private to their uploader, who reaches them
       // through their enrolments rather than this listing
       filter.approved = true;
+    }
+
+    if (language && isValidLanguage(language)) {
+      filter.language = language;
     }
 
     if (query && query.length > 0) {
@@ -84,7 +92,7 @@ export async function GET(req) {
         );
       }
 
-      filter.title = {
+      titlePattern = {
         $regex: escapeRegex(query.slice(0, MAX_QUERY_LENGTH)),
         $options: "i",
       };
@@ -92,6 +100,38 @@ export async function GET(req) {
 
     const db = await getCoursesDB();
     let courses = [];
+
+    // A course also matches when one of its videos does, so searching for a
+    // topic covered inside a course finds it even if the course title does not
+    // mention it.
+    if (titlePattern) {
+      const videoMatches = await db
+        .collection("videos")
+        .aggregate([
+          { $match: { title: titlePattern } },
+          {
+            $group: {
+              _id: "$courseId",
+              matchCount: { $sum: 1 },
+              titles: { $push: "$title" },
+            },
+          },
+          { $limit: MAX_LIMIT },
+        ])
+        .toArray();
+
+      matchedVideosByCourse = new Map(
+        videoMatches.map((doc) => [
+          doc._id.toString(),
+          { count: doc.matchCount, titles: doc.titles.slice(0, 3) },
+        ]),
+      );
+
+      filter.$or = [
+        { title: titlePattern },
+        { _id: { $in: videoMatches.map((doc) => doc._id) } },
+      ];
+    }
 
     if (popular === "true") {
       courses = await db
@@ -156,6 +196,13 @@ export async function GET(req) {
         ])
         .toArray();
     }
+    if (matchedVideosByCourse.size > 0) {
+      courses = courses.map((course) => {
+        const matched = matchedVideosByCourse.get(course._id.toString());
+        return matched ? { ...course, matchedVideos: matched } : course;
+      });
+    }
+
     const res = NextResponse.json(courses, { status: 200 });
     res.headers.set("Cache-Control", "no-store, max-age=0");
     return res;
@@ -182,6 +229,7 @@ export async function POST(req) {
     // here so the YouTube key stays on the server and the stored documents
     // cannot be shaped by the caller.
     const playlistId = parsePlaylistId(body?.url ?? body?.playlistId);
+    const language = isValidLanguage(body?.language) ? body.language : null;
 
     if (!playlistId) {
       return NextResponse.json(
@@ -218,8 +266,13 @@ export async function POST(req) {
     const courseRes = await coursesCol.insertOne({
       playlistId,
       ownerEmail: session.user.email,
+      language,
       title,
       totalCount: totalCount || videos.length,
+      totalDurationSeconds: videos.reduce(
+        (sum, video) => sum + (Number(video.durationSeconds) || 0),
+        0,
+      ),
       thumbnailUrl: videos[0]?.thumbnail || "",
       approved: false,
       createdAt: new Date(),
@@ -241,6 +294,7 @@ export async function POST(req) {
         ...v,
         courseId,
         order: index,
+        addedAt: new Date(),
       })),
       { ordered: false },
     );

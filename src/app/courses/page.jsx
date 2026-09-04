@@ -7,8 +7,8 @@ export const metadata = {
 export const revalidate = 3600;
 
 const page = async ({ searchParams }) => {
-  const { sortBy } = await searchParams;
-  return <CoursesList sortBy={sortBy} />;
+  const { sortBy, language } = await searchParams;
+  return <CoursesList sortBy={sortBy} language={language} />;
 };
 
 export default page;

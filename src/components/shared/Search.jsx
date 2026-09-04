@@ -103,9 +103,23 @@ const Search = ({ setShowSearchModal }) => {
                     onClick={() => setShowSearchModal(false)}
                     className="hover:link truncate flex items-center"
                   >
-                    <RiPlayList2Fill className="mr-2" size={14} />
-                    {course.title}
+                    <RiPlayList2Fill className="mr-2 shrink-0" size={14} />
+                    <span className="truncate">{course.title}</span>
                   </Link>
+                  {course.matchedVideos?.count > 0 && (
+                    <p className="ml-6 mt-0.5 text-xs text-base-content/60">
+                      {course.matchedVideos.count} matching video
+                      {course.matchedVideos.count === 1 ? "" : "s"}
+                      {course.matchedVideos.titles?.[0] && (
+                        <>
+                          {" · "}
+                          <span className="italic">
+                            {course.matchedVideos.titles[0]}
+                          </span>
+                        </>
+                      )}
+                    </p>
+                  )}
                   <div className="divider m-0"></div>
                 </div>
               ))}

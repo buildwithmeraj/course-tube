@@ -23,6 +23,9 @@ import {
 import { RiGraduationCapFill, RiPlayListAddFill } from "react-icons/ri";
 import { IoHelpCircle } from "react-icons/io5";
 import VideoDescription from "@/components/ui/VideoDescription";
+import { formatDuration } from "@/lib/duration";
+import ChapterList from "@/components/ui/ChapterList";
+import VideoNotes from "@/components/ui/VideoNotes";
 
 const CourseVideos = () => {
   const { data: session } = useSession();
@@ -35,6 +38,11 @@ const CourseVideos = () => {
   const lastReportedRef = useRef({ videoId: null, seconds: -1 });
   const [manuallySelectedVideo, setManuallySelectedVideo] = useState(null);
   const [descriptionsById, setDescriptionsById] = useState({});
+  const [seekRequest, setSeekRequest] = useState(null);
+  const [playheadSeconds, setPlayheadSeconds] = useState(0);
+  const [lastActiveAt, setLastActiveAt] = useState(null);
+  const [notes, setNotes] = useState([]);
+  const playerApiRef = useRef(null);
   const requestedDescriptionsRef = useRef(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -92,6 +100,7 @@ const CourseVideos = () => {
         isUpdatedWithinDays(courseData?.updatedAt || courseData?.createdAt, 7),
       );
       setVideos(Array.isArray(videosData) ? videosData : []);
+      setLastActiveAt(progressData?.lastActiveAt ?? null);
       setProgress(
         progressData && typeof progressData === "object"
           ? { videos: progressData.videos || {}, lastVideoId: progressData.lastVideoId ?? null }
@@ -157,10 +166,40 @@ const CourseVideos = () => {
     [progress],
   );
 
-  const completedCount = useMemo(
-    () => videos.filter((v) => isCompleted(v._id)).length,
-    [videos, isCompleted],
+  const watchable = useMemo(
+    () => videos.filter((video) => !video.unavailable),
+    [videos],
   );
+
+  const completedCount = useMemo(
+    () => watchable.filter((v) => isCompleted(v._id)).length,
+    [watchable, isCompleted],
+  );
+
+  // Videos that arrived since this learner last watched anything here
+  const newVideos = useMemo(() => {
+    if (!lastActiveAt) return [];
+    const since = new Date(lastActiveAt).getTime();
+    return videos.filter(
+      (video) => video.addedAt && new Date(video.addedAt).getTime() > since,
+    );
+  }, [videos, lastActiveAt]);
+
+  // Hours are what learners actually plan around, so show time as well as count
+  const runtime = useMemo(() => {
+    let total = 0;
+    let remaining = 0;
+    let unknown = 0;
+
+    for (const video of watchable) {
+      const seconds = Number(video.durationSeconds) || 0;
+      if (seconds === 0) unknown += 1;
+      total += seconds;
+      if (!isCompleted(video._id)) remaining += seconds;
+    }
+
+    return { total, remaining, unknown };
+  }, [watchable, isCompleted]);
 
   // Resume where this video was left off, unless it is already finished
   const resumeSeconds = useMemo(() => {
@@ -169,6 +208,68 @@ const CourseVideos = () => {
     if (!record || record.completedAt) return 0;
     return record.positionSeconds || 0;
   }, [progress, selectedVideo]);
+
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+
+    fetch(`/api/courses/${id}/notes`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (!cancelled) setNotes(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        if (!cancelled) setNotes([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  const notesForSelected = useMemo(
+    () => notes.filter((note) => note.videoId === selectedVideo),
+    [notes, selectedVideo],
+  );
+
+  const addNote = useCallback(
+    async (text) => {
+      if (!selectedVideo) return false;
+
+      // Read the exact play head rather than the last 5-second tick
+      const seconds = playerApiRef.current?.getCurrentTime?.() ?? 0;
+
+      try {
+        const res = await fetch(`/api/courses/${id}/notes`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ videoId: selectedVideo, seconds, text }),
+        });
+        if (!res.ok) return false;
+
+        const saved = await res.json();
+        setNotes((prev) =>
+          [...prev, { ...saved, videoId: selectedVideo }].sort(
+            (a, b) => a.seconds - b.seconds,
+          ),
+        );
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [id, selectedVideo],
+  );
+
+  const deleteNote = useCallback(async (noteId) => {
+    try {
+      const res = await fetch(`/api/notes/${noteId}`, { method: "DELETE" });
+      if (!res.ok) return;
+      setNotes((prev) => prev.filter((note) => note._id !== noteId));
+    } catch (err) {
+      console.error("Error deleting note:", err);
+    }
+  }, []);
 
   // Descriptions are excluded from the video listing and fetched per video
   useEffect(() => {
@@ -246,6 +347,8 @@ const CourseVideos = () => {
       // Pin the video being watched: without this it would be deselected the
       // moment it crosses the completion threshold, mid-playback.
       setManuallySelectedVideo(video._id);
+
+      setPlayheadSeconds(seconds);
 
       const last = lastReportedRef.current;
       if (last.videoId === video._id && Math.abs(seconds - last.seconds) < 10) {
@@ -353,7 +456,16 @@ const CourseVideos = () => {
         // Refetch videos after synchronization
         await fetchVideosAndProgress();
         setUpdated(true);
-        toast.success("Course synchronized successfully");
+
+        // Say what actually changed, so syncing reads as useful rather than a chore
+        const changes = [];
+        if (data.added > 0) changes.push(`${data.added} added`);
+        if (data.removed > 0) changes.push(`${data.removed} removed`);
+        toast.success(
+          changes.length
+            ? `Course synchronized — ${changes.join(", ")}`
+            : "Course synchronized — no changes",
+        );
       } else {
         if (res.status === 429) {
           toast.success(data.message || "Course is already updated");
@@ -405,6 +517,16 @@ const CourseVideos = () => {
       <div className="grid grid-cols-1 lg:grid-cols-7 xl:grid-cols-3 gap-4 w-full">
         <div className="col-span-full -mb-2">
           <h2 className="title-accent">{course?.title}</h2>
+          {newVideos.length > 0 && (
+            <div className="alert alert-info alert-soft mt-2 py-2">
+              <FaSyncAlt className="inline" />
+              <span>
+                {newVideos.length} new video
+                {newVideos.length === 1 ? "" : "s"} added since you last watched
+                this course.
+              </span>
+            </div>
+          )}
         </div>
         <div className="col-span-full lg:col-span-4 xl:col-span-2 space-y-3 w-full">
           {loading ? (
@@ -416,6 +538,8 @@ const CourseVideos = () => {
               course={course}
               startSeconds={resumeSeconds}
               onProgress={handleProgress}
+              seekRequest={seekRequest}
+              ref={playerApiRef}
             />
           )}
           <div className="flex items-center justify-between">
@@ -434,6 +558,20 @@ const CourseVideos = () => {
               <FaArrowAltCircleRight />
             </button>
           </div>
+          <ChapterList
+            chapters={selectedVideoData?.chapters}
+            currentSeconds={playheadSeconds}
+            onSeek={(seconds) =>
+              setSeekRequest({ seconds, nonce: Date.now() })
+            }
+          />
+          <VideoNotes
+            notes={notesForSelected}
+            onAdd={addNote}
+            onDelete={deleteNote}
+            onSeek={(seconds) => setSeekRequest({ seconds, nonce: Date.now() })}
+            disabled={!selectedVideo}
+          />
           <VideoDescription
             description={descriptionsById[selectedVideo]}
             loading={
@@ -443,14 +581,23 @@ const CourseVideos = () => {
           />
           <div className="flex justify-between flex-col md:flex-row items-center">
             <div className="text-lg font-semibold items-center gap-4">
+              {runtime.total > 0 && (
+                <div className="text-sm font-normal text-base-content/70 mb-1">
+                  {runtime.remaining > 0
+                    ? `${formatDuration(runtime.remaining)} left of ${formatDuration(runtime.total)}`
+                    : `All ${formatDuration(runtime.total)} watched`}
+                  {runtime.unknown > 0 &&
+                    ` · ${runtime.unknown} video${runtime.unknown === 1 ? "" : "s"} without a duration`}
+                </div>
+              )}
               Course Progress{" "}
               <progress
                 className={`progress w-28 xl:w-56 transition-all duration-300 ${progressColor(
-                  videos.length || course?.totalCount,
+                  watchable.length || course?.totalCount,
                   completedCount,
                 )}`}
                 value={completedCount}
-                max={videos.length || course?.totalCount}
+                max={watchable.length || course?.totalCount}
                 id="progress"
               ></progress>
             </div>

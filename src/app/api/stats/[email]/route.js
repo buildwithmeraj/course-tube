@@ -60,9 +60,11 @@ export async function GET(req, { params }) {
     completedPerCourse.map((doc) => [doc._id.toString(), doc.completed]),
   );
 
+  // Deleted or private videos can never be watched, so they are excluded from
+  // the total a learner has to finish
   const totalPerCourse = await videosCol
     .aggregate([
-      { $match: { courseId: { $in: courseIds } } },
+      { $match: { courseId: { $in: courseIds }, unavailable: { $ne: true } } },
       { $group: { _id: "$courseId", total: { $sum: 1 } } },
     ])
     .toArray();

@@ -2,6 +2,7 @@
 import { getServerYouTubeApiKey, getSiteUrl } from "./youtube";
 import { chargeQuota } from "./quota";
 import { MAX_COURSE_VIDEOS } from "./limits";
+import { parseChapters, isUnavailableVideo } from "./chapters";
 
 export { MAX_COURSE_VIDEOS };
 
@@ -201,10 +202,18 @@ export const fetchPlaylistVideos = async (playlistId) => {
 
   return videos.map((v) => {
     const parsed = parseDuration(durationMap[v.videoId] || "PT0S");
-    return {
+    const video = {
       ...v,
       duration: parsed.formatted,
       durationSeconds: parsed.seconds,
+    };
+
+    return {
+      ...video,
+      // Deleted and private entries stay in the playlist but can never be
+      // watched, so they must not count towards completing the course
+      unavailable: isUnavailableVideo(video),
+      chapters: parseChapters(video.description, parsed.seconds),
     };
   });
 };

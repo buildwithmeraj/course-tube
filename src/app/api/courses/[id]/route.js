@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
 import { canViewCourse } from "@/lib/courseAccess";
+import { isValidLanguage } from "@/lib/languages";
 
 export async function PATCH(req, { params }) {
   const { id } = await params;
@@ -17,9 +18,26 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const { approved } = await req.json();
-  if (typeof approved !== "boolean") {
-    return NextResponse.json({ message: "Invalid payload" }, { status: 400 });
+  const body = await req.json();
+  const { approved, language } = body;
+
+  const update = {};
+  if (approved !== undefined) {
+    if (typeof approved !== "boolean") {
+      return NextResponse.json({ message: "Invalid payload" }, { status: 400 });
+    }
+    update.approved = approved;
+  }
+
+  if (language !== undefined) {
+    if (language !== null && !isValidLanguage(language)) {
+      return NextResponse.json({ message: "Unknown language" }, { status: 400 });
+    }
+    update.language = language;
+  }
+
+  if (Object.keys(update).length === 0) {
+    return NextResponse.json({ message: "Nothing to update" }, { status: 400 });
   }
 
   const db = await getCoursesDB();
@@ -29,7 +47,7 @@ export async function PATCH(req, { params }) {
 
   const res = await coursesCol.updateOne(
     { _id: courseId },
-    { $set: { approved } }
+    { $set: update }
   );
 
   if (res.matchedCount === 0) {

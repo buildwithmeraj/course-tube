@@ -2,11 +2,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef } from "react";
-import { FaCheckCircle, FaPlayCircle } from "react-icons/fa";
+import { FaCheckCircle, FaPlayCircle, FaBan } from "react-icons/fa";
 
 const VideoListCard = ({ video, isSelected, course, isWatched }) => {
   const cardRef = useRef(null);
   const isWatchedButNotSelected = isWatched && !isSelected;
+  const unavailable = Boolean(video.unavailable);
 
   useEffect(() => {
     if (isSelected && isWatched && cardRef.current) {
@@ -56,7 +57,7 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
         </div>
 
         <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-          {video.duration}
+          {unavailable ? "Unavailable" : video.duration}
         </div>
 
         <div
@@ -75,7 +76,13 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
           ${isSelected ? "text-info" : ""} hover:text-info
         `}
       >
-        {isWatchedButNotSelected && (
+        {unavailable && (
+          <FaBan
+            className="inline text-error mr-1 mb-0.5"
+            title="No longer available on YouTube"
+          />
+        )}
+        {!unavailable && isWatchedButNotSelected && (
           <FaCheckCircle className="inline text-success mr-1 mb-0.5" />
         )}{" "}
         {isSelected && <FaPlayCircle className="inline mr-1 mb-1" />}{" "}

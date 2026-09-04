@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useImperativeHandle, useRef } from "react";
 
 const IFRAME_API_SRC = "https://www.youtube.com/iframe_api";
 
@@ -40,6 +40,8 @@ const YouTubePlayer = ({
   course,
   startSeconds = 0,
   onProgress,
+  seekRequest,
+  ref,
 }) => {
   const containerRef = useRef(null);
   const playerRef = useRef(null);
@@ -143,6 +145,24 @@ const YouTubePlayer = ({
       cancelled = true;
     };
   }, [video?.videoId, startTicking, stopTicking]);
+
+  // Lets the parent read the exact play head when a note is written, rather
+  // than the value from the last 5-second tick.
+  useImperativeHandle(
+    ref,
+    () => ({
+      getCurrentTime: () => playerRef.current?.getCurrentTime?.() ?? 0,
+    }),
+    [],
+  );
+
+  // Chapter clicks arrive as { seconds, nonce }; the nonce makes repeat clicks
+  // on the same chapter seek again.
+  useEffect(() => {
+    if (!seekRequest || !playerRef.current?.seekTo) return;
+    playerRef.current.seekTo(Math.max(0, Math.floor(seekRequest.seconds)), true);
+    playerRef.current.playVideo?.();
+  }, [seekRequest]);
 
   // Tear down only when the component actually goes away
   useEffect(

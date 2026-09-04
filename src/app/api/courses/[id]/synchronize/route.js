@@ -114,6 +114,10 @@ export async function PATCH(req, { params }) {
         $set: {
           title,
           totalCount,
+          totalDurationSeconds: videos.reduce(
+            (sum, video) => sum + (Number(video.durationSeconds) || 0),
+            0,
+          ),
           thumbnailUrl: videos[0]?.thumbnail || course.thumbnailUrl || "",
           updatedAt: new Date(),
         },
@@ -123,11 +127,24 @@ export async function PATCH(req, { params }) {
     // Upsert on (courseId, videoId) rather than replacing the set outright:
     // saved progress points at these documents by _id, so reinserting them
     // would silently reset every enrolled learner to the first video.
+    const existingIds = new Set(
+      (
+        await videosCol
+          .find({ courseId }, { projection: { videoId: 1 } })
+          .toArray()
+      ).map((v) => v.videoId),
+    );
+    const addedCount = videos.filter((v) => !existingIds.has(v.videoId)).length;
+
     await videosCol.bulkWrite(
       videos.map((v, index) => ({
         updateOne: {
           filter: { courseId, videoId: v.videoId },
-          update: { $set: { ...v, courseId, order: index } },
+          update: {
+            $set: { ...v, courseId, order: index },
+            // Only set on insert, so "new since you last watched" stays true
+            $setOnInsert: { addedAt: new Date() },
+          },
           upsert: true,
         },
       })),
@@ -135,7 +152,7 @@ export async function PATCH(req, { params }) {
     );
 
     // Drop videos that are no longer part of the playlist
-    await videosCol.deleteMany({
+    const { deletedCount: removedCount } = await videosCol.deleteMany({
       courseId,
       videoId: { $nin: videos.map((v) => v.videoId) },
     });
@@ -147,6 +164,8 @@ export async function PATCH(req, { params }) {
         title,
         totalCount,
         videosUpdated: videos.length,
+        added: addedCount,
+        removed: removedCount,
       },
       { status: 200 },
     );

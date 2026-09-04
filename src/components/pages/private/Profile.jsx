@@ -1,4 +1,6 @@
 "use client";
+import ActivityHeatmap from "@/components/ui/ActivityHeatmap";
+import ContinueLearning from "@/components/ui/ContinueLearning";
 import Loading from "@/components/ui/Loading";
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
@@ -116,6 +118,7 @@ export default function Profile() {
 
   return (
     <section className="mx-auto max-w-5xl">
+      <ContinueLearning />
       <div className="rounded-2xl border border-base-200 bg-base-100 p-6 shadow-md md:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
@@ -259,6 +262,8 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      <ActivityHeatmap />
 
       <div className="mt-6 rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm">
         <div className="flex items-center justify-between">
