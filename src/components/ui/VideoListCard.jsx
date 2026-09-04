@@ -87,11 +87,11 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
           </div>
         )}
 
-        <div className="absolute bottom-2 left-2 rounded-lg bg-black/50 px-2 py-1 text-xs text-white">
+        <div className="figure-text absolute bottom-1.5 left-1.5 hidden rounded-selector bg-black/60 px-1 py-0.5 text-[10px] text-white @[124px]:block">
           {video.position + 1}/{course?.totalCount || "?"}
         </div>
 
-        <div className="absolute right-2 bottom-2 rounded-lg bg-black/50 px-2 py-1 text-xs text-white">
+        <div className="figure-text absolute right-1.5 bottom-1.5 rounded-selector bg-black/60 px-1 py-0.5 text-[10px] text-white">
           {unavailable ? "Unavailable" : video.duration}
         </div>
 

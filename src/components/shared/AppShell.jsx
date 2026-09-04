@@ -46,7 +46,7 @@ const GROUPS = [
   },
 ];
 
-const RailLink = ({ href, label, Icon, onNavigate }) => {
+const RailLink = ({ href, label, Icon, onNavigate, collapsible = true }) => {
   const pathname = usePathname();
   const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
 
@@ -55,27 +55,32 @@ const RailLink = ({ href, label, Icon, onNavigate }) => {
       href={href}
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
-      className={`flex items-center gap-3 border-l-2 px-4 py-2 text-sm transition-colors ${
+      title={collapsible ? label : undefined}
+      className={`flex items-center gap-3 border-l-2 py-2 text-sm transition-colors ${
+        collapsible ? "justify-center px-0 xl:justify-start xl:px-4" : "px-4"
+      } ${
         active
           ? "border-accent bg-base-100 font-semibold text-base-content"
           : "border-transparent text-base-content/70 hover:bg-base-100 hover:text-base-content"
       }`}
     >
-      <Icon size={15} className="shrink-0" />
-      {label}
+      <Icon size={16} className="shrink-0" />
+      <span className={collapsible ? "hidden xl:inline" : ""}>{label}</span>
     </Link>
   );
 };
 
-const Rail = ({ session, onNavigate }) => (
+const Rail = ({ session, onNavigate, collapsible = false }) => (
   <nav aria-label="Main" className="flex h-full flex-col py-4">
     <Link
       href="/"
       onClick={onNavigate}
-      className="mb-3 flex items-center px-4"
+      className={`mb-3 flex items-center ${
+        collapsible ? "justify-center xl:justify-start xl:px-4" : "px-4"
+      }`}
       aria-label="CourseTube home"
     >
-      <Logo />
+      <Logo compact={collapsible} />
     </Link>
 
     {GROUPS.map((group) => {
@@ -87,29 +92,55 @@ const Rail = ({ session, onNavigate }) => (
       if (!items.length) return null;
 
       return (
-        <div key={group.label} className="mt-3">
-          <p className="eyebrow px-4 pb-1">{group.label}</p>
+        <div
+          key={group.label}
+          className={`mt-3 ${
+            collapsible
+              ? "border-t border-hairline pt-3 first:border-t-0 xl:border-t-0 xl:pt-0"
+              : ""
+          }`}
+        >
+          <p
+            className={`eyebrow px-4 pb-1 ${collapsible ? "hidden xl:block" : ""}`}
+          >
+            {group.label}
+          </p>
           {items.map((item) => (
-            <RailLink key={item.href} {...item} onNavigate={onNavigate} />
+            <RailLink
+              key={item.href}
+              {...item}
+              onNavigate={onNavigate}
+              collapsible={collapsible}
+            />
           ))}
         </div>
       );
     })}
 
-    <div className="mt-auto space-y-2 px-4 pt-6">
+    <div
+      className={`mt-auto pt-6 ${collapsible ? "px-2 xl:px-4" : "px-4"}`}
+    >
       {session?.user ? (
         <Link
           href="/profile/courses/add"
           onClick={onNavigate}
+          title="Add playlist"
           className="btn btn-primary btn-sm w-full"
         >
           <FaPlus size={12} />
-          Add playlist
+          <span className={collapsible ? "hidden xl:inline" : ""}>
+            Add playlist
+          </span>
         </Link>
       ) : (
-        <Link href="/login" onClick={onNavigate} className="btn btn-primary btn-sm w-full">
+        <Link
+          href="/login"
+          onClick={onNavigate}
+          title="Sign in"
+          className="btn btn-primary btn-sm w-full"
+        >
           <FaSignInAlt size={13} />
-          Sign in
+          <span className={collapsible ? "hidden xl:inline" : ""}>Sign in</span>
         </Link>
       )}
     </div>
@@ -122,10 +153,11 @@ const AppShell = ({ children }) => {
   const [drawer, setDrawer] = useState(false);
 
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[216px_1fr]">
-      {/* Persistent rail from lg up */}
+    <div className="min-h-screen lg:grid lg:grid-cols-[60px_1fr] xl:grid-cols-[216px_1fr]">
+      {/* Icon-only from lg, full labels from xl. At 1024 a 216px rail left the
+          watch page's player and queue too narrow to be comfortable. */}
       <aside className="sticky top-0 hidden h-screen overflow-y-auto border-r border-hairline bg-surface lg:block">
-        <Rail session={session} />
+        <Rail session={session} collapsible />
       </aside>
 
       {/* Slide-over rail below lg */}
