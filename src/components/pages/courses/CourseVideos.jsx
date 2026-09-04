@@ -51,7 +51,7 @@ const TABS = [
 ];
 
 const CourseVideos = ({ initialCourse = null, initialVideos = [] }) => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [videos, setVideos] = useState(initialVideos);
   const [course, setCourse] = useState(initialCourse);
   const [enrolled, setEnrolled] = useState(false);
@@ -366,7 +366,9 @@ const CourseVideos = ({ initialCourse = null, initialVideos = [] }) => {
   const updateVideoParam = (videoId) => {
     const params = new URLSearchParams(searchParams);
     params.set("video", videoId);
-    router.replace(`${pathname}?${params.toString()}`);
+    // Auto-advance happens while the reader is watching, so the default
+    // scroll-to-top on navigation would yank the page out from under them.
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   const saveProgress = useCallback(
@@ -554,7 +556,10 @@ const CourseVideos = ({ initialCourse = null, initialVideos = [] }) => {
     return <NotFound />;
   }
 
-  if (!session && !loading) {
+  // "unauthenticated", not a falsy session: while NextAuth is still resolving
+  // the cookie there is no session yet, and testing for one told every signed-in
+  // reader they were signed out for as long as that round trip took.
+  if (status === "unauthenticated") {
     return <NotLoggedIn />;
   }
 

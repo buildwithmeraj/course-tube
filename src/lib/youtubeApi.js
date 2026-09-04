@@ -1,7 +1,11 @@
 // Server-only: reads YOUTUBE_API_KEY, which must never reach the browser.
 import { getServerYouTubeApiKey, getSiteUrl } from "./youtube";
 import { chargeQuota } from "./quota";
-import { MAX_COURSE_VIDEOS } from "./limits";
+import {
+  MAX_COURSE_VIDEOS,
+  SEARCH_MAX_RESULTS,
+  SEARCH_UNIT_COST,
+} from "./limits";
 import { parseChapters, isUnavailableVideo } from "./chapters";
 
 export { MAX_COURSE_VIDEOS };
@@ -39,13 +43,17 @@ const buildYouTubeUrl = (baseUrl, params) => {
   return url.toString();
 };
 
-const fetchYouTubeJson = async (url, fallbackMessage) => {
+const fetchYouTubeJson = async (url, fallbackMessage, charge = {}) => {
   // Charged before the request so the breaker cannot be bypassed by a new
-  // caller: playlists.list, playlistItems.list and videos.list are 1 unit each.
-  const quota = await chargeQuota(1);
+  // caller: playlists.list, playlistItems.list and videos.list are 1 unit each,
+  // and search.list is 100.
+  const { units = 1, bucket = null } = charge;
+  const quota = await chargeQuota(units, bucket);
   if (!quota.allowed) {
     throw new YouTubeError(
-      "Daily YouTube API budget reached. Adding and syncing courses will resume tomorrow.",
+      quota.stoppedBy === "search"
+        ? "Daily YouTube search budget reached. Paste a playlist URL instead — adding still works."
+        : "Daily YouTube API budget reached. Adding and syncing courses will resume tomorrow.",
       503,
     );
   }
@@ -145,6 +153,64 @@ export const fetchPlaylistInfo = async (playlistId) => {
     title: data.items[0].snippet.title,
     totalCount: data.items[0].contentDetails.itemCount,
   };
+};
+
+// Search YouTube for playlists. The expensive one: search.list is 100 units
+// against 1 for everything else here, so it is charged to its own bucket and
+// every caller is expected to cache the result.
+//
+// search.list does not return item counts, so the ids are passed through
+// playlists.list — 1 unit for up to 50 of them — to get something worth showing.
+export const searchPlaylists = async (query) => {
+  const apiKey = requireApiKey();
+
+  const found = await fetchYouTubeJson(
+    buildYouTubeUrl("https://www.googleapis.com/youtube/v3/search", {
+      part: "snippet",
+      type: "playlist",
+      q: query,
+      maxResults: String(SEARCH_MAX_RESULTS),
+      key: apiKey,
+    }),
+    "Failed to search YouTube",
+    { units: SEARCH_UNIT_COST, bucket: "search" },
+  );
+
+  const items = Array.isArray(found?.items) ? found.items : [];
+  const ids = items.map((item) => item.id?.playlistId).filter(Boolean);
+  if (ids.length === 0) return [];
+
+  const details = await fetchYouTubeJson(
+    buildYouTubeUrl("https://www.googleapis.com/youtube/v3/playlists", {
+      part: "snippet,contentDetails",
+      id: ids.join(","),
+      key: apiKey,
+    }),
+    "Failed to read playlist details from YouTube",
+  );
+
+  const countById = Object.fromEntries(
+    (details?.items || []).map((item) => [item.id, item.contentDetails?.itemCount ?? 0]),
+  );
+
+  return items
+    .map((item) => {
+      const playlistId = item.id?.playlistId;
+      const snippet = item.snippet || {};
+
+      return {
+        playlistId,
+        title: snippet.title || "Untitled playlist",
+        channelTitle: snippet.channelTitle || "",
+        thumbnail:
+          snippet.thumbnails?.medium?.url ||
+          snippet.thumbnails?.default?.url ||
+          null,
+        totalCount: countById[playlistId] ?? 0,
+      };
+    })
+    // A playlist YouTube will not tell us the size of is one we cannot import
+    .filter((item) => item.playlistId && item.totalCount > 0);
 };
 
 // Every video in the playlist, with durations merged in

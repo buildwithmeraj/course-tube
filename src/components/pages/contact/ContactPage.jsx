@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { FaCheckCircle, FaInfoCircle } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import { PiWarningFill } from "react-icons/pi";
+import FormPanel from "@/components/ui/FormPanel";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -61,15 +62,11 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="flex items-center justify-center h-[82vh]">
-      <div className="w-full max-w-xl rounded-box border border-hairline bg-base-100">
-        <div className="card-body">
-          <h1 className="page-title text-center">Contact Us</h1>
-          <p className="alert alert-soft alert-info mb-3">
-            <FaInfoCircle className="inline-block" size={30} />
-            Have questions or feedback? We would love to hear from you. Fill out
-            the form below and we will get back to you as soon as possible.
-          </p>
+    <FormPanel
+      title="Contact us"
+      description="Questions, feedback or partnership enquiries — we read everything."
+      width="lg"
+    >
 
           {success && (
             <div className="alert alert-success mb-4">
@@ -155,11 +152,9 @@ export default function ContactPage() {
               className="btn btn-primary w-full"
             >
               <IoSend />
-              {loading ? "Sending..." : "Send Message"}
+              {loading ? "Sending…" : "Send message"}
             </button>
-          </form>
-        </div>
-      </div>
-    </div>
+      </form>
+    </FormPanel>
   );
 }

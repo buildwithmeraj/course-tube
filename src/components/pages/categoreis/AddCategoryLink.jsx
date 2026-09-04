@@ -11,12 +11,9 @@ const AddCategoryLink = () => {
   if (session?.user?.role !== "admin") return null;
 
   return (
-    <Link
-      className="border-t border-base-content/30 mt-2 pt-2 hover:text-primary flex items-center justify-center"
-      href="/dashboard/categories/add"
-    >
-      <FaFolderPlus className="inline mr-2 mb-1" size={18} />
-      Add a Category
+    <Link className="btn btn-primary btn-sm" href="/dashboard/categories/add">
+      <FaFolderPlus size={13} />
+      Add category
     </Link>
   );
 };

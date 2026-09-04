@@ -77,8 +77,10 @@ const ContinueLearning = () => {
           </h3>
 
           <div className="mt-2 flex items-center gap-2">
+            {/* Amber, not green: this card only ever shows a course you have
+                not finished, and green is reserved for finished. */}
             <progress
-              className="progress progress-success w-40"
+              className="progress progress-accent w-40"
               value={resume.completedCount}
               max={resume.totalCount || 1}
             />

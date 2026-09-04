@@ -32,6 +32,7 @@ const INDEXES = [
   ["courses", "videoProgress", { userEmail: 1, updatedAt: -1 }, { name: "userEmail_updatedAt" }, null],
   ["courses", "courses", { language: 1, approved: 1 }, { name: "language_approved" }, null],
   ["courses", "rateLimits", { expiresAt: 1 }, { expireAfterSeconds: 0, name: "expiresAt_ttl" }, null],
+  ["courses", "youtubeSearches", { expiresAt: 1 }, { expireAfterSeconds: 0, name: "expiresAt_ttl" }, null],
 ];
 
 const countDuplicates = async (col, key) => {

@@ -2,11 +2,12 @@
 import Link from "next/link";
 import React from "react";
 import { FaGoogle, FaUserPen } from "react-icons/fa6";
-import { FaSignInAlt, FaUserPlus } from "react-icons/fa";
+import { FaUserPlus } from "react-icons/fa";
 import { signIn, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import FormPanel from "@/components/ui/FormPanel";
 
 const RegisterPage = () => {
   const { data: session, status } = useSession();
@@ -139,10 +140,19 @@ const RegisterPage = () => {
     );
   }
   return (
-    <div className="flex items-center justify-center h-[84vh]">
-      <div className="w-full max-w-sm rounded-box border border-hairline bg-base-100">
+    <FormPanel
+      title="Create an account"
+      description="Keeps your progress, notes and resume position across devices."
+      footer={
+        <>
+          Already have an account?{" "}
+          <Link href="/login" className="text-primary hover:underline">
+            Sign in
+          </Link>
+        </>
+      }
+    >
         <form className="card-body" onSubmit={handleCredentialsRegister}>
-          <h1 className="page-title text-center">Register</h1>
           {error && (
             <div className="alert alert-error flex items-center mt-2">
               <svg
@@ -193,36 +203,31 @@ const RegisterPage = () => {
               placeholder="Confirm Password"
             />
             <button
-              className="btn btn-primary mt-2"
+              className="btn btn-primary mt-2 w-full"
               disabled={isLoading || isUploading}
             >
-              <FaUserPlus size={20} />{" "}
+              <FaUserPlus size={14} />
               {isLoading || isUploading
                 ? isLoading
-                  ? "Registering..."
-                  : "Uploading..."
-                : "Register"}
+                  ? "Creating account…"
+                  : "Uploading…"
+                : "Create account"}
             </button>
-            <div className="divider m-0.5 font-semibold">OR</div>
-            <div className="flex flex-col gap-2">
-              <button
-                className="btn btn-soft flex flex-1"
-                type="button"
-                onClick={handleGoogleRegister}
-                disabled={isLoading || isUploading}
-              >
-                <FaGoogle size={20} />
-                {isLoading || isUploading ? "Registering..." : "Register"}
-              </button>
-              <Link className="btn btn-soft flex flex-1" href="/login">
-                <FaSignInAlt size={20} />
-                Login
-              </Link>
-            </div>
+
+            <div className="divider my-1 text-xs text-base-content/50">or</div>
+
+            <button
+              className="btn btn-soft w-full"
+              type="button"
+              onClick={handleGoogleRegister}
+              disabled={isLoading || isUploading}
+            >
+              <FaGoogle size={14} />
+              Continue with Google
+            </button>
           </fieldset>
-        </form>
-      </div>
-    </div>
+      </form>
+    </FormPanel>
   );
 };
 

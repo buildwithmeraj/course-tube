@@ -1,11 +1,13 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-/* Two rules govern this palette:
+/* Three rules govern this palette:
    1. Every `*-content` token is measured against its own colour at >= 4.5:1
       (WCAG AA for body text). The ratio is noted beside each pair.
-   2. A colour is either a surface or an action, never both. The pale sky that
-      used to be `primary` is now `--surface` below; `primary` is an action. */
+   2. A colour is either a surface or an action, never both.
+   3. `primary` is the logo's own blue — #8ecae6 sky over #023047 navy — so the
+      brand colour and the action colour are the same colour. That also frees
+      green to mean one thing only: finished. */
 
 @plugin "daisyui/theme" {
   name: "light";
@@ -13,24 +15,26 @@
   prefersdark: false;
   color-scheme: "light";
 
-  /* Neutrals carry a few points of the accent's hue rather than being pure
+  /* Neutrals carry a few points of the brand's hue rather than being pure
      grey, so the surfaces read as a set. */
   --color-base-100: #ffffff;
-  --color-base-200: #f3f6f3;
-  --color-base-300: #e2e9e4;
-  --color-base-content: #101711;
+  --color-base-200: #f2f5f8;
+  --color-base-300: #e0e7ee;
+  --color-base-content: #0e161c;
 
-  --color-primary: #2b5c3d;            /* moss: brand + actions */
-  --color-primary-content: #ffffff;    /*  7.78:1 */
-  --color-secondary: #1d3f2b;
-  --color-secondary-content: #ffffff;  /* 11.35:1 */
+  --color-primary: #026b8c;            /* logo blue: brand + actions */
+  --color-primary-content: #ffffff;    /*  6.03:1 */
+  --color-secondary: #023047;          /* the logo's own navy */
+  --color-secondary-content: #ffffff;  /* 13.85:1 */
   --color-accent: #9c5a06;             /* amber: in progress + now playing */
   --color-accent-content: #ffffff;     /*  5.41:1 */
-  --color-neutral: #101711;
-  --color-neutral-content: #f3f6f3;    /* 15.96:1 */
+  --color-neutral: #0e161c;
+  --color-neutral-content: #f2f5f8;    /* 16.69:1 */
 
-  --color-info: #2f6076;
-  --color-info-content: #ffffff;       /*  6.87:1 */
+  /* Indigo, not another blue: `info` sits next to primary in badges and
+     alerts, and a second blue there would read as the same thing. */
+  --color-info: #534fa1;
+  --color-info-content: #ffffff;       /*  7.00:1 */
   --color-success: #2f7d52;
   --color-success-content: #ffffff;    /*  5.03:1 */
   --color-warning: #9a4d20;
@@ -59,19 +63,21 @@
   --color-base-100: #101418;
   --color-base-200: #171d22;
   --color-base-300: #232b32;
-  --color-base-content: #e6ecea;
+  --color-base-content: #e4ecf1;
 
-  --color-primary: #77c795;
-  --color-primary-content: #06210f;    /*  8.43:1 */
-  --color-secondary: #a9dcbc;
-  --color-secondary-content: #06210f;  /* 12.24:1 */
+  /* The logo's two colours, used as themselves: its sky as the action, its
+     navy as the ink on top. */
+  --color-primary: #8ecae6;
+  --color-primary-content: #023047;    /*  7.74:1 */
+  --color-secondary: #b9e0f2;
+  --color-secondary-content: #023047;  /*  9.90:1 */
   --color-accent: #f0a020;
   --color-accent-content: #2a1a00;     /*  7.83:1 */
   --color-neutral: #232b32;
-  --color-neutral-content: #e6ecea;    /* 12.00:1 */
+  --color-neutral-content: #e4ecf1;    /* 12.01:1 */
 
-  --color-info: #79b4cf;
-  --color-info-content: #04202b;       /*  7.41:1 */
+  --color-info: #a2a3f4;
+  --color-info-content: #141046;       /*  7.62:1 */
   --color-success: #68c78d;
   --color-success-content: #04230f;    /*  8.10:1 */
   --color-warning: #e59a63;
@@ -98,8 +104,8 @@
 }
 
 :root {
-  --surface: #f3f6f3;
-  --hairline: #e2e9e4;
+  --surface: #f2f5f8;
+  --hairline: #e0e7ee;
 }
 
 [data-theme="dark"] {

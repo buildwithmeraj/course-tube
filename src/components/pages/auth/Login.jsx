@@ -1,11 +1,12 @@
 "use client";
 import React from "react";
 import { signIn, useSession } from "next-auth/react";
-import { FaGoogle, FaSignInAlt, FaUserPlus } from "react-icons/fa";
+import { FaGoogle, FaSignInAlt } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import FormPanel from "@/components/ui/FormPanel";
 
 const LoginPage = () => {
   const { data: session, status } = useSession();
@@ -69,78 +70,81 @@ const LoginPage = () => {
   // Show loading spinner while session status is loading
   if (status === "loading") {
     return (
-      <div className="hero min-h-[75vh] flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
+      <div className="flex justify-center py-20">
+        <span className="loading loading-spinner loading-lg" />
       </div>
     );
   }
   return (
-    <div className="flex items-center justify-center h-[84vh]">
-      <div className="w-full max-w-sm rounded-box border border-hairline bg-base-100">
-        <form className="card-body" onSubmit={handleCredentialsLogin}>
-          <h1 className="page-title text-center">Login</h1>
-          {error && (
-            <div className="alert alert-error flex items-center mt-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="stroke-current shrink-0 h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>{error}</span>
-            </div>
-          )}
-          <fieldset className="fieldset">
-            <label className="eyebrow">Email</label>
-            <input
-              type="email"
-              className="input"
-              name="email"
-              placeholder="Email"
-            />
-            <label className="eyebrow">Password</label>
-            <input
-              type="password"
-              className="input"
-              name="password"
-              placeholder="Password"
-            />
+    <FormPanel
+      title="Sign in"
+      description="Pick up where you left off."
+      footer={
+        <>
+          No account?{" "}
+          <Link href="/register" className="text-primary hover:underline">
+            Create one
+          </Link>
+        </>
+      }
+    >
+      <form className="space-y-3" onSubmit={handleCredentialsLogin}>
+        {error && (
+          <div className="alert alert-error alert-soft py-2 text-sm">
+            <span>{error}</span>
+          </div>
+        )}
 
-            <button
-              className="btn btn-primary mt-2"
-              disabled={isLoading}
-              type="submit"
-            >
-              <FaSignInAlt size={20} />
-              {isLoading ? "Logging in..." : "Login"}
-            </button>
-            <div className="divider m-0.5 font-semibold">OR</div>
-            <div className="flex flex-col gap-2">
-              <button
-                className="btn btn-soft"
-                type="button"
-                onClick={handleGoogleLogin}
-                disabled={isLoading}
-              >
-                <FaGoogle size={20} />
-                Continue with Google
-              </button>
-              <Link className="btn btn-soft" href="/register">
-                <FaUserPlus size={20} />
-                Register
-              </Link>
-            </div>
-          </fieldset>
-        </form>
-      </div>
-    </div>
+        <div>
+          <label className="eyebrow" htmlFor="login-email">
+            Email
+          </label>
+          <input
+            id="login-email"
+            type="email"
+            className="input mt-1 w-full"
+            name="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+          />
+        </div>
+
+        <div>
+          <label className="eyebrow" htmlFor="login-password">
+            Password
+          </label>
+          <input
+            id="login-password"
+            type="password"
+            className="input mt-1 w-full"
+            name="password"
+            autoComplete="current-password"
+            placeholder="••••••••"
+          />
+        </div>
+
+        <button
+          className="btn btn-primary w-full"
+          disabled={isLoading}
+          type="submit"
+        >
+          <FaSignInAlt size={14} />
+          {isLoading ? "Signing in…" : "Sign in"}
+        </button>
+
+        <div className="divider my-1 text-xs text-base-content/50">or</div>
+
+        <button
+          className="btn btn-soft w-full"
+          type="button"
+          onClick={handleGoogleLogin}
+          disabled={isLoading}
+        >
+          <FaGoogle size={14} />
+          Continue with Google
+        </button>
+      </form>
+    </FormPanel>
   );
 };
 

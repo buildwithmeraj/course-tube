@@ -2,7 +2,6 @@
 import React from "react";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
-import { SearchProvider } from "../contexts/SearchContext";
 
 const Providers = ({ children }) => {
   return (
@@ -13,7 +12,7 @@ const Providers = ({ children }) => {
         enableSystem
         suppressHydrationWarning
       >
-        <SearchProvider>{children}</SearchProvider>
+        {children}
       </ThemeProvider>
     </SessionProvider>
   );

@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { FaCircleCheck, FaFolderPlus } from "react-icons/fa6";
 import { IoWarning } from "react-icons/io5";
+import FormPanel from "@/components/ui/FormPanel";
 
 const AddCategory = () => {
   const [courses, setCourses] = useState([]);
@@ -92,15 +93,8 @@ const AddCategory = () => {
   }, [courses, courseSearch]);
 
   return (
-    <div className="lg:flex lg:items-center lg:justify-center lg:h-[82vh] mx-auto">
-      <div className="rounded-box border border-hairline bg-base-100">
-        <form
-          className="card-body w-full max-w-sm"
-          onSubmit={handleAddCategory}
-        >
-          <h1 className="page-title text-center">
-            Add Category
-          </h1>
+    <FormPanel title="Add a category" description="Group related courses under one topic." width="md">
+      <form className="space-y-3" onSubmit={handleAddCategory}>
 
           {error && (
             <p className="alert alert-error">
@@ -173,11 +167,10 @@ const AddCategory = () => {
 
           <button className="btn btn-primary mt-3" disabled={submitting}>
             <FaFolderPlus size={16} />
-            {submitting ? "Adding..." : "Add Category"}
+            {submitting ? "Adding…" : "Add category"}
           </button>
-        </form>
-      </div>
-    </div>
+      </form>
+    </FormPanel>
   );
 };
 

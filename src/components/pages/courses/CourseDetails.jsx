@@ -9,6 +9,10 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdOutlineAddToPhotos } from "react-icons/md";
+import Image from "next/image";
+import { FaPlay, FaRegClock, FaVideo, FaCheck } from "react-icons/fa6";
+import { formatDuration } from "@/lib/duration";
+import { languageLabel } from "@/lib/languages";
 
 const CourseDetails = () => {
   const { data: session, status } = useSession();
@@ -164,45 +168,130 @@ const CourseDetails = () => {
     );
   }
 
+  const watchable = videos.filter((v) => !v.unavailable);
+  const done = watchable.filter((v) => completedIds.has(v._id)).length;
+  const total = watchable.length;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const complete = total > 0 && done >= total;
+  const resumeHref = selectedVideo
+    ? `/courses/${id}/videos?video=${selectedVideo}`
+    : `/courses/${id}/videos`;
+
   return (
-    <div className="space-y-4">
-      <h1 className="page-title flex flex-col lg:flex-row justify-between items-center">
-        <span>
-          {loading ? (
-            <span className="loading loading-dots loading-xl"></span>
-          ) : (
-            <>
-              {course?.title} ({videos?.length} Videos)
-            </>
+    <div className="space-y-5">
+      {/* A course page has to answer "should I start this, and where was I" —
+          the lesson grid alone answered neither. */}
+      <div className="grid gap-4 rounded-box border border-hairline bg-base-100 p-4 sm:grid-cols-[220px_1fr]">
+        <div className="relative aspect-video overflow-hidden rounded-field bg-base-300">
+          {course?.thumbnailUrl && (
+            <Image
+              src={course.thumbnailUrl}
+              alt=""
+              fill
+              sizes="220px"
+              className="object-cover"
+              priority
+            />
           )}
-        </span>
-        {!enrollLoading && !enrolled && (
-          <button className="btn btn-primary" onClick={enrollInCourse}>
-            <MdOutlineAddToPhotos />
-            Enroll Now
-          </button>
-        )}
-      </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
-        {loading && (
-          <>
-            {Array.from({ length: 12 }).map((_, i) => (
+        </div>
+
+        <div className="flex min-w-0 flex-col">
+          <h1 className="page-title mb-1">
+            {loading ? (
+              <span className="loading loading-dots loading-md" />
+            ) : (
+              course?.title
+            )}
+          </h1>
+
+          <div className="figure-text flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-base-content/60">
+            <span className="flex items-center gap-1">
+              <FaVideo size={11} />
+              {videos.length} lessons
+            </span>
+            {course?.totalDurationSeconds > 0 && (
+              <span className="flex items-center gap-1">
+                <FaRegClock size={11} />
+                {formatDuration(course.totalDurationSeconds)}
+              </span>
+            )}
+            {languageLabel(course?.language) && (
+              <span className="rounded-selector border border-hairline px-1.5">
+                {languageLabel(course.language)}
+              </span>
+            )}
+            {course?.enrollCount >= 0 && (
+              <span>{course.enrollCount} enrolled</span>
+            )}
+          </div>
+
+          {enrolled && total > 0 && (
+            <div className="mt-4 max-w-sm">
+              <div className="figure-text mb-1 flex items-baseline justify-between text-xs">
+                <span className={complete ? "text-success" : ""}>
+                  {complete ? "Finished" : `${done} of ${total} done`}
+                </span>
+                <span className="text-base-content/50">{pct}%</span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-base-300">
+                <div
+                  className={`h-full ${complete ? "bg-success" : "bg-accent"}`}
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="mt-auto flex flex-wrap gap-2 pt-4">
+            {enrolled ? (
+              <Link href={resumeHref} className="btn btn-primary btn-sm">
+                <FaPlay size={10} />
+                {complete ? "Rewatch" : done > 0 ? "Resume" : "Start course"}
+              </Link>
+            ) : (
+              !enrollLoading && (
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={enrollInCourse}
+                >
+                  <MdOutlineAddToPhotos size={14} />
+                  Enroll now
+                </button>
+              )
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <h2 className="section-title mb-0">Lessons</h2>
+          {enrolled && done > 0 && (
+            <span className="figure-text text-xs text-base-content/60">
+              <FaCheck size={9} className="mr-1 inline text-success" />
+              {done} watched
+            </span>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5">
+          {loading &&
+            Array.from({ length: 10 }).map((_, i) => (
               <VideoCardSkeleton key={i} />
             ))}
-          </>
-        )}
-        {!loading &&
-          videos.map((video) => (
-            <VideoCard
-              key={video._id.toString()}
-              video={video}
-              course={course}
-              isSelected={video._id === selectedVideo}
-              isWatched={completedIds.has(video._id)}
-              isEnrolled={enrolled}
-              onSelect={(vid) => setSelectedVideo(vid)}
-            />
-          ))}
+          {!loading &&
+            videos.map((video) => (
+              <VideoCard
+                key={video._id.toString()}
+                video={video}
+                course={course}
+                isSelected={video._id === selectedVideo}
+                isWatched={completedIds.has(video._id)}
+                isEnrolled={enrolled}
+                onSelect={(vid) => setSelectedVideo(vid)}
+              />
+            ))}
+        </div>
       </div>
 
       {showModal && (

@@ -1,11 +1,8 @@
 import React from "react";
 import Link from "next/link";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa6";
 import { IoMdMail } from "react-icons/io";
-import { FaUnlock } from "react-icons/fa6";
-import { GrStatusGood } from "react-icons/gr";
-import { RiCommunityLine } from "react-icons/ri";
-import { GoNorthStar } from "react-icons/go";
+
 export const metadata = {
   title: "About",
   description: `Learn how ${process.env.SITE_NAME} turns YouTube playlists into structured courses with progress tracking and admin review.`,
@@ -20,138 +17,117 @@ const features = [
   "Responsive design that works on desktop, tablet, and mobile",
 ];
 
+const differences = [
+  {
+    title: "Accessibility",
+    body: "Anyone should be able to learn from quality content without a paywall.",
+  },
+  {
+    title: "Quality",
+    body: "Public courses are reviewed before approval, so the catalogue stays cleaner and easier to browse.",
+  },
+  {
+    title: "Community",
+    body: "Anyone can submit playlists they find useful, which grows the catalogue with practical recommendations.",
+  },
+  {
+    title: "Progress",
+    body: "Progress tracking makes long playlists feel manageable, even when you return later from another device.",
+  },
+];
+
+const involvement = [
+  ["Submit a course", "Found a good YouTube playlist? Submit it for review."],
+  ["Give feedback", "Tell us what feels confusing, missing or worth improving."],
+  ["Spread the word", "Point other learners at free resources worth their time."],
+];
+
+// A document that still fills the page. Prose is capped to a readable measure,
+// but the structural blocks — the checklist, the cards — span the full content
+// width, so the page uses its space instead of stranding one narrow column on
+// the left of an empty screen.
 export default function AboutPage() {
   return (
-    <div className="space-y-10">
-      <section>
-        <h1 className="page-title text-center">
-          About {process.env.SITE_NAME}
-        </h1>
+    <article className="doc space-y-12">
+      <header>
+        <h1 className="page-title mb-2">About {process.env.SITE_NAME}</h1>
         <p className="lede">
-          {process.env.SITE_NAME} helps turn scattered YouTube playlists into
+          {process.env.SITE_NAME} turns scattered YouTube playlists into
           structured learning paths. It is built for people who want a simple
           way to discover courses, track progress, and keep learning without
           paying for another subscription.
         </p>
-      </section>
+      </header>
 
-      <div className="flex items-center gap-4 flex-col lg:flex-row">
-        <section className="w-full lg:w-1/2">
-          <h2 className="section-title text-center">Our Mission</h2>
+      {/* The prose column is fixed at a readable measure and the checklist
+          takes whatever is left, so neither one is stretched or stranded. */}
+      <div className="grid gap-x-14 gap-y-12 lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]">
+        <section>
+          <h2 className="section-title">Mission</h2>
           <p>
-            Make free learning feel organized. We take high-quality playlists
-            from YouTube and present them in a course format that is easier to
-            follow, revisit, and complete.
+            Make free learning feel organised. We take good playlists from
+            YouTube and present them in a course format that is easier to
+            follow, revisit and complete — so the focus stays on the content
+            itself rather than on jumping between tabs, losing track of
+            progress, or hunting for the next video.
           </p>
           <p>
-            The goal is to reduce friction for learners, so the focus stays on
-            the content itself, not on jumping between tabs, losing track of
-            progress, or searching for the next video.
+            Playlists play from YouTube, so creators keep ownership and their
+            view counts. {process.env.SITE_NAME} hosts nothing.
           </p>
         </section>
 
-        <section className="w-full lg:w-1/2">
-          <h2 className="section-title text-center">Our Vision</h2>
-          <p>
-            Create a lightweight learning hub where anyone can discover, share,
-            and manage YouTube-based courses in one place.
-          </p>
-          <p>
-            We want the platform to stay simple, useful, and easy to trust for
-            both learners and admins as it grows.
-          </p>
+        <section>
+          <h2 className="section-title">What you get</h2>
+          <ul className="grid list-none gap-x-8 gap-y-2 pl-0 sm:grid-cols-2">
+            {features.map((feature) => (
+              <li key={feature} className="flex items-start gap-2 text-sm">
+                <FaCheck
+                  size={11}
+                  className="mt-1.5 shrink-0 text-success"
+                  aria-hidden="true"
+                />
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
 
       <section>
-        <h2 className="section-title text-center">Why Choose {process.env.SITE_NAME}?</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
-          {features.map((feature, index) => (
-            <div key={index} className="flex items-start gap-3">
-              <FaCheckCircle className="text-success mt-1 shrink-0" />
-              <span>{feature}</span>
+        <h2 className="section-title">What makes it different</h2>
+        <dl className="grid gap-px overflow-hidden rounded-box border border-hairline bg-hairline sm:grid-cols-2 xl:grid-cols-4">
+          {differences.map(({ title, body }) => (
+            <div key={title} className="bg-base-100 p-4">
+              <dt className="card-heading">{title}</dt>
+              <dd className="mt-1 text-sm text-base-content/70">{body}</dd>
             </div>
           ))}
-        </div>
+        </dl>
       </section>
 
       <section>
-        <h2 className="section-title text-center">What Makes It Different</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 bg-primary/10 rounded-box">
-            <h3 className="card-heading mb-2">Accessibility</h3>
-            <p className="text-sm">
-              <FaUnlock className="inline mr-1.5 mb-0.5" />
-              Anyone should be able to learn from quality content without a paywall.
-            </p>
-          </div>
-          <div className="p-4 bg-info/10 rounded-box">
-            <h3 className="card-heading mb-2">Quality</h3>
-            <p className="text-sm">
-              <GrStatusGood className="inline mr-1.5 mb-0.5" />
-              Public courses are reviewed before approval so the catalog stays
-              cleaner and easier to browse.
-            </p>
-          </div>
-          <div className="p-4 bg-success/10 rounded-box">
-            <h3 className="card-heading mb-2">Community</h3>
-            <p className="text-sm">
-              <RiCommunityLine className="inline mr-1.5 mb-0.5" />
-              Users can submit playlists they find useful, helping the catalog grow
-              with practical recommendations.
-            </p>
-          </div>
-          <div className="p-4 bg-warning/10 rounded-box">
-            <h3 className="card-heading mb-2">Progress</h3>
-            <p className="text-sm">
-              <GoNorthStar className="inline mr-1.5 mb-0.5" />
-              Progress tracking makes long playlists feel manageable, even when
-              you return later from another device.
-            </p>
-          </div>
-        </div>
+        <h2 className="section-title">Get involved</h2>
+        <dl className="grid gap-x-10 gap-y-3 sm:grid-cols-3">
+          {involvement.map(([title, body]) => (
+            <div key={title} className="text-sm">
+              <dt className="card-heading">{title}</dt>
+              <dd className="mt-1 text-base-content/70">{body}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       <section>
-        <h2 className="section-title text-center">Get Involved</h2>
-        <p className="mb-3 font-semibold">
-          We are always looking for ways to improve {process.env.SITE_NAME}.
-          Here is how you can help:
-        </p>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
-          <div>
-            <strong>Submit a Course:</strong> Found a great YouTube playlist?
-            Submit it for admin approval.
-          </div>
-          <div>
-            <strong>Provide Feedback:</strong> Share what feels confusing,
-            missing, or worth improving.
-          </div>
-          <div>
-            <strong>Become an Ambassador:</strong> Help spread the word about
-            quality free learning resources.
-          </div>
-          <div>
-            <strong>Share Content:</strong> Share the platform with other
-            learners so they can discover useful courses too.
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2 className="section-title text-center">Contact & Support</h2>
-        <p className="mb-3">
-          Have questions, feedback, or partnership inquiries? We would love to
-          hear from you.
-        </p>
-        <p>
-          For partnerships, support, or any queries:{" "}
+        <h2 className="section-title">Contact</h2>
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-box border border-hairline bg-base-100 p-5">
+          <p>Questions, feedback or partnership enquiries are welcome.</p>
           <Link href="/contact" className="btn btn-primary btn-sm">
-            <IoMdMail />
+            <IoMdMail size={14} />
             Contact us
           </Link>
-        </p>
+        </div>
       </section>
-    </div>
+    </article>
   );
 }

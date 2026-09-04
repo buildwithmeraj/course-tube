@@ -24,20 +24,42 @@ const Equalizer = () => (
   </span>
 );
 
+// The nearest ancestor that actually scrolls, so we can move the list without
+// moving the document behind it.
+const scrollParent = (node) => {
+  for (let el = node.parentElement; el; el = el.parentElement) {
+    const { overflowY } = getComputedStyle(el);
+    const scrolls = overflowY === "auto" || overflowY === "scroll";
+    if (scrolls && el.scrollHeight > el.clientHeight) return el;
+  }
+  return null;
+};
+
 const VideoListCard = ({ video, isSelected, course, isWatched }) => {
   const cardRef = useRef(null);
   const isWatchedButNotSelected = isWatched && !isSelected;
   const unavailable = Boolean(video.unavailable);
 
+  // Keep the playing card in view inside the list's own scroll box. This was
+  // scrollIntoView keyed on isWatched, which scrolled the whole page — and did
+  // so mid-playback, since a video flips to watched at 90%, nudging the player
+  // out from under the reader just as it was finishing.
   useEffect(() => {
-    if (isSelected && isWatched && cardRef.current) {
-      cardRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-        inline: "start",
-      });
-    }
-  }, [isSelected, isWatched]);
+    const card = cardRef.current;
+    if (!isSelected || !card) return;
+
+    const list = scrollParent(card);
+    if (!list) return;
+
+    const cardBox = card.getBoundingClientRect();
+    const listBox = list.getBoundingClientRect();
+    if (cardBox.top >= listBox.top && cardBox.bottom <= listBox.bottom) return;
+
+    list.scrollTo({
+      top: list.scrollTop + (cardBox.top - listBox.top) - 8,
+      behavior: "smooth",
+    });
+  }, [isSelected]);
 
   return (
     <Link
@@ -49,8 +71,11 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
         <Image
           src={video.thumbnail}
           alt={video.title}
-          width={0}
-          height={0}
+          // Every stored thumbnail is YouTube's mqdefault, which is 320x180.
+          // Declaring it reserves the box before the image loads, so the list
+          // stops growing under the scroll that brings the playing card in.
+          width={320}
+          height={180}
           sizes="(max-width: 1024px) 40vw, 192px"
           className={`h-auto w-full rounded-lg lg:max-w-48 ${
             isWatchedButNotSelected ? "opacity-50" : ""

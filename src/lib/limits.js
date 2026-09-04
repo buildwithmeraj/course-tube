@@ -23,6 +23,15 @@ export const MAX_PENDING_QUEUE = 200; // protects the approval queue
 export const DAILY_QUOTA_LIMIT = 10000;
 export const QUOTA_BUDGET = 8000;
 
+// search.list costs 100 units against playlists/playlistItems/videos.list at 1,
+// so one search is worth roughly fourteen playlist imports. Search gets its own
+// sub-budget inside QUOTA_BUDGET: when it is spent, discovery degrades to
+// pasting a URL and importing keeps its full allowance.
+export const SEARCH_UNIT_COST = 100;
+export const SEARCH_QUOTA_BUDGET = 2000; // 20 uncached searches a day
+export const SEARCH_CACHE_HOURS = 24;
+export const SEARCH_MAX_RESULTS = 10;
+
 // Per IP
 export const RATE_LIMITS = {
   signIn: { limit: 20, windowMs: 15 * 60 * 1000 },
@@ -30,6 +39,10 @@ export const RATE_LIMITS = {
   contact: { limit: 5, windowMs: 60 * 60 * 1000 },
   search: { limit: 60, windowMs: 60 * 1000 },
 };
+
+// Per user, not per IP: a YouTube search spends a shared external resource, so
+// it is charged to the account rather than to whatever address it came from.
+export const YOUTUBE_SEARCH_RATE = { limit: 5, windowMs: 60 * 60 * 1000 };
 
 // Admins bypass the per-user caps, but never the quota budget — that protects
 // an external resource that does not care who is spending it.

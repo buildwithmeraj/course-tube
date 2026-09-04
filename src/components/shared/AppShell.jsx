@@ -5,11 +5,14 @@ import { useEffect, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import {
   FaBars,
+  FaCircleInfo,
+  FaEnvelope,
   FaFolderOpen,
   FaGraduationCap,
   FaMagnifyingGlass,
   FaPlus,
   FaRegNoteSticky,
+  FaShieldHalved,
   FaXmark,
 } from "react-icons/fa6";
 import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
@@ -17,7 +20,6 @@ import { MdDashboard, MdPlayCircleOutline } from "react-icons/md";
 import { IoHomeSharp } from "react-icons/io5";
 import ThemeSwitcher from "./ThemeSwitcher";
 import Logo from "../utilities/Logo";
-import { useSearch } from "@/app/contexts/SearchContext";
 
 // Groups mirror how the product is actually used: what you're watching, what
 // you could watch, and your own record — rather than a flat list of routes.
@@ -49,6 +51,14 @@ const GROUPS = [
       { href: "/dashboard", label: "Dashboard", Icon: MdDashboard, admin: true },
     ],
   },
+  {
+    label: "More",
+    items: [
+      { href: "/about", label: "About", Icon: FaCircleInfo },
+      { href: "/contact", label: "Contact", Icon: FaEnvelope },
+      { href: "/privacy", label: "Privacy", Icon: FaShieldHalved },
+    ],
+  },
 ];
 
 const RailLink = ({ href, label, Icon, onNavigate }) => {
@@ -72,7 +82,7 @@ const RailLink = ({ href, label, Icon, onNavigate }) => {
   );
 };
 
-const Rail = ({ session, onNavigate }) => (
+const Rail = ({ session, pending, onNavigate }) => (
   <nav aria-label="Main" className="flex h-full flex-col py-4">
     <Link
       href="/"
@@ -92,7 +102,7 @@ const Rail = ({ session, onNavigate }) => (
       if (!items.length) return null;
 
       return (
-        <div key={group.label} className="mt-3">
+        <div key={group.label} className="mt-2.5">
           <p className="eyebrow px-4 pb-1">{group.label}</p>
           {items.map((item) => (
             <RailLink key={item.href} {...item} onNavigate={onNavigate} />
@@ -101,8 +111,14 @@ const Rail = ({ session, onNavigate }) => (
       );
     })}
 
-    <div className="mt-auto space-y-2 px-4 pt-6">
-      {session?.user ? (
+    {/* Nothing here until the session resolves: rendering "Sign in" first told
+        every signed-in reader they were signed out for the length of the
+        session round trip, then swapped it out under them. */}
+    <div className="mt-auto px-4 pt-5">
+      <div className="space-y-2">
+      {pending ? (
+        <div className="h-8" />
+      ) : session?.user ? (
         <>
           <Link
             href="/profile/courses/add"
@@ -112,9 +128,11 @@ const Rail = ({ session, onNavigate }) => (
             <FaPlus size={12} />
             Add playlist
           </Link>
+          {/* Soft, not solid: leaving is a real action worth colouring, but it
+              must not compete with the primary one directly above it. */}
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="btn btn-ghost btn-sm w-full text-base-content/70"
+            className="btn btn-error btn-soft btn-sm w-full"
           >
             <FaSignOutAlt size={13} />
             Sign out
@@ -130,14 +148,31 @@ const Rail = ({ session, onNavigate }) => (
           Sign in
         </Link>
       )}
+      </div>
+
+      {/* What is left of the old page footer once its links moved up into
+          their own nav group: the two lines that were never navigation. */}
+      <div className="mt-4 border-t border-hairline pt-3 text-center text-xs text-base-content/50">
+        <p className="flex items-center justify-center gap-1.5">
+          <FaRegNoteSticky size={10} className="shrink-0" />
+          Playlists stream from YouTube
+        </p>
+        <p className="mt-1">
+          © {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME}
+        </p>
+      </div>
     </div>
   </nav>
 );
 
 const AppShell = ({ children }) => {
-  const { data: session } = useSession();
-  const { setShowSearchModal } = useSearch();
+  const { data: session, status } = useSession();
+  const pending = status === "loading";
   const [drawer, setDrawer] = useState(false);
+  // /search is a search field, so the shell's trigger would be a second one on
+  // the same screen. Everywhere else it is a link to that page rather than a
+  // modal: the query belongs in the URL so results can be linked and revisited.
+  const onSearchPage = usePathname() === "/search";
 
   // Escape closes it, and a locked body stops the page scrolling underneath
   useEffect(() => {
@@ -163,7 +198,7 @@ const AppShell = ({ children }) => {
           content. Below xl it is the same slide-over the phone gets, rather
           than an icon strip that costs width and says less. */}
       <aside className="sticky top-0 hidden h-screen overflow-y-auto border-r border-hairline bg-surface xl:block">
-        <Rail session={session} />
+        <Rail session={session} pending={pending} />
       </aside>
 
       {drawer && (
@@ -174,7 +209,11 @@ const AppShell = ({ children }) => {
             onClick={() => setDrawer(false)}
           />
           <div className="absolute inset-y-0 left-0 w-64 overflow-y-auto border-r border-hairline bg-surface">
-            <Rail session={session} onNavigate={() => setDrawer(false)} />
+            <Rail
+              session={session}
+              pending={pending}
+              onNavigate={() => setDrawer(false)}
+            />
           </div>
         </div>
       )}
@@ -197,17 +236,19 @@ const AppShell = ({ children }) => {
             <Logo />
           </Link>
 
-          <button
-            onClick={() => setShowSearchModal(true)}
-            className="hidden h-9 max-w-md flex-1 items-center gap-2 rounded-field border border-hairline bg-base-100 px-3 text-left text-sm text-base-content/50 hover:border-base-content/25 xl:flex"
-          >
-            <FaMagnifyingGlass size={13} />
-            Search courses and lessons
-          </button>
+          {!onSearchPage && (
+            <Link
+              href="/search"
+              className="hidden h-9 max-w-md flex-1 items-center gap-2 rounded-field border border-hairline bg-base-100 px-3 text-left text-sm text-base-content/50 hover:border-base-content/25 xl:flex"
+            >
+              <FaMagnifyingGlass size={13} />
+              Search courses and lessons
+            </Link>
+          )}
 
           <div className="ml-auto flex items-center gap-2">
             <ThemeSwitcher />
-            {!session?.user && (
+            {!pending && !session?.user && (
               <Link href="/login" className="btn btn-ghost btn-sm">
                 <FaSignInAlt size={14} />
                 <span className="hidden sm:inline">Sign in</span>
@@ -217,36 +258,17 @@ const AppShell = ({ children }) => {
         </header>
 
         <main className="min-w-0 flex-1 px-4 pt-4 pb-14 xl:px-6 xl:pt-5">
-          <button
-            onClick={() => setShowSearchModal(true)}
-            className="mb-4 flex h-10 w-full items-center gap-2 rounded-field border border-hairline bg-base-100 px-3 text-left text-sm text-base-content/50 hover:border-base-content/25 xl:hidden"
-          >
-            <FaMagnifyingGlass size={14} />
-            Search courses and lessons
-          </button>
+          {!onSearchPage && (
+            <Link
+              href="/search"
+              className="mb-4 flex h-10 w-full items-center gap-2 rounded-field border border-hairline bg-base-100 px-3 text-left text-sm text-base-content/50 hover:border-base-content/25 xl:hidden"
+            >
+              <FaMagnifyingGlass size={14} />
+              Search courses and lessons
+            </Link>
+          )}
           {children}
         </main>
-
-        <footer className="border-t border-hairline px-4 py-4 text-xs text-base-content/50 xl:px-6">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <span>
-              © {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME}
-            </span>
-            <Link href="/about" className="hover:text-base-content">
-              About
-            </Link>
-            <Link href="/contact" className="hover:text-base-content">
-              Contact
-            </Link>
-            <Link href="/privacy" className="hover:text-base-content">
-              Privacy
-            </Link>
-            <span className="ml-auto flex items-center gap-1.5">
-              <FaRegNoteSticky size={11} />
-              Playlists stream from YouTube
-            </span>
-          </div>
-        </footer>
       </div>
     </div>
   );
