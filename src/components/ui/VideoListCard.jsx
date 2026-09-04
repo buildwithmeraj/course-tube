@@ -10,14 +10,14 @@ const BAR_HEIGHTS = ["55%", "100%", "70%", "85%"];
 
 const Equalizer = () => (
   <span
-    className="flex h-4 items-end gap-[3px]"
+    className="flex h-[22cqw] items-end gap-[1.5cqw]"
     role="img"
     aria-label="Now playing"
   >
     {BAR_HEIGHTS.map((height, index) => (
       <span
         key={index}
-        className="eq-bar w-[3px] rounded-xs bg-white"
+        className="eq-bar w-[3cqw] rounded-xs bg-white"
         style={{ height, animationDelay: `${index * 130}ms` }}
       />
     ))}
@@ -45,7 +45,7 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
       href={`/courses/${video.courseId}/videos?video=${video._id}`}
       className="grid grid-cols-7 items-start gap-2 md:grid-cols-3"
     >
-      <figure className="group relative col-span-3 rounded-lg md:col-span-1 lg:max-w-48">
+      <figure className="group @container relative col-span-3 rounded-lg md:col-span-1 lg:max-w-48">
         <Image
           src={video.thumbnail}
           alt={video.title}
@@ -72,14 +72,18 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
         {/* Watched: a check on the thumbnail itself, not only beside the
             title, so progress is scannable down the column. */}
         {isWatchedButNotSelected && !unavailable && (
-          <div className="pointer-events-none absolute top-1.5 left-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-success text-success-content shadow-sm">
-            <FaCheck size={10} />
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <span className="flex aspect-square w-[24cqw] items-center justify-center rounded-full bg-success text-[11cqw] text-success-content shadow-sm">
+              <FaCheck />
+            </span>
           </div>
         )}
 
         {unavailable && (
-          <div className="pointer-events-none absolute top-1.5 left-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-error text-error-content shadow-sm">
-            <FaBan size={10} />
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <span className="flex aspect-square w-[24cqw] items-center justify-center rounded-full bg-error text-[11cqw] text-error-content shadow-sm">
+              <FaBan />
+            </span>
           </div>
         )}
 
