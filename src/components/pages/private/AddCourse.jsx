@@ -41,9 +41,9 @@ const AddCourse = () => {
 
   return (
     <div className="flex items-center justify-center h-[76vh]">
-      <div className="card bg-base-200 shadow-md flex flex-row w-full max-w-md">
+      <div className="w-full max-w-md rounded-box border border-hairline bg-base-100">
         <form className="card-body" onSubmit={handleAddCourse}>
-          <h1 className="page-title text-accent text-center">Add Course</h1>
+          <h1 className="page-title text-center">Add Course</h1>
 
           {error && (
             <p className="alert alert-error">
@@ -58,7 +58,7 @@ const AddCourse = () => {
             </p>
           )}
 
-          <label className="label">Course Playlist URL</label>
+          <label className="eyebrow">Course Playlist URL</label>
           <input
             type="url"
             className="input w-full"
@@ -67,7 +67,7 @@ const AddCourse = () => {
             placeholder="https://www.youtube.com/playlist?list=PL..."
           />
 
-          <label className="label mt-2">Language</label>
+          <label className="eyebrow mt-2">Language</label>
           <select className="select w-full" name="language" defaultValue="">
             <option value="">Not specified</option>
             {LANGUAGES.map((language) => (
@@ -77,7 +77,7 @@ const AddCourse = () => {
             ))}
           </select>
 
-          <button className="btn btn-accent mt-2" disabled={isLoading}>
+          <button className="btn btn-primary mt-2" disabled={isLoading}>
             <RiPlayListAddFill size={20} />
             {isLoading ? "Adding..." : "Add Course"}
           </button>

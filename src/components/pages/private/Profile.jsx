@@ -2,7 +2,7 @@
 import ActivityHeatmap from "@/components/ui/ActivityHeatmap";
 import ContinueLearning from "@/components/ui/ContinueLearning";
 import Loading from "@/components/ui/Loading";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -108,10 +108,6 @@ export default function Profile() {
   const coursesLoading =
     statsLoading || (ongoingIds.length > 0 && fetchedCourses === null);
 
-  const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/" });
-  };
-
   if (status === "loading") {
     return <Loading />;
   }
@@ -119,7 +115,7 @@ export default function Profile() {
   return (
     <section className="mx-auto max-w-5xl">
       <ContinueLearning />
-      <div className="rounded-xl border border-base-200 bg-base-100 p-6 shadow-sm md:p-8">
+      <div className="rounded-box border border-hairline bg-base-100 p-6 md:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
             <div className="relative">
@@ -142,10 +138,10 @@ export default function Profile() {
                 {displayName}
               </h1>
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                <span className="rounded-full border border-base-200 bg-base-200/60 px-3 py-1 text-xs font-semibold text-base-content">
+                <span className="rounded-full border border-hairline bg-surface px-3 py-1 text-xs font-semibold text-base-content">
                   {role}
                 </span>
-                <span className="rounded-full border border-base-200 bg-base-200/40 px-3 py-1 text-xs font-semibold text-base-content/70">
+                <span className="rounded-full border border-hairline bg-surface px-3 py-1 text-xs font-semibold text-base-content/70">
                   {email}
                 </span>
               </div>
@@ -153,26 +149,22 @@ export default function Profile() {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-            <Link href="/profile/courses" className="btn btn-sm btn-accent">
+            <Link href="/profile/courses" className="btn btn-sm btn-primary">
               <RiGraduationCapFill className="mb-0.5" />
               View Courses
             </Link>
             {user?.role === "admin" && (
-              <Link href="/dashboard" className="btn btn-sm btn-info">
+              <Link href="/dashboard" className="btn btn-sm btn-ghost">
                 <MdDashboard />
                 Admin Dashboard
               </Link>
             )}
-            <button onClick={handleSignOut} className="btn btn-sm btn-error">
-              <FaSignOutAlt />
-              Logout
-            </button>
           </div>
         </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-xl border border-base-200 bg-base-200 p-5 shadow-sm">
-            <p className="text-sm font-medium text-base-content/60">
+          <div className="rounded-box border border-hairline bg-base-100 p-5">
+            <p className="eyebrow">
               Enrolled course progress
             </p>
             <div className="mt-3 flex items-baseline justify-between">
@@ -185,7 +177,7 @@ export default function Profile() {
                   : `${enrolledStats.inProgress} active courses`}
               </span>
             </div>
-            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-base-200/70">
+            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-surface">
               <div
                 className="h-full rounded-full bg-primary transition-all"
                 style={{
@@ -194,19 +186,19 @@ export default function Profile() {
               />
             </div>
             <div className="mt-4 grid grid-cols-3 gap-3 text-center text-sm">
-              <div className="rounded-lg bg-base-200/50 px-2 py-3">
+              <div className="rounded-lg bg-surface px-2 py-3">
                 <p className="text-xs text-base-content/60">Enrolled</p>
                 <p className="mt-1 text-lg font-semibold text-base-content">
                   {statsLoading ? "--" : enrolledStats.enrolled}
                 </p>
               </div>
-              <div className="rounded-lg bg-base-200/50 px-2 py-3">
+              <div className="rounded-lg bg-surface px-2 py-3">
                 <p className="text-xs text-base-content/60">In progress</p>
                 <p className="mt-1 text-lg font-semibold text-base-content">
                   {statsLoading ? "--" : enrolledStats.inProgress}
                 </p>
               </div>
-              <div className="rounded-lg bg-base-200/50 px-2 py-3">
+              <div className="rounded-lg bg-surface px-2 py-3">
                 <p className="text-xs text-base-content/60">Completed</p>
                 <p className="mt-1 text-lg font-semibold text-base-content">
                   {statsLoading ? "--" : enrolledStats.completed}
@@ -218,8 +210,8 @@ export default function Profile() {
             </p>
           </div>
 
-          <div className="rounded-xl border border-base-200 bg-base-200 p-5 shadow-sm">
-            <p className="text-sm font-medium text-base-content/60">
+          <div className="rounded-box border border-hairline bg-base-100 p-5">
+            <p className="eyebrow">
               Account details
             </p>
             <div className="mt-4 space-y-3 text-sm text-base-content/70">
@@ -242,8 +234,8 @@ export default function Profile() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-base-200 bg-base-200 p-5 shadow-sm md:col-span-2 lg:col-span-1">
-            <p className="text-sm font-medium text-base-content/60">
+          <div className="rounded-box border border-hairline bg-base-100 p-5 md:col-span-2 lg:col-span-1">
+            <p className="eyebrow">
               Next steps
             </p>
             <p className="mt-3 text-lg font-semibold text-base-content">
@@ -254,7 +246,7 @@ export default function Profile() {
               something new.
             </p>
             <div className="text-center">
-              <Link href="/profile/courses" className="btn btn-accent mt-4">
+              <Link href="/profile/courses" className="btn btn-primary mt-4">
                 <RxResume />
                 Continue learning
               </Link>
@@ -265,7 +257,7 @@ export default function Profile() {
 
       <ActivityHeatmap />
 
-      <div className="mt-6 rounded-xl border border-base-200 bg-base-100 p-6 shadow-sm">
+      <div className="mt-6 rounded-box border border-hairline bg-base-100 p-6">
         <div className="flex items-center justify-between">
           <h3 className="card-heading text-base-content">
             Ongoing courses
@@ -280,7 +272,7 @@ export default function Profile() {
             {Array.from({ length: 4 }).map((_, index) => (
               <div
                 key={`course-skeleton-${index}`}
-                className="h-16 rounded-lg bg-base-200/90"
+                className="h-16 rounded-lg bg-surface"
               />
             ))}
           </div>
@@ -295,9 +287,9 @@ export default function Profile() {
               return (
                 <div
                   key={courseId || course?.title}
-                  className="flex items-center gap-3 rounded-lg border border-base-300 bg-base-300 p-3"
+                  className="flex items-center gap-3 rounded-lg border border-hairline bg-base-300 p-3"
                 >
-                  <div className="h-12 w-20 overflow-hidden rounded-lg bg-base-200/60">
+                  <div className="h-12 w-20 overflow-hidden rounded-lg bg-surface">
                     {course?.thumbnailUrl ? (
                       <Image
                         src={course.thumbnailUrl}

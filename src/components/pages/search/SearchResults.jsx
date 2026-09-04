@@ -61,7 +61,7 @@ const SearchResults = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="page-title text-accent">Search</h1>
+        <h1 className="page-title">Search</h1>
         <form onSubmit={submit} className="flex max-w-xl gap-2">
           <label className="input flex-1">
             <IoSearch size={18} className="text-base-content/60" />

@@ -8,7 +8,7 @@ const NotLoggedIn = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center flex-col">
         <FaSignInAlt size={128} className="text-base-content/50" />
         <h1 className="page-title text-center">Login required</h1>
-        <p className="border border-dashed p-4 rounded-xl text-center">
+        <p className="border border-dashed p-4 rounded-box text-center">
           You must be logged in to access this page.
         </p>
         <Link className="btn btn-primary mt-4" href="/login">

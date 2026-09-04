@@ -1,8 +1,8 @@
 const VideoCardSkeleton = () => {
   return (
-    <div className="cursor-pointer rounded-xl animate-pulse">
+    <div className="cursor-pointer rounded-box animate-pulse">
       <div className="relative">
-        <div className="w-full aspect-video rounded-xl bg-base-300 skeleton">
+        <div className="w-full aspect-video rounded-box bg-base-300 skeleton">
           <div className="absolute bottom-2 left-2 w-14 h-5 bg-base-200 rounded-lg" />
           <div className="absolute bottom-2 right-2 w-12 h-5 bg-base-200 rounded-lg" />
         </div>

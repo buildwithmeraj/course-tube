@@ -24,7 +24,7 @@ export default function AboutPage() {
   return (
     <div className="space-y-10">
       <section>
-        <h1 className="page-title text-accent text-center">
+        <h1 className="page-title text-center">
           About {process.env.SITE_NAME}
         </h1>
         <p className="lede">
@@ -78,14 +78,14 @@ export default function AboutPage() {
       <section>
         <h2 className="section-title text-center">What Makes It Different</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 bg-primary/10 rounded-xl">
+          <div className="p-4 bg-primary/10 rounded-box">
             <h3 className="card-heading mb-2">Accessibility</h3>
             <p className="text-sm">
               <FaUnlock className="inline mr-1.5 mb-0.5" />
               Anyone should be able to learn from quality content without a paywall.
             </p>
           </div>
-          <div className="p-4 bg-info/10 rounded-xl">
+          <div className="p-4 bg-info/10 rounded-box">
             <h3 className="card-heading mb-2">Quality</h3>
             <p className="text-sm">
               <GrStatusGood className="inline mr-1.5 mb-0.5" />
@@ -93,7 +93,7 @@ export default function AboutPage() {
               cleaner and easier to browse.
             </p>
           </div>
-          <div className="p-4 bg-success/10 rounded-xl">
+          <div className="p-4 bg-success/10 rounded-box">
             <h3 className="card-heading mb-2">Community</h3>
             <p className="text-sm">
               <RiCommunityLine className="inline mr-1.5 mb-0.5" />
@@ -101,7 +101,7 @@ export default function AboutPage() {
               with practical recommendations.
             </p>
           </div>
-          <div className="p-4 bg-warning/10 rounded-xl">
+          <div className="p-4 bg-warning/10 rounded-box">
             <h3 className="card-heading mb-2">Progress</h3>
             <p className="text-sm">
               <GoNorthStar className="inline mr-1.5 mb-0.5" />

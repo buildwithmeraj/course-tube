@@ -140,9 +140,9 @@ const RegisterPage = () => {
   }
   return (
     <div className="flex items-center justify-center h-[84vh]">
-      <div className="card bg-base-200 w-full max-w-sm shadow-md flex flex-row items-center">
+      <div className="w-full max-w-sm rounded-box border border-hairline bg-base-100">
         <form className="card-body" onSubmit={handleCredentialsRegister}>
-          <h1 className="page-title text-accent text-center">Register</h1>
+          <h1 className="page-title text-center">Register</h1>
           {error && (
             <div className="alert alert-error flex items-center mt-2">
               <svg
@@ -162,30 +162,30 @@ const RegisterPage = () => {
             </div>
           )}
           <fieldset className="fieldset">
-            <label className="label">Name</label>
+            <label className="eyebrow">Name</label>
             <input
               type="text"
               name="name"
               className="input"
               placeholder="Name"
             />
-            <label className="label">Email</label>
+            <label className="eyebrow">Email</label>
             <input
               type="email"
               name="email"
               className="input"
               placeholder="Email"
             />
-            <label className="label">Profile Picture</label>
+            <label className="eyebrow">Profile Picture</label>
             <input type="file" className="file-input" name="photo" />
-            <label className="label">Password</label>
+            <label className="eyebrow">Password</label>
             <input
               type="password"
               className="input"
               name="password"
               placeholder="Password"
             />
-            <label className="label">Confirm Password</label>
+            <label className="eyebrow">Confirm Password</label>
             <input
               type="password"
               className="input"
@@ -193,7 +193,7 @@ const RegisterPage = () => {
               placeholder="Confirm Password"
             />
             <button
-              className="btn btn-accent mt-2"
+              className="btn btn-primary mt-2"
               disabled={isLoading || isUploading}
             >
               <FaUserPlus size={20} />{" "}
@@ -204,7 +204,7 @@ const RegisterPage = () => {
                 : "Register"}
             </button>
             <div className="divider m-0.5 font-semibold">OR</div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-col gap-2">
               <button
                 className="btn btn-soft flex flex-1"
                 type="button"

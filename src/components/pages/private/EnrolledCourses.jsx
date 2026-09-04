@@ -9,7 +9,7 @@ const EnrolledCourses = async () => {
   return (
     <div>
       <div className="flex justify-between gap-4 flex-col lg:items-center lg:flex-row">
-        <h1 className="page-title text-accent">
+        <h1 className="page-title">
           Your Courses {courses.length > 0 && `(${courses.length})`}
         </h1>
         <Link href="/profile/courses/add" className="btn btn-primary">

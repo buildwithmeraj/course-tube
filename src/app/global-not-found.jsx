@@ -1,7 +1,5 @@
 import React from "react";
 import "./globals.css";
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
 import Providers from "./providers/Providers";
 import { Toaster } from "react-hot-toast";
 import { FaExclamationTriangle } from "react-icons/fa";
@@ -17,36 +15,20 @@ const GlobalNotFound = () => {
     <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`antialiased flex flex-col min-h-screen`}
+        className={`antialiased`}
       >
         <Providers>
-          <header>
-            <nav>
-              <Navbar forceHardNavigation />
-            </nav>
-          </header>
-          <main className="container mx-auto flex-1 px-4 pt-[calc(var(--nav-h)+1.5rem)]">
-            <div className="min-h-[78vh] flex flex-col items-center justify-center">
-              <div className="card bg-base-200 p-20 lg:p-24 rounded-xl shadow-md space-y-3 text-center">
-                <div className="flex items-center justify-center">
-                  <FaExclamationTriangle size={120} className="text-warning" />
-                </div>
-                <h1 className="page-title text-accent">Page not found</h1>
-                <p className="text-lg">
-                  The page you are looking for does not exist. It might have
-                  been moved or deleted.
-                </p>
-                <p className="text-lg">But you can return to the homepage.</p>
-                <p>
-                  <HomeButton className="btn btn-success" />
-                </p>
-              </div>
-            </div>
+          <main className="mx-auto flex min-h-screen max-w-xl flex-col items-center justify-center px-6 text-center">
+            <FaExclamationTriangle size={72} className="text-warning" />
+            <h1 className="page-title mt-6">Page not found</h1>
+            <p className="text-base-content/70">
+              The page you are looking for does not exist. It might have been
+              moved or deleted.
+            </p>
+            <p className="mt-6">
+              <HomeButton className="btn btn-primary" />
+            </p>
           </main>
-          <Toaster position="bottom-center" reverseOrder={false} />
-          <footer>
-            <Footer />
-          </footer>
         </Providers>
       </body>
     </html>

@@ -11,17 +11,17 @@ const PlaylistCard = ({ playlist }) => {
     <div>
       <Link
         href={`/courses/${playlist._id}`}
-        className="group relative block overflow-hidden rounded-xl"
+        className="group relative block overflow-hidden rounded-box"
       >
         <Image
           src={playlist.thumbnailUrl}
           alt={playlist.title}
           width={0}
           height={0}
-          sizes="100vw"
-          className="w-full rounded-xl"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, (max-width: 1536px) 25vw, 20vw"
+          className="w-full rounded-box"
         />
-        <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="absolute inset-0 flex items-center justify-center rounded-box bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100">
           <RiPlayList2Fill size={56} />
         </div>
         {playlist.enrollCount >= 0 && (

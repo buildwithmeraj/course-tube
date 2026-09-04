@@ -93,12 +93,12 @@ const AddCategory = () => {
 
   return (
     <div className="lg:flex lg:items-center lg:justify-center lg:h-[82vh] mx-auto">
-      <div className="card bg-base-200 shadow-md flex flex-row">
+      <div className="rounded-box border border-hairline bg-base-100">
         <form
           className="card-body w-full max-w-sm"
           onSubmit={handleAddCategory}
         >
-          <h1 className="page-title text-accent text-center">
+          <h1 className="page-title text-center">
             Add Category
           </h1>
 
@@ -116,7 +116,7 @@ const AddCategory = () => {
           )}
 
           <div>
-            <label className="label">Category Title</label>
+            <label className="eyebrow">Category Title</label>
             <input
               className="input input-bordered w-full"
               value={title}
@@ -127,7 +127,7 @@ const AddCategory = () => {
           </div>
 
           <div>
-            <label className="label">Description</label>
+            <label className="eyebrow">Description</label>
             <textarea
               className="textarea textarea-bordered w-full"
               value={description}
@@ -137,7 +137,7 @@ const AddCategory = () => {
           </div>
 
           <div>
-            <label className="label">Select Courses</label>
+            <label className="eyebrow">Select Courses</label>
 
             <input
               type="text"
@@ -147,7 +147,7 @@ const AddCategory = () => {
               onChange={(e) => setCourseSearch(e.target.value)}
             />
 
-            <div className="max-h-40 overflow-y-auto space-y-1 border p-2 rounded-xl">
+            <div className="max-h-40 overflow-y-auto space-y-1 border p-2 rounded-box">
               {loadingCourses ? (
                 <p className="text-sm opacity-70">Loading courses...</p>
               ) : filteredCourses.length > 0 ? (
@@ -171,7 +171,7 @@ const AddCategory = () => {
             </div>
           </div>
 
-          <button className="btn btn-accent mt-3" disabled={submitting}>
+          <button className="btn btn-primary mt-3" disabled={submitting}>
             <FaFolderPlus size={16} />
             {submitting ? "Adding..." : "Add Category"}
           </button>

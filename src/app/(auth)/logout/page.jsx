@@ -10,8 +10,8 @@ export default function LogoutPage() {
 
   return (
     <div className="flex min-h-[70vh] items-center justify-center">
-      <div className="card bg-base-200 p-8 shadow-md text-center space-y-3">
-        <h1 className="page-title text-accent">Signing you out</h1>
+      <div className="space-y-3 rounded-box border border-hairline bg-base-100 p-8 text-center">
+        <h1 className="page-title">Signing you out</h1>
         <p className="text-base-content/70">
           Please wait a moment while we redirect you to the login page.
         </p>

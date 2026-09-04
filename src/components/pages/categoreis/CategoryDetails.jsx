@@ -16,7 +16,7 @@ const CategoryDetails = async ({ id }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4 mt-4">
-      <h1 className="col-span-full page-title text-accent">
+      <h1 className="col-span-full page-title">
         {category.title} ({courses.length} Courses)
       </h1>
       {category.description && (

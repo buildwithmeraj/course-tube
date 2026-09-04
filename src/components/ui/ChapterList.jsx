@@ -35,7 +35,7 @@ const ChapterList = ({ chapters, onSeek, currentSeconds = 0 }) => {
             type="button"
             onClick={() => onSeek?.(chapter.seconds)}
             className={`flex w-full gap-3 rounded-lg px-2 py-1.5 text-left text-sm hover:bg-base-200 ${
-              index === activeIndex ? "bg-base-200 font-semibold text-info" : ""
+              index === activeIndex ? "bg-base-200 font-semibold text-accent" : ""
             }`}
           >
             <span className="shrink-0 pt-0.5 font-mono text-xs opacity-70">

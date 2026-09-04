@@ -51,7 +51,7 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
           alt={video.title}
           width={0}
           height={0}
-          sizes="100vw"
+          sizes="(max-width: 1024px) 40vw, 192px"
           className={`h-auto w-full rounded-lg lg:max-w-48 ${
             isWatchedButNotSelected ? "opacity-50" : ""
           } ${
@@ -104,9 +104,9 @@ const VideoListCard = ({ video, isSelected, course, isWatched }) => {
       </figure>
 
       <h4
-        className={`col-span-4 line-clamp-3 text-sm md:col-span-2 hover:text-info ${
+        className={`col-span-4 line-clamp-3 text-sm md:col-span-2 hover:text-primary ${
           isWatchedButNotSelected ? "text-base-content/60" : "text-base-content"
-        } ${isSelected ? "font-semibold text-info" : ""}`}
+        } ${isSelected ? "font-semibold text-accent" : ""}`}
       >
         {unavailable && (
           <FaBan

@@ -4,7 +4,7 @@ const YouTubePlayerSkeleton = () => {
   return (
     <div className="w-full animate-pulse">
       <div className="relative w-full pt-[56.25%]">
-        <div className="absolute inset-0 rounded-xl bg-base-300 skeleton" />
+        <div className="absolute inset-0 rounded-box bg-base-300 skeleton" />
       </div>
 
       <div className="mt-2 space-y-2">

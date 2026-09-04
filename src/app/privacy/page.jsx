@@ -7,7 +7,7 @@ export const metadata = {
 export default function PrivacyPolicyPage() {
   return (
     <article className="doc mx-auto max-w-[68ch] space-y-8">
-      <h1 className="page-title text-accent">Privacy Policy</h1>
+      <h1 className="page-title">Privacy Policy</h1>
       <p className="text-sm text-base-content/60">Last updated: January 18, 2026</p>
 
       <section>
@@ -98,7 +98,7 @@ export default function PrivacyPolicyPage() {
         <h2 className="section-title">6. Contact Us</h2>
         <p>
           If you have any questions about this Privacy Policy, please{" "}
-          <Link href="/contact" className="text-accent hover:underline">
+          <Link href="/contact" className="text-primary hover:underline">
             contact us
           </Link>
         </p>

@@ -53,13 +53,13 @@ const ActivityHeatmap = () => {
   for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
 
   return (
-    <div className="mt-6 rounded-xl border border-base-200 bg-base-100 p-6 shadow-sm">
+    <div className="mt-6 rounded-box border border-hairline bg-base-100 p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="card-heading text-base-content">
           Study activity
         </h3>
         <div className="flex items-center gap-4 text-sm">
-          <span className="flex items-center gap-1.5 font-semibold text-warning">
+          <span className="flex items-center gap-1.5 font-semibold text-accent">
             <FaFire />
             {data.currentStreak} day streak
           </span>

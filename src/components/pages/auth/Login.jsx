@@ -76,9 +76,9 @@ const LoginPage = () => {
   }
   return (
     <div className="flex items-center justify-center h-[84vh]">
-      <div className="card bg-base-200 w-full max-w-sm shadow-md flex flex-row items-center">
+      <div className="w-full max-w-sm rounded-box border border-hairline bg-base-100">
         <form className="card-body" onSubmit={handleCredentialsLogin}>
-          <h1 className="page-title text-accent text-center">Login</h1>
+          <h1 className="page-title text-center">Login</h1>
           {error && (
             <div className="alert alert-error flex items-center mt-2">
               <svg
@@ -98,14 +98,14 @@ const LoginPage = () => {
             </div>
           )}
           <fieldset className="fieldset">
-            <label className="label">Email</label>
+            <label className="eyebrow">Email</label>
             <input
               type="email"
               className="input"
               name="email"
               placeholder="Email"
             />
-            <label className="label">Password</label>
+            <label className="eyebrow">Password</label>
             <input
               type="password"
               className="input"
@@ -114,7 +114,7 @@ const LoginPage = () => {
             />
 
             <button
-              className="btn btn-accent mt-2"
+              className="btn btn-primary mt-2"
               disabled={isLoading}
               type="submit"
             >
@@ -122,9 +122,9 @@ const LoginPage = () => {
               {isLoading ? "Logging in..." : "Login"}
             </button>
             <div className="divider m-0.5 font-semibold">OR</div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-col gap-2">
               <button
-                className="btn btn-soft flex-1"
+                className="btn btn-soft"
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={isLoading}
@@ -132,7 +132,7 @@ const LoginPage = () => {
                 <FaGoogle size={20} />
                 Continue with Google
               </button>
-              <Link className="btn btn-soft flex-1" href="/register">
+              <Link className="btn btn-soft" href="/register">
                 <FaUserPlus size={20} />
                 Register
               </Link>

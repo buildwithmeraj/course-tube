@@ -128,7 +128,7 @@ const ManageCourses = () => {
     <div className="space-y-3 mt-1">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-2">
-          <h1 className="page-title text-accent">
+          <h1 className="page-title">
             Manage Courses {courses.length > 0 && `(${courses.length})`}
           </h1>
         </div>
@@ -139,7 +139,7 @@ const ManageCourses = () => {
       </div>
 
       {courses.length === 0 ? (
-        <div className="min-h-[50vh] flex items-center justify-center rounded-xl border border-base-200 bg-base-100/80 p-10 shadow-sm">
+        <div className="min-h-[50vh] flex items-center justify-center rounded-box border border-hairline bg-base-100/80 p-10">
           <div className="text-center text-xl text-base-content/60 flex items-center justify-center flex-col gap-3">
             <FaCircleInfo size={56} />
             No courses found
@@ -150,11 +150,11 @@ const ManageCourses = () => {
           </div>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-base-200 bg-base-100/90 shadow-sm">
+        <div className="overflow-hidden rounded-box border border-hairline bg-base-100">
           <div className="overflow-x-auto">
             <table className="table">
               <thead>
-                <tr className="bg-base-200/60 text-base-content/70">
+                <tr className="bg-surface text-base-content/70">
                   <th>Title</th>
                   <th>Approved</th>
                   <th>Language</th>
@@ -165,7 +165,7 @@ const ManageCourses = () => {
 
               <tbody>
                 {courses.map((item) => (
-                  <tr key={item._id} className="hover:bg-base-200/50">
+                  <tr key={item._id} className="hover:bg-surface">
                     <td className="font-bold">
                       <Link href={`/courses/${item._id}`} className="link">
                         {item.title}
@@ -173,7 +173,7 @@ const ManageCourses = () => {
                     </td>
                     <td>
                       <span
-                        className={`badge badge-sm rounded-xl ${
+                        className={`badge badge-sm rounded-box ${
                           item.approved ? "badge-success" : "badge-warning"
                         }`}
                       >
@@ -251,8 +251,8 @@ const ManageCourses = () => {
       )}
       {action && selectedCourse && (
         <div className="modal modal-open">
-          <div className="modal-box rounded-xl">
-            <h3 className="card-heading text-accent capitalize">
+          <div className="modal-box">
+            <h3 className="card-heading capitalize">
               {action} Course
             </h3>
 

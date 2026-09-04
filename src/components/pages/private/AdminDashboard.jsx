@@ -12,45 +12,35 @@ import {
 } from "react-icons/fa";
 import { HiMiniWrenchScrewdriver } from "react-icons/hi2";
 
-const StatCard = ({ title, value, color, tint, icon: Icon, hint }) => (
-  <div className="rounded-xl border border-base-200 bg-base-100/90 p-5 shadow-sm">
+const StatCard = ({ title, value, icon: Icon, hint }) => (
+  <div className="rounded-box border border-hairline bg-base-100 p-4">
     <div className="flex items-start justify-between gap-3">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-base-content/50">
-          {title}
-        </p>
-        <div className={`mt-2 text-3xl font-black ${color}`}>{value}</div>
-        <p className="mt-2 text-sm text-base-content/60">{hint}</p>
+      <div className="min-w-0">
+        <p className="eyebrow">{title}</p>
+        <div className="figure-text mt-1 text-2xl font-bold">{value}</div>
+        <p className="mt-1 text-xs text-base-content/60">{hint}</p>
       </div>
-      <div className={`rounded-xl p-3 ${color} ${tint}`}>
-        <Icon size={22} />
-      </div>
+      <span className="rounded-field bg-surface p-2 text-base-content/50">
+        <Icon size={16} />
+      </span>
     </div>
   </div>
 );
 
-const DashboardCard = ({ icon: Icon, title, description, href, color }) => (
-  <div
-    className={`card overflow-hidden border shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md rounded-xl ${color}`}
+const DashboardCard = ({ icon: Icon, title, description, href }) => (
+  <Link
+    href={href}
+    className="flex items-center gap-4 rounded-box border border-hairline bg-base-100 p-4 transition-colors hover:border-primary/50 hover:bg-surface"
   >
-    <div className="card-body gap-5 bg-base-100/90">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className={`rounded-xl p-3 ${color} text-accent-content shadow-sm`}>
-            <Icon size={20} />
-          </div>
-          <div>
-            <h3 className="card-title text-lg">{title}</h3>
-            <p className="text-sm text-base-content/60">{description}</p>
-          </div>
-        </div>
-        <Link href={href} className="btn btn-accent">
-          <HiMiniWrenchScrewdriver />
-          Manage
-        </Link>
-      </div>
-    </div>
-  </div>
+    <span className="rounded-field bg-primary/10 p-2.5 text-primary">
+      <Icon size={18} />
+    </span>
+    <span className="min-w-0 flex-1">
+      <span className="card-heading block">{title}</span>
+      <span className="block text-xs text-base-content/60">{description}</span>
+    </span>
+    <HiMiniWrenchScrewdriver size={15} className="text-base-content/40" />
+  </Link>
 );
 
 const AdminDashboard = () => {
@@ -71,14 +61,12 @@ const AdminDashboard = () => {
       title: "Manage Courses",
       description: "Create, edit, and delete courses",
       href: "/dashboard/courses",
-      color: "border-primary bg-accent",
     },
     {
       icon: FaList,
       title: "Manage Categories",
       description: "Organize course categories",
       href: "/dashboard/categories",
-      color: "border-info bg-accent",
     },
   ];
 
@@ -87,32 +75,24 @@ const AdminDashboard = () => {
     {
       title: "Total Courses",
       value: loading ? "..." : (s.coursesCount ?? 0),
-      color: "text-primary",
-      tint: "bg-primary/10",
       icon: FaBook,
       hint: "Courses published across the platform",
     },
     {
       title: "Total Enrolls",
       value: loading ? "..." : (s.enrollsCount ?? 0),
-      color: "text-info",
-      tint: "bg-info/10",
       icon: FaRegChartBar,
       hint: "Learners currently participating",
     },
     {
       title: "Total Categories",
       value: loading ? "..." : (s.categoriesCount ?? 0),
-      color: "text-success",
-      tint: "bg-success/10",
       icon: FaLayerGroup,
       hint: "Structured content groups",
     },
     {
       title: "Total Videos",
       value: loading ? "..." : (s.videosCount ?? 0),
-      color: "text-warning",
-      tint: "bg-warning/10",
       icon: FaList,
       hint: "Tracked playlist videos",
     },
@@ -122,7 +102,7 @@ const AdminDashboard = () => {
     <div className="space-y-3">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-2xl space-y-2">
-          <h1 className="page-title text-accent">Admin Dashboard</h1>
+          <h1 className="page-title">Admin Dashboard</h1>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -151,23 +131,13 @@ const AdminDashboard = () => {
           <DashboardCard key={card.href} {...card} />
         ))}
 
-        <div className="card border border-base-200 bg-gradient-to-br from-accent/10 via-base-100 to-primary/10 shadow-sm col-span-full">
-          <div className="card-body">
-            <h3 className="card-title text-accent text-2xl">
-              Workflow snapshot
-            </h3>
-            <div className="space-y-3 text-sm text-base-content/70">
-              <p>
-                Approve pending courses, keep categories tidy, and create
-                structure quickly with the links in the sidebar.
-              </p>
-              <ul className="space-y-2">
-                <li>• Review new course submissions</li>
-                <li>• Organize category mappings</li>
-                <li>• Add structure before publishing</li>
-              </ul>
-            </div>
-          </div>
+        <div className="col-span-full rounded-box border border-hairline bg-surface p-4">
+          <p className="eyebrow">Workflow</p>
+          <ul className="mt-2 grid gap-1.5 text-sm text-base-content/70 sm:grid-cols-3">
+            <li>Review new course submissions</li>
+            <li>Organise category mappings</li>
+            <li>Add structure before publishing</li>
+          </ul>
         </div>
       </div>
     </div>

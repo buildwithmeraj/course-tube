@@ -62,9 +62,9 @@ export default function ContactPage() {
 
   return (
     <div className="flex items-center justify-center h-[82vh]">
-      <div className="card bg-base-200 w-full max-w-xl shadow-md">
+      <div className="w-full max-w-xl rounded-box border border-hairline bg-base-100">
         <div className="card-body">
-          <h1 className="page-title text-accent text-center">Contact Us</h1>
+          <h1 className="page-title text-center">Contact Us</h1>
           <p className="alert alert-soft alert-info mb-3">
             <FaInfoCircle className="inline-block" size={30} />
             Have questions or feedback? We would love to hear from you. Fill out
@@ -91,7 +91,7 @@ export default function ContactPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="form-control">
-              <label className="label block">
+              <label className="eyebrow block">
                 <span className="label-text">Name</span>
               </label>
               <input
@@ -106,7 +106,7 @@ export default function ContactPage() {
             </div>
 
             <div className="form-control">
-              <label className="label block">
+              <label className="eyebrow block">
                 <span className="label-text">Email</span>
               </label>
               <input
@@ -121,7 +121,7 @@ export default function ContactPage() {
             </div>
 
             <div className="form-control">
-              <label className="label block">
+              <label className="eyebrow block">
                 <span className="label-text">Subject</span>
               </label>
               <input
@@ -136,7 +136,7 @@ export default function ContactPage() {
             </div>
 
             <div className="form-control">
-              <label className="label block">
+              <label className="eyebrow block">
                 <span className="label-text">Message</span>
               </label>
               <textarea

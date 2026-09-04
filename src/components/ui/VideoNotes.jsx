@@ -69,7 +69,7 @@ const VideoNotes = ({ notes, onAdd, onDelete, onSeek, disabled }) => {
               <button
                 type="button"
                 onClick={() => onSeek?.(note.seconds)}
-                className="shrink-0 pt-0.5 font-mono text-xs text-info hover:underline"
+                className="figure-text shrink-0 pt-0.5 text-xs text-primary hover:underline"
                 aria-label={`Jump to ${stamp(note.seconds)}`}
               >
                 {stamp(note.seconds)}

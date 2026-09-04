@@ -4,7 +4,7 @@ import React from "react";
 const PlaylistCardSkeleton = () => {
   return (
     <div>
-      <div className="skeleton relative aspect-video w-full rounded-xl bg-base-300">
+      <div className="skeleton relative aspect-video w-full rounded-box bg-base-300">
         <div className="absolute bottom-2 left-2 h-5 w-24 rounded-lg bg-base-200" />
         <div className="absolute right-2 bottom-2 h-5 w-20 rounded-lg bg-base-200" />
       </div>

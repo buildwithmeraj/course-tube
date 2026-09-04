@@ -29,6 +29,16 @@ import { formatDuration } from "@/lib/duration";
 import ChapterList from "@/components/ui/ChapterList";
 import VideoNotes from "@/components/ui/VideoNotes";
 
+const isUpdatedWithinDays = (dateValue, days = 7) => {
+  if (!dateValue) return false;
+
+  const lastUpdate = new Date(dateValue);
+  if (Number.isNaN(lastUpdate.getTime())) return false;
+
+  const maxAgeMs = days * 24 * 60 * 60 * 1000;
+  return new Date().getTime() - lastUpdate.getTime() < maxAgeMs;
+};
+
 const TABS = [
   {
     id: "chapters",
@@ -40,13 +50,18 @@ const TABS = [
   { id: "description", label: "Description", Icon: BiDetail, count: () => 0 },
 ];
 
-const CourseVideos = () => {
+const CourseVideos = ({ initialCourse = null, initialVideos = [] }) => {
   const { data: session } = useSession();
-  const [videos, setVideos] = useState([]);
-  const [course, setCourse] = useState(null);
+  const [videos, setVideos] = useState(initialVideos);
+  const [course, setCourse] = useState(initialCourse);
   const [enrolled, setEnrolled] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [updated, setUpdated] = useState(false);
+  const [updated, setUpdated] = useState(() =>
+    isUpdatedWithinDays(
+      initialCourse?.updatedAt || initialCourse?.createdAt,
+      7,
+    ),
+  );
   const [progress, setProgress] = useState({ videos: {}, lastVideoId: null });
   const lastReportedRef = useRef({ videoId: null, seconds: -1 });
   const [manuallySelectedVideo, setManuallySelectedVideo] = useState(null);
@@ -56,9 +71,13 @@ const CourseVideos = () => {
   const [lastActiveAt, setLastActiveAt] = useState(null);
   const [notes, setNotes] = useState([]);
   const [tab, setTab] = useState("chapters");
+  // The video list renders from server data immediately, but which video is
+  // selected depends on this user's progress. Waiting for it stops the player
+  // from starting on video 1 and then jumping to the resume point.
+  const [progressLoaded, setProgressLoaded] = useState(false);
   const playerApiRef = useRef(null);
   const requestedDescriptionsRef = useRef(new Set());
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [synchronizing, setSynchronizing] = useState(false);
   const [enrollLoading, setEnrollLoading] = useState(true);
@@ -67,25 +86,48 @@ const CourseVideos = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const progressColor = (total, progress) => {
-    let progressPercentage = (progress / total) * 100;
-    return progressPercentage < 35
-      ? "text-base-content"
-      : progressPercentage < 70
-        ? "text-warning"
-        : "text-success";
-  };
+  // Amber while in progress, moss once it is effectively finished — the same
+  // two-colour rule the rest of the app uses.
+  const progressColor = (total, progress) =>
+    total > 0 && progress / total >= 1 ? "progress-success" : "progress-accent";
 
-  const isUpdatedWithinDays = (dateValue, days = 7) => {
-    if (!dateValue) return false;
+  const applyProgress = useCallback((progressData) => {
+    setLastActiveAt(progressData?.lastActiveAt ?? null);
+    setProgress(
+      progressData && typeof progressData === "object"
+        ? {
+            videos: progressData.videos || {},
+            lastVideoId: progressData.lastVideoId ?? null,
+          }
+        : { videos: {}, lastVideoId: null },
+    );
+  }, []);
 
-    const lastUpdate = new Date(dateValue);
-    if (Number.isNaN(lastUpdate.getTime())) return false;
+  // Course and videos are rendered on the server, so the only thing still
+  // needed on mount is this user's own progress.
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
 
-    const maxAgeMs = days * 24 * 60 * 60 * 1000;
-    return new Date().getTime() - lastUpdate.getTime() < maxAgeMs;
-  };
+    fetch(`/api/courses/${id}/progress`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (cancelled) return;
+        applyProgress(data);
+        setProgressLoaded(true);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        applyProgress(null);
+        setProgressLoaded(true);
+      });
 
+    return () => {
+      cancelled = true;
+    };
+  }, [id, applyProgress]);
+
+  // A sync rewrites the video list, so that path still refetches everything.
   const fetchVideosAndProgress = useCallback(async () => {
     if (!id) return;
 
@@ -114,25 +156,14 @@ const CourseVideos = () => {
         isUpdatedWithinDays(courseData?.updatedAt || courseData?.createdAt, 7),
       );
       setVideos(Array.isArray(videosData) ? videosData : []);
-      setLastActiveAt(progressData?.lastActiveAt ?? null);
-      setProgress(
-        progressData && typeof progressData === "object"
-          ? { videos: progressData.videos || {}, lastVideoId: progressData.lastVideoId ?? null }
-          : { videos: {}, lastVideoId: null },
-      );
+      applyProgress(progressData);
     } catch (err) {
       console.error(err);
       setError("Failed to load course data");
     } finally {
       setLoading(false);
     }
-  }, [id]);
-
-  useEffect(() => {
-    if (!id) return;
-
-    fetchVideosAndProgress();
-  }, [id, fetchVideosAndProgress]);
+  }, [id, applyProgress]);
 
   // Derive the selected video instead of setting it in an effect
   const selectedVideo = useMemo(() => {
@@ -307,7 +338,7 @@ const CourseVideos = () => {
 
   // Descriptions are excluded from the video listing and fetched per video
   useEffect(() => {
-    if (!id || !selectedVideo) return;
+    if (!id || !selectedVideo || !progressLoaded) return;
     if (requestedDescriptionsRef.current.has(selectedVideo)) return;
 
     requestedDescriptionsRef.current.add(selectedVideo);
@@ -330,7 +361,7 @@ const CourseVideos = () => {
     return () => {
       cancelled = true;
     };
-  }, [id, selectedVideo]);
+  }, [id, selectedVideo, progressLoaded]);
 
   const updateVideoParam = (videoId) => {
     const params = new URLSearchParams(searchParams);
@@ -537,7 +568,7 @@ const CourseVideos = () => {
         </div>
         <div className="col-span-full space-y-3 lg:col-span-4 xl:col-span-2">
           <YouTubePlayerSkeleton />
-          <div className="skeleton h-28 w-full rounded-xl" />
+          <div className="skeleton h-28 w-full rounded-box" />
         </div>
         <div className="col-span-full space-y-2 lg:col-span-3 xl:col-span-1">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -556,7 +587,7 @@ const CourseVideos = () => {
             size={96}
             className="mx-auto text-base-content/40"
           />
-          <h1 className="page-title text-accent">
+          <h1 className="page-title">
             You are not enrolled in this course
           </h1>
           <p className="text-base-content/70">
@@ -576,7 +607,7 @@ const CourseVideos = () => {
     <div className="space-y-3">
       <div className="grid grid-cols-1 lg:grid-cols-7 xl:grid-cols-3 gap-4 w-full">
         <div className="col-span-full -mb-2">
-          <h1 className="page-title text-accent">{course?.title}</h1>
+          <h1 className="page-title">{course?.title}</h1>
           {newVideos.length > 0 && (
             <div className="alert alert-info alert-soft mt-2 py-2">
               <FaSyncAlt className="inline" />
@@ -589,7 +620,7 @@ const CourseVideos = () => {
           )}
         </div>
         <div className="col-span-full lg:col-span-4 xl:col-span-2 w-full space-y-3">
-          {loading ? (
+          {loading || !progressLoaded ? (
             <YouTubePlayerSkeleton />
           ) : (
             <YouTubePlayer
@@ -606,7 +637,7 @@ const CourseVideos = () => {
           {/* Status bar: the two things this page exists to expose — where you
               are in the course, and how to pull in new videos — stay directly
               under the player instead of below whatever the tabs contain. */}
-          <div className="space-y-3 rounded-xl border border-base-300 bg-base-100 p-3">
+          <div className="space-y-3 rounded-box border border-hairline bg-surface p-3">
             <div className="flex flex-wrap items-center gap-2">
               <button
                 className="btn btn-soft btn-sm"
@@ -698,7 +729,7 @@ const CourseVideos = () => {
               ))}
             </div>
 
-            <div className="min-h-40 rounded-b-xl border border-t-0 border-base-300 bg-base-100 p-4">
+            <div className="min-h-40 rounded-b-box border border-t-0 border-hairline bg-base-100 p-4">
               {activeTab === "chapters" && (
                 <ChapterList
                   chapters={selectedVideoData?.chapters}
@@ -732,7 +763,7 @@ const CourseVideos = () => {
           </div>
         </div>
 
-        <div className="col-span-full lg:col-span-3 xl:col-span-1 overflow-y-auto max-h-[82vh] space-y-2  scrollbar-slim  rounded-lg w-full">
+        <div className="col-span-full max-h-[78vh] w-full space-y-1 overflow-y-auto rounded-box border border-hairline bg-base-100 p-1 scrollbar-slim lg:col-span-3 xl:col-span-1">
           {loading &&
             Array.from({ length: 12 }).map((_, i) => (
               <VideoListCardSkeleton key={i} />
@@ -763,7 +794,7 @@ const CourseVideos = () => {
             </p>
             <div className="modal-action flex items-center justify-center">
               <form method="dialog">
-                <button className="btn btn-success" onClick={closeModal}>
+                <button className="btn btn-primary" onClick={closeModal}>
                   Okay
                 </button>
               </form>

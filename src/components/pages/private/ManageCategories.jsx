@@ -153,7 +153,7 @@ const ManageCategories = () => {
     <div className="space-y-3 mt-1">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-2">
-          <h1 className="page-title text-accent">
+          <h1 className="page-title">
             Manage Categories{" "}
             {categories.length > 0 && `(${categories.length})`}
           </h1>
@@ -167,7 +167,7 @@ const ManageCategories = () => {
         </Link>
       </div>
       {categories.length === 0 ? (
-        <div className="min-h-[50vh] flex items-center justify-center rounded-xl border border-base-200 bg-base-100/80 p-10 shadow-sm">
+        <div className="min-h-[50vh] flex items-center justify-center rounded-box border border-hairline bg-base-100/80 p-10">
           <div className="text-center text-xl text-base-content/60 flex items-center justify-center flex-col gap-3">
             <FaCircleInfo size={56} />
             No categories found
@@ -181,11 +181,11 @@ const ManageCategories = () => {
           </div>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-base-200 bg-base-100/90 shadow-sm">
+        <div className="overflow-hidden rounded-box border border-hairline bg-base-100">
           <div className="overflow-x-auto">
             <table className="table">
               <thead>
-                <tr className="bg-base-200/60 text-base-content/70">
+                <tr className="bg-surface text-base-content/70">
                   <th>Title</th>
                   <th>Description</th>
                   <th>Courses</th>
@@ -195,7 +195,7 @@ const ManageCategories = () => {
 
               <tbody>
                 {categories.map((cat) => (
-                  <tr key={cat._id} className="hover:bg-base-200/50">
+                  <tr key={cat._id} className="hover:bg-surface">
                     <td className="font-semibold">
                       <Link href={`/categories/${cat._id}`} className="link">
                         {cat.title}
@@ -205,13 +205,13 @@ const ManageCategories = () => {
                       {cat.description || "-"}
                     </td>
                     <td>
-                      <span className="badge badge-info">
+                      <span className="badge badge-ghost">
                         {cat.courseIds?.length || 0}
                       </span>
                     </td>
                     <td className="flex gap-2">
                       <button
-                        className="btn btn-xs btn-info"
+                        className="btn btn-xs btn-ghost"
                         onClick={() => openEditModal(cat)}
                       >
                         Edit
@@ -232,10 +232,10 @@ const ManageCategories = () => {
       )}
       {action && selectedCategory && (
         <div className="modal modal-open">
-          <div className="modal-box rounded-xl">
+          <div className="modal-box">
             {action === ACTIONS.EDIT && (
               <>
-                <h3 className="card-heading text-accent mb-4">
+                <h3 className="card-heading mb-4">
                   Edit Category
                 </h3>
 
@@ -256,7 +256,7 @@ const ManageCategories = () => {
                   placeholder="Description"
                 />
 
-                <div className="border rounded-xl p-3 max-h-60 overflow-y-auto">
+                <div className="border rounded-box p-3 max-h-60 overflow-y-auto">
                   <p className="font-semibold mb-2">Select Courses</p>
                   <input
                     type="text"
@@ -287,7 +287,7 @@ const ManageCategories = () => {
                 </div>
 
                 <div className="modal-action">
-                  <button className="btn btn-success" onClick={handleUpdate}>
+                  <button className="btn btn-primary" onClick={handleUpdate}>
                     Save Changes
                   </button>
                   <button className="btn" onClick={closeModal}>

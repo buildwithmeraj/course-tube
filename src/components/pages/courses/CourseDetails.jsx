@@ -148,8 +148,8 @@ const CourseDetails = () => {
   if (!loading && videos.length === 0) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
-        <div className="card bg-base-200 max-w-lg shadow-md text-center p-8 space-y-3">
-          <h1 className="page-title text-accent">No videos yet</h1>
+        <div className="max-w-lg space-y-3 rounded-box border border-hairline bg-base-100 p-8 text-center">
+          <h1 className="page-title">No videos yet</h1>
           <p className="text-base-content/70">
             This course does not have any published videos right now. Please
             check back later or return to the courses list.
@@ -166,7 +166,7 @@ const CourseDetails = () => {
 
   return (
     <div className="space-y-4">
-      <h1 className="page-title text-accent flex flex-col lg:flex-row justify-between items-center">
+      <h1 className="page-title flex flex-col lg:flex-row justify-between items-center">
         <span>
           {loading ? (
             <span className="loading loading-dots loading-xl"></span>
@@ -218,7 +218,7 @@ const CourseDetails = () => {
             </p>
             <div className="modal-action flex items-center justify-center">
               <form method="dialog">
-                <button className="btn btn-success" onClick={closeModal}>
+                <button className="btn btn-primary" onClick={closeModal}>
                   Okay
                 </button>
               </form>

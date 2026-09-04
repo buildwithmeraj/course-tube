@@ -1,10 +1,12 @@
 import React from "react";
 import Icon from "./Icon";
 
+// Sized to fit the 216px rail without truncating the wordmark.
 const Logo = () => {
   return (
-    <div className="flex items-center gap-1 text-3xl font-bold">
-      <Icon height={50} width={50} /> {process.env.NEXT_PUBLIC_SITE_NAME}
+    <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
+      <Icon height={26} width={26} />
+      <span className="truncate">{process.env.NEXT_PUBLIC_SITE_NAME}</span>
     </div>
   );
 };

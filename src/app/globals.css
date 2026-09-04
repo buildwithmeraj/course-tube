@@ -16,32 +16,31 @@
   /* Neutrals carry a few points of the accent's hue rather than being pure
      grey, so the surfaces read as a set. */
   --color-base-100: #ffffff;
-  --color-base-200: #f2f5f7;
-  --color-base-300: #e3e9ed;
-  --color-base-content: #141a1f;
+  --color-base-200: #f3f6f3;
+  --color-base-300: #e2e9e4;
+  --color-base-content: #101711;
 
-  --color-primary: #0f6b84;            /* action  */
-  --color-primary-content: #ffffff;    /*  6.08:1 */
-  --color-secondary: #023046;
-  --color-secondary-content: #ffffff;  /* 13.87:1 */
-  --color-accent: #3d6d84;
-  --color-accent-content: #ffffff;     /*  5.65:1 */
-  --color-neutral: #141a1f;
-  --color-neutral-content: #f2f5f7;    /* 16.02:1 */
+  --color-primary: #2b5c3d;            /* moss: brand + actions */
+  --color-primary-content: #ffffff;    /*  7.78:1 */
+  --color-secondary: #1d3f2b;
+  --color-secondary-content: #ffffff;  /* 11.35:1 */
+  --color-accent: #9c5a06;             /* amber: in progress + now playing */
+  --color-accent-content: #ffffff;     /*  5.41:1 */
+  --color-neutral: #101711;
+  --color-neutral-content: #f3f6f3;    /* 15.96:1 */
 
-  --color-info: #0369a1;
-  --color-info-content: #ffffff;       /*  5.93:1 */
-  --color-success: #15803d;
-  --color-success-content: #ffffff;    /*  5.02:1 */
-  --color-warning: #a15c07;            /* dark enough to also be legible as
-                                          text in the -soft variants */
-  --color-warning-content: #ffffff;    /*  5.19:1 */
-  --color-error: #b3261e;
-  --color-error-content: #ffffff;      /*  6.54:1 */
+  --color-info: #2f6076;
+  --color-info-content: #ffffff;       /*  6.87:1 */
+  --color-success: #2f7d52;
+  --color-success-content: #ffffff;    /*  5.03:1 */
+  --color-warning: #9a4d20;
+  --color-warning-content: #ffffff;    /*  6.08:1 */
+  --color-error: #a8342a;
+  --color-error-content: #ffffff;      /*  6.58:1 */
 
-  --radius-selector: 0.5rem;
-  --radius-field: 0.5rem;
-  --radius-box: 0.75rem;
+  --radius-selector: 0.375rem;
+  --radius-field: 0.375rem;
+  --radius-box: 0.625rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
@@ -57,32 +56,32 @@
 
   /* base-100 is the darkest ground and 200/300 step *up* in lightness, so a
      raised card lifts off the page instead of sinking into it. */
-  --color-base-100: #0e1417;
-  --color-base-200: #151e22;
-  --color-base-300: #1f2b31;
-  --color-base-content: #e4ecef;
+  --color-base-100: #101418;
+  --color-base-200: #171d22;
+  --color-base-300: #232b32;
+  --color-base-content: #e6ecea;
 
-  --color-primary: #5cb6d1;
-  --color-primary-content: #04222c;    /*  7.14:1 */
-  --color-secondary: #a3dced;
-  --color-secondary-content: #04222c;  /* 11.03:1 */
-  --color-accent: #7fc7de;
-  --color-accent-content: #06262f;     /*  8.39:1 */
-  --color-neutral: #1f2b31;
-  --color-neutral-content: #e4ecef;    /* 12.11:1 */
+  --color-primary: #77c795;
+  --color-primary-content: #06210f;    /*  8.43:1 */
+  --color-secondary: #a9dcbc;
+  --color-secondary-content: #06210f;  /* 12.24:1 */
+  --color-accent: #f0a020;
+  --color-accent-content: #2a1a00;     /*  7.83:1 */
+  --color-neutral: #232b32;
+  --color-neutral-content: #e6ecea;    /* 12.00:1 */
 
-  --color-info: #63b3e8;
-  --color-info-content: #04202f;       /*  7.30:1 */
-  --color-success: #5fd39a;
-  --color-success-content: #04241a;    /*  8.86:1 */
-  --color-warning: #e8b45f;
-  --color-warning-content: #2e2100;    /*  8.34:1 */
-  --color-error: #ff8a80;
-  --color-error-content: #33100c;      /*  7.54:1 */
+  --color-info: #79b4cf;
+  --color-info-content: #04202b;       /*  7.41:1 */
+  --color-success: #68c78d;
+  --color-success-content: #04230f;    /*  8.10:1 */
+  --color-warning: #e59a63;
+  --color-warning-content: #2c1602;    /*  7.47:1 */
+  --color-error: #ff8f83;
+  --color-error-content: #33100c;      /*  7.79:1 */
 
-  --radius-selector: 0.5rem;
-  --radius-field: 0.5rem;
-  --radius-box: 0.75rem;
+  --radius-selector: 0.375rem;
+  --radius-field: 0.375rem;
+  --radius-box: 0.625rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
@@ -90,45 +89,33 @@
   --noise: 0;
 }
 
-/* The pale sky is a ground, never an action: only used at low alpha behind
-   content (navbar, hero band, stat tiles). Registered inline so the utility
-   reads the variable at runtime and follows the theme. */
+/* Chrome surface — the rail, the top bar, the transport strip. Sits one step
+   off the content ground in both themes (darker in light, lighter in dark),
+   which is what makes the shell read as a frame around the content. */
 @theme inline {
   --color-surface: var(--surface);
+  --color-hairline: var(--hairline);
 }
 
 :root {
-  --surface: #8ecae6;
+  --surface: #f3f6f3;
+  --hairline: #e2e9e4;
 }
 
 [data-theme="dark"] {
-  --surface: #2e5f70;
+  --surface: #171d22;
+  --hairline: #232b32;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --surface: #2e5f70;
+    --surface: #171d22;
+    --hairline: #232b32;
   }
 }
 
 body {
-  font-family: var(--font-figtree);
-}
-
-/* Chrome heights, so page padding is derived from them rather than guessed.
-   `.navbar` and `.dock` are both 4rem tall in daisyUI. */
-:root {
-  --nav-h: 4rem;
-  --dock-h: 4rem;
-  /* Space the dock actually occupies. Zero once it is hidden, so the footer
-     and the toast stack follow it without each hard-coding a breakpoint. */
-  --dock-offset: var(--dock-h);
-}
-
-@media (width >= 64rem) {
-  :root {
-    --dock-offset: 0rem;
-  }
+  font-family: var(--font-ui);
 }
 
 /* ---- Type scale ---------------------------------------------------------
@@ -142,26 +129,43 @@ body {
 
 @layer components {
   .page-title {
-    font-family: var(--font-display), var(--font-figtree), sans-serif;
-    @apply text-3xl sm:text-4xl font-bold tracking-tight mb-4;
+    @apply text-2xl sm:text-3xl font-bold mb-4;
+    letter-spacing: -0.03em;
     text-wrap: balance;
   }
 
   .section-title {
-    font-family: var(--font-display), var(--font-figtree), sans-serif;
-    @apply text-2xl sm:text-3xl font-bold tracking-tight mb-3;
+    @apply text-lg sm:text-xl font-bold mb-3;
+    letter-spacing: -0.02em;
     text-wrap: balance;
   }
 
   .subsection-title {
-    font-family: var(--font-display), var(--font-figtree), sans-serif;
-    @apply text-xl font-semibold;
+    @apply text-base font-bold;
+    letter-spacing: -0.015em;
     text-wrap: balance;
   }
 
   .card-heading {
-    font-family: var(--font-display), var(--font-figtree), sans-serif;
-    @apply text-lg font-semibold;
+    @apply text-sm font-bold;
+    letter-spacing: -0.01em;
+  }
+
+  /* Figures, durations, counts, timestamps. */
+  .figure-text {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Small all-caps label above a number or a section. Named `eyebrow`
+     because `.label` is already a daisyUI form-label component. */
+  .eyebrow {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-family: var(--font-mono), ui-monospace, monospace;
+    @apply text-base-content/60;
   }
 
   /* Long-form document body. Supplies the list styling and inner rhythm the

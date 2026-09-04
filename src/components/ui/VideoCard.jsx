@@ -1,56 +1,84 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { FaCheckCircle, FaPlayCircle } from "react-icons/fa";
+import { FaCheck, FaPlay } from "react-icons/fa";
+
+// Same state language as VideoListCard: a moss check for watched, an amber
+// equaliser for the one playing, both centred on the thumbnail.
+const BAR_HEIGHTS = ["55%", "100%", "70%", "85%"];
 
 const VideoCard = ({ video, isSelected, course, isWatched, isEnrolled }) => {
+  const watched = isEnrolled && isWatched && !isSelected;
+  const playing = isEnrolled && isSelected;
+
   return (
     <Link
       href={`/courses/${video.courseId}/videos?video=${video._id}`}
-      className={`group cursor-pointer rounded-xl ${
-        isEnrolled && isSelected ? "border-primary" : "border-base-300"
-      }`}
+      className="group block"
     >
-      <figure className="relative">
+      <figure
+        className={`@container relative overflow-hidden rounded-box border ${
+          playing ? "border-accent" : "border-hairline"
+        }`}
+      >
         <Image
           src={video.thumbnail}
           alt={video.title}
           width={0}
           height={0}
-          sizes="100vw"
-          className={`w-full rounded-xl ${isEnrolled && isWatched ? "opacity-50" : ""} ${
-            isEnrolled && isSelected
-              ? "border-4 border-primary"
-              : " border border-base-content"
-          }`}
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, (max-width: 1536px) 25vw, 20vw"
+          className={`w-full ${watched ? "opacity-50" : ""}`}
         />
-        <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs md:text-sm px-2 py-1 rounded-lg">
+
+        {playing && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40">
+            <span
+              className="flex h-[22cqw] items-end gap-[1.5cqw]"
+              role="img"
+              aria-label="Now playing"
+            >
+              {BAR_HEIGHTS.map((height, index) => (
+                <span
+                  key={index}
+                  className="eq-bar w-[3cqw] rounded-xs bg-accent"
+                  style={{ height, animationDelay: `${index * 130}ms` }}
+                />
+              ))}
+            </span>
+          </div>
+        )}
+
+        {watched && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <span className="flex aspect-square w-[18cqw] items-center justify-center rounded-full bg-success text-[8cqw] text-success-content">
+              <FaCheck />
+            </span>
+          </div>
+        )}
+
+        <div className="figure-text absolute bottom-2 left-2 rounded-selector bg-black/60 px-1.5 py-0.5 text-xs text-white">
           {video.position + 1}/{course?.totalCount || "?"}
         </div>
-        <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs md:text-sm px-2 py-1 rounded-lg">
+        <div className="figure-text absolute right-2 bottom-2 rounded-selector bg-black/60 px-1.5 py-0.5 text-xs text-white">
           {video.duration}
         </div>
-        <div
-          className="absolute inset-0 flex items-center justify-center
-                          bg-black/40 text-white text-xl opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"
-        >
-          <FaPlayCircle size={56} />
-        </div>
-      </figure>
-      <h3
-        className={`card-title mt-2 line-clamp-2 ${
-          isEnrolled && isWatched ? "text-base-content/60" : "text-base-content"
-        } ${isEnrolled && isSelected ? "text-info" : ""}`}
-      >
-        {isEnrolled && isWatched && (
-          <FaCheckCircle className="inline text-success mr-1 mb-0.5" />
-        )}{" "}
-        {isEnrolled && isSelected && (
-          <FaPlayCircle className="inline mr-1.5 mb-1" />
+
+        {!playing && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100">
+            <FaPlay size={26} />
+          </div>
         )}
+      </figure>
+
+      <h3
+        className={`card-heading mt-2 line-clamp-2 ${
+          watched ? "text-base-content/60" : "text-base-content"
+        }`}
+      >
         {video.title}
       </h3>
     </Link>
   );
 };
+
 export default VideoCard;

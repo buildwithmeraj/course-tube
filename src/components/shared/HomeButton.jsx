@@ -2,7 +2,7 @@
 
 import { FaHome } from "react-icons/fa";
 
-const HomeButton = ({ className = "btn btn-success" }) => {
+const HomeButton = ({ className = "btn btn-primary" }) => {
   const handleGoHome = () => {
     window.location.assign("/");
   };

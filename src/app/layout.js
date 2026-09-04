@@ -1,25 +1,22 @@
-import { Bricolage_Grotesque, Figtree } from "next/font/google";
+import { Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
+import AppShell from "@/components/shared/AppShell";
 import Providers from "./providers/Providers";
 import { Toaster } from "react-hot-toast";
-import Dock from "@/components/shared/Dock";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-const FigtreeFont = Figtree({
+const UiFont = Archivo({
   subsets: ["latin"],
-  variable: "--font-figtree",
+  variable: "--font-ui",
   fallback: ["system-ui", "sans-serif"],
 });
 
-// Headings only. Figtree is an even geometric sans and reads the same at every
-// size; the display face gives the type scale somewhere to actually go.
-const DisplayFont = Bricolage_Grotesque({
+// Every duration, count and timestamp. Tabular figures matter here: the video
+// list is a column of numbers that should line up.
+const MonoFont = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  variable: "--font-display",
-  fallback: ["system-ui", "sans-serif"],
+  variable: "--font-mono",
+  fallback: ["ui-monospace", "monospace"],
 });
 
 export const metadata = {
@@ -36,27 +33,16 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${FigtreeFont.variable} ${DisplayFont.variable} antialiased flex flex-col min-h-screen overflow-x-hidden`}
+        className={`${UiFont.variable} ${MonoFont.variable} antialiased overflow-x-hidden`}
       >
         <SpeedInsights />
         <Providers>
-          <header>
-            <nav>
-              <Navbar />
-            </nav>
-          </header>
-          <main className="container mx-auto flex-1 px-4 pt-[calc(var(--nav-h)+1.5rem)] pb-6 lg:pb-4">
-            {children}
-          </main>
+          <AppShell>{children}</AppShell>
           <Toaster
             position="bottom-center"
             reverseOrder={false}
-            containerStyle={{ bottom: "calc(var(--dock-offset) + 1rem)" }}
+            containerStyle={{ bottom: "1rem" }}
           />
-          <footer>
-            <Footer />
-            <Dock />
-          </footer>
         </Providers>
       </body>
     </html>
